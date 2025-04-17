@@ -1,0 +1,11 @@
+,attributevalue,count,normalized_attributevalue,synonyms
+0,"Full-Length, Full-length",110888,full length sleeve,"[('Long sleeve', 0.783), ('Extended sleeve', 0.777), ('Floor-length sleeve', 0.72), ('Maxi sleeve', 0.595)]"
+1,Short,98397,short sleeve,"[('Cap sleeve', 0.677)]"
+2,Sleeveless,10484,sleeveless sleeve,"[(‘Without sleeves', 0.732), ('Racerback', 0.466)]"
+3,Strappy,601,strappy sleeve,"[('Ribbon Sleeve', 0.655), ('Thin Strap Sleeve', 0.606), ('Spaghetti Strap Sleeve', 0.603)]"
+4,Cap,167,cap sleeve,"[('Short sleeve', 0.499)]"
+5,Stylised,84,stylised sleeve,"[('Designer sleeve', 0.863)]"
+6,Bell,69,bell sleeve,"[('Lantern Sleeve', 0.631), ('Bishop Sleeve', 0.611), ('Flared Sleeve', 0.582), ('Trumpet Sleeve', 0.553)]"
+7,Racerback,24,racerback sleeve,"[('Racerback Armhole', 0.848), ('Racerback Cut', 0.813), ('Racerback Style', 0.791), ('Racerback Design', 0.788)]"
+8,Puff,5,puff sleeve,"[('Gigot sleeve', 0.767), ('Balloon sleeve', 0.649), ('Leg-of-mutton sleeve', 0.647), ('Bishop sleeve', 0.606)]"
+9,Churidar,1,churidar sleeve,"[('Churidar Sleevelet', 0.88), ('Churidar Armhole', 0.838), ('Churidar Cuff', 0.814), ('Churidar Flounce', 0.809)]"

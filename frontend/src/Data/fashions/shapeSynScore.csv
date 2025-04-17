@@ -1,0 +1,6 @@
+,attributevalue,count,normalized_attributevalue,synonyms
+0,Regular,680142,regular shape,"[(‘Normal fit', 0.624)]"
+1,Maternity,3499,maternity shape,"[('Maternity Cut', 0.789), ('Maternity Design', 0.769), ('Maternity Silhouette', 0.743), ('Maternity Fit', 0.673)]"
+2,Plus,3399,plus shape,[]
+3,Curve,1735,curve shape,"[('Curvy', 0.679)]"
+4,Petite,222,petite shape,"[('Miniature form', 0.742), ('Tiny figure', 0.705), (‘Small frame', 0.694)]"

@@ -1,0 +1,8 @@
+,attributevalue,count,normalized_attributevalue,synonyms
+0,"Casual, CASUAL",888358,casual occasion,"[('Laid-Back Function', 0.808), ('Informal Gathering', 0.761), ('Relaxed Event', 0.644), ('Easygoing Celebration', 0.555)]"
+1,"Universal, UNIVERSAL",155309,universal occasion,"[('All-encompassing event', 0.605), ('Global gathering', 0.542), ('Worldwide festivity', 0.477), ('Comprehensive celebration', 0.465)]"
+2,Occasion,129244,occasion occasion,"[('Event', 0.688), ('Function', 0.62), ('Gathering', 0.609), ('Ceremony', 0.605)]"
+3,"ACTIVE, Active",37593,active occasion,"[('Trendy Celebration', 0.497), ('Fashionable Function', 0.437), ('Stylish Gathering', 0.396), ('Vibrant Event', 0.393)]"
+4,"EVENING, Evening",24530,evening occasion,"[('Cotillion', 0.618), ('Soiree', 0.613), ('Gala', 0.604), ('Ball', 0.497)]"
+5,"WORK, Work",24154,work occasion,"[('Garment occasion', 0.589), ('Outfit gathering', 0.552), ('Clothes celebration', 0.381), ('Dress event', 0.358)]"
+6,Special Occasion,7251,special occasion occasion,"[('Soiree', 0.594), ('Gala', 0.588), ('Ball', 0.564), ('Formal Event', 0.51)]"

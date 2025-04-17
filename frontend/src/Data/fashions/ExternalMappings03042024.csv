@@ -1,0 +1,2659 @@
+row_num,word,rightword,,w_count,r_count,old_r_count,soundex,dropThese?,RtoR,Remarks,mapping_type
+2,aakiriti,aakriti,#N/A,,294,258,A263,,FALSE,,W2R
+3,aanarkalisuit,anarkali,#N/A,,6148,536,A562,,FALSE,,W2R
+4,aavas,avaasa,#N/A,,2960,88440,A120,,FALSE,,W2R
+5,aavasaa,avaasa,#N/A,,2960,34275,A120,,FALSE,,W2R
+6,aavass,avaasa,#N/A,,2960,12539,A120,,FALSE,,W2R
+7,aavesa,avassa,#N/A,,,13047,A120,,FALSE,,W2R
+8,aawasa,avaasa,#N/A,,2960,92763,A200,,FALSE,,W2R
+9,accessories,earrings,accessories,304379,67238,,,1,FALSE,losing intent for other accessories,R1 2 R2
+10,accessories,accessories,#N/A,304379,304379,,,,TRUE,,R2R
+11,accessory,accessories,accessory,720,304379,,,,FALSE,plural,R1 2 R2
+12,accessory,earrings,#N/A,720,67238,,,1,FALSE,losing intent for other accessories,R1 2 R2
+13,accidental,accidental,#N/A,9,9,70486,A235,,TRUE,,R2R
+14,addidad,adidas,#N/A,,5084,31482,A333,,FALSE,,W2R
+15,adelina,adelina,#N/A,1,1,15484,A345,,TRUE,,R2R
+16,adfidas,adidas,#N/A,,5084,12950,A313,,FALSE,,W2R
+17,adidads,adidas,#N/A,,5084,13688,A333,,FALSE,,W2R
+18,adizero,adizero,#N/A,38,38,23861,A326,,TRUE,,R2R
+19,airjordan,air jordan,#N/A,,,14582,A626,,FALSE,,R2R
+20,ajanta,ajanta,#N/A,396,396,26061,A253,,TRUE,,R2R
+21,ajarak,ajrak,#N/A,1,757,,,,FALSE,,W2R
+22,ajarakh,ajrak,#N/A,2,757,,,,FALSE,,W2R
+23,ajiolife,ajiolife,#N/A,,,19466,A241,,TRUE,,R2R
+24,ajrakh,ajrak,#N/A,78,757,,,,FALSE,,W2R
+25,alphabounce,alphabounce,#N/A,4,4,19957,A411,,TRUE,,R2R
+26,alyaka,alyaka,#N/A,1,1,20285,A420,,TRUE,,R2R
+27,ambrala,umbrella,#N/A,,186,11848,A516,,FALSE,,W2R
+28,ambrela,umbrella,#N/A,,186,29749,A516,,FALSE,,W2R
+29,ambrodary,embroidery,#N/A,,67045,11782,A516,,FALSE,,W2R
+30,amrela,umbrella,#N/A,,186,15679,A564,,FALSE,,W2R
+31,anakarli,anarkali,#N/A,,6148,27170,A526,,FALSE,,R2R
+32,andhra,pochampally,#N/A,88,1133,,,,FALSE,,R1 2 R2
+33,andhra ikat,pochampally,andhra ikat,,1133,,,1,FALSE,both words are handled separately,R1 2 R2
+34,andhra ikat,ikat,#N/A,,4018,,,1,FALSE,both words are handled separately,R1 2 R2
+35,andhra ikkat,andhra ikat,#N/A,,,,,1,FALSE,both words are handled separately,W2R
+36,andra ikat,andhra ikat,#N/A,,,,,1,FALSE,both words are handled separately,W2R
+37,andtrousers,trousers,#N/A,,49974,1111,A536,,FALSE,split with one word as stop word,W2R
+38,angarakha,angrakha,#N/A,30,890,,,,FALSE,,W2R
+39,angarkh,angrakha,#N/A,,890,,,,FALSE,,W2R
+40,ankarli,anarkali,#N/A,,6148,11721,A526,,FALSE,,W2R
+41,anubhutee,anubhutee,#N/A,742,742,46159,A513,,TRUE,,R2R
+42,aplik,applique,#N/A,,14290,,,,FALSE,,W2R
+43,appliances,appliances,appliances,59,,,,,TRUE,"both are category tokens, ""Kitchen Appliances"" and ""Wearable Gadgets""",R2R
+44,appliances,gadgets,#N/A,320,,,,1,FALSE,"both are category tokens, ""Kitchen Appliances"" and ""Wearable Gadgets""",R1 2 R2
+45,applicable,applicable,#N/A,19,19,31822,A142,,TRUE,,R2R
+46,applik,applique,#N/A,,14290,,,,FALSE,,W2R
+47,appliq,applique,#N/A,,14290,,,,FALSE,,W2R
+48,appliques,applique,#N/A,143,14290,,,,FALSE,,W2R
+49,aqualite,aqualite,#N/A,291,291,17702,A243,,TRUE,,R2R
+50,arie,eri,arie,2,22,,,1,FALSE,"getting converted to marie, eri is in name_text of sarees and hence open token",R1 2 R2
+51,arie,boxers,arie,2,12174,,,?,FALSE,no idea how it is related to boxers,R1 2 R2
+52,arie,eri,#N/A,2,22,,,1,FALSE,,R1 2 R2
+53,armlet,bangles,armlet,498,13470,,,,FALSE,,R1 2 R2
+54,armlet,bracelets & bangles,#N/A,498,,,,1,FALSE,,R1 2 R2
+55,army,camouflage,#N/A,288,3587,,,,FALSE,,R1 2 R2
+56,ashland,ashland,#N/A,8,8,15027,A245,,TRUE,,R2R
+57,assasin,assassin,#N/A,,1,20464,A225,,TRUE,,W2R
+58,assesories,accessories,#N/A,,304379,25712,A226,,FALSE,,W2R
+59,assign,assign,#N/A,,,22853,A225,,TRUE,,R2R
+60,asweego,asweego,#N/A,,,13085,A220,,TRUE,,R2R
+61,asymmentric,asymmetric,#N/A,,858,14598,A255,,FALSE,,W2R
+62,aurgandi,organdy,#N/A,,,,,,FALSE,,W2R
+63,avaasamix,avaasa mix,#N/A,,,15497,A125,,FALSE,,R2R
+64,avaasta,avaasa,#N/A,,2960,11473,A123,,FALSE,,W2R
+65,avadsa,avaasa,#N/A,,2960,17920,A132,,FALSE,,W2R
+66,avansa,avaasa,#N/A,,2960,25492,A152,,FALSE,,W2R
+67,avasamix,avaasa mix,#N/A,,,14472,A125,,FALSE,,W2R
+68,avasana,avaasa,#N/A,,2960,58137,A125,,FALSE,,W2R
+69,avasara,avaasa,#N/A,,2960,79917,A126,,FALSE,,W2R
+70,avasasa,avaasa,#N/A,,2960,19052,A122,,FALSE,,W2R
+71,avasd,avaasa,#N/A,,2960,694,A123,,FALSE,,W2R
+72,avasda,avaasa,#N/A,,2960,13770,A123,,FALSE,,W2R
+73,avastha,avastha,#N/A,,,15897,A123,,TRUE,,R2R
+74,awasa,avaasa,#N/A,,2960,92763,A200,,FALSE,,W2R
+75,awassa,avaasa,#N/A,,2960,38593,A200,,FALSE,,W2R
+76,axelion,axelion,#N/A,4,4,30126,A245,,TRUE,,R2R
+77,baateek,batik,#N/A,,779,,,,FALSE,,W2R
+78,babies,infants,#N/A,115,16402,,,,FALSE,,R1 2 R2
+79,baby,infants,#N/A,9883,16402,,,,FALSE,,R1 2 R2
+80,babyboy,baby boy,#N/A,,,14377,B110,,FALSE,,R2R
+81,babycon,babycon,#N/A,,,12274,B125,,TRUE,,R2R
+82,babygirl,baby girl,#N/A,7,,32650,B126,,FALSE,,R2R
+83,babyhug,babyhug,#N/A,,,28531,B120,,TRUE,,R2R
+84,bacchon,kids,#N/A,,9193,64633,B250,,FALSE,,W2R
+85,backbag,backpacks,#N/A,,3901,186936,B212,,FALSE,,W2R
+86,backbags,backpacks,#N/A,,3901,116822,B212,,FALSE,,W2R
+87,back bag,backpacks,#N/A,,3901,186936,B212,,FALSE,,W2R
+88,back bags,backpacks,#N/A,,3901,116822,B212,,FALSE,,W2R
+89,backpack,backpacks,#N/A,3387,3901,,,,FALSE,,R1 2 R2
+90,backpacks,backpacks,#N/A,3901,3901,,,,TRUE,,R1 2 R2
+91,backup,backup,#N/A,,,17191,B210,,TRUE,,R2R
+92,badges,brooches,#N/A,36,1283,,,?,FALSE,,R1 2 R2
+93,badhiya,adizya,#N/A,,26,11990,B300,1,FALSE,,W2R
+94,badla,mukaish,#N/A,3,43,,,?,FALSE,"badla not in catalogue, mukaish will go into open tokens",R1 2 R2
+95,bag,travel bags,bag,25401,,,,1,FALSE,losing intent,R1 2 R2
+96,bag,laptop bags,bag,25401,,,,1,FALSE,losing intent,R1 2 R2
+97,bag,handbags,bag,25401,22502,,,1,FALSE,losing intent,R1 2 R2
+98,bag,gym bags,bag,25401,,,,1,FALSE,losing intent,R1 2 R2
+99,bag,backpacks,#N/A,25401,3901,,,1,FALSE,losing intent,R1 2 R2
+100,bagoacks,backpacks,#N/A,,3901,20460,B220,,FALSE,,W2R
+101,bagpack,backpacks,#N/A,13,3901,,,,FALSE,,W2R
+102,bag pack,backpacks,#N/A,,3901,,,,FALSE,,W2R
+103,bagpacks,backpacks,bagpacks,,3901,,,,FALSE,,W2R
+104,bag packs,backpacks,#N/A,,3901,,,,FALSE,,W2R
+105,bagpsck,backpacks,#N/A,,3901,50,B212,,FALSE,,W2R
+106,bagspack,backpacks,#N/A,,3901,50,B212,,FALSE,,W2R
+107,bags pack,backpacks,#N/A,,3901,50,B212,,FALSE,,W2R
+108,bagroo,bagru,#N/A,,1669,,,,FALSE,,W2R
+109,bagru,bagru,bagru,1669,1669,,,,TRUE,,R2R
+110,bagru,jaipur,#N/A,1669,2941,,,1,FALSE,,R1 2 R2
+111,bags,travel bags,bags,58206,,,,1,FALSE,losing intent,R1 2 R2
+112,bags,laptop bags,bags,58206,,,,1,FALSE,losing intent,R1 2 R2
+113,bags,handbags,bags,58206,22502,,,1,FALSE,losing intent,R1 2 R2
+114,bags,gym bags,#N/A,58206,,,,1,FALSE,losing intent,R1 2 R2
+115,balezar,blazer,#N/A,,4215,14178,B426,,FALSE,,W2R
+116,ball dress,gowns,#N/A,,8206,,,,FALSE,,R1 2 R2
+117,ballarians,ballerinas,#N/A,,2285,11456,B465,,FALSE,,W2R
+118,balldress,gowns,#N/A,,8206,,,,FALSE,,R1 2 R2
+119,ballenaries,ballerinas,#N/A,,2285,12142,B456,,TRUE,,W2R
+120,balleneries,ballerinas,#N/A,,2285,11874,B456,,TRUE,,W2R
+121,balleries,ballerinas,#N/A,,2285,18394,B462,,FALSE,,W2R
+122,ballroom,gowns,#N/A,,8206,,,,FALSE,,R1 2 R2
+123,banaras,banarasi,#N/A,15,35075,,,,FALSE,,R1 2 R2
+124,banarasi,banarasi,#N/A,35075,35075,,,,TRUE,,R2R
+125,banarsi,banarasi,#N/A,,35075,,,,FALSE,,W2R
+126,band,rings,band,15474,20811,,,1,FALSE,,R1 2 R2
+127,band,hair accessories,#N/A,15474,,,,1,FALSE,,R1 2 R2
+128,bandage,bandage,#N/A,5,5,17494,B532,,TRUE,,R2R
+129,bandana,shawls,bandana,90,2231,,,1,FALSE,completely different items,R1 2 R2
+130,bandana,scarves,bandana,90,5470,,,1,FALSE,completely different items,R1 2 R2
+131,bandana,scarves,#N/A,90,5470,,,1,FALSE,bandanas is a styletype,R1 2 R2
+132,bandani,bandhani,#N/A,13,3545,,,,FALSE,,W2R
+133,bangal,bengal,#N/A,,810,,,,FALSE,,W2R
+134,bangali,bengal,#N/A,,810,,,,FALSE,,W2R
+135,bangees,bangles,#N/A,,13470,147,B522,,FALSE,,W2R
+136,bangle,bangles,bangle,1112,13470,,,,FALSE,plural,R1 2 R2
+137,bangle,bracelets & bangles,#N/A,1112,,,,1,FALSE,,R1 2 R2
+138,bangles,bangles,bangles,13470,13470,,,,TRUE,,R2R
+139,bangles,bracelets & bangles,#N/A,13470,,,,1,FALSE,,R1 2 R2
+140,banians,vests,#N/A,,4164,35262,B552,,FALSE,,W2R
+141,baniyan,vests,#N/A,,4164,,,,FALSE,,W2R
+142,baniyans,vests,#N/A,,4164,45188,B552,,FALSE,,R1 2 R2
+143,banner,banner,#N/A,6,6,35879,B560,,TRUE,,R2R
+144,barmunda,barmuda,#N/A,,2,26530,B655,,FALSE,,W2R
+145,barrel,gym bags,#N/A,1051,,,,,FALSE,,R1 2 R2
+146,barrel bag,gym bags,#N/A,,,,,1,FALSE,,R1 2 R2
+147,barrel bags,gym bags,#N/A,,,,,1,FALSE,,R1 2 R2
+148,batiq,batik,#N/A,,779,,,,FALSE,,W2R
+149,batique,batik,#N/A,,779,,,,FALSE,,W2R
+150,beachwear,swimwear,#N/A,64,3498,,,,FALSE,,R1 2 R2
+151,beanies,caps & hats,beanies,901,,,,1,FALSE,losing intent,R1 2 R2
+152,beanies,caps & hats,#N/A,901,,,,1,FALSE,losing intent,R1 2 R2
+153,bellerian,ballerinas,#N/A,,2285,14602,B465,,FALSE,,W2R
+154,belt,belts,#N/A,14518,57385,,,,FALSE,plural,R1 2 R2
+155,belts,belts,belts,57385,57385,,,,TRUE,,R2R
+156,belts,belts,#N/A,57385,57385,,,1,TRUE,,R2R
+157,benaras,banarasi,#N/A,49,35075,,,,FALSE,,W2R
+158,benarasi,banarasi,#N/A,4,35075,,,,FALSE,,W2R
+159,benarsi,banarasi,#N/A,,35075,,,,FALSE,,W2R
+160,bengali,bengal,#N/A,138,810,,,,FALSE,,R1 2 R2
+161,bengali coton,bengal cottons,#N/A,,,,,1,FALSE,,W2R
+162,bengals,bengal,#N/A,,810,,,,FALSE,plural,R1 2 R2
+163,bengals cotton,bengal cottons,#N/A,,,,,1,FALSE,plural,R1 2 R2
+164,benten,benetton,#N/A,,2488,19245,B535,,FALSE,,W2R
+165,berryblush,berrylush,#N/A,,31,18086,B614,,TRUE,,W2R
+166,berrylush,berrylush,#N/A,31,31,194015,B642,,TRUE,,R2R
+167,bhagalpur,tussar,#N/A,73,1370,,,?,FALSE,bhagalpuri is a weave type in duppattas whereas tussar is fabric in sarees,R1 2 R2
+168,bhagalpuri,tussar,#N/A,1323,1370,,,?,FALSE,bhagalpuri is a weave type in duppattas whereas tussar is fabric in sarees,R1 2 R2
+169,bhandani,bandhani,#N/A,5,3545,,,,FALSE,,W2R
+170,bhandhani,bandhani,#N/A,1,3545,,,,FALSE,,W2R
+171,bhuj,kutch,#N/A,,389,,,,FALSE,,R1 2 R2
+172,bhuj slippers,kutch footwear,#N/A,,,,,1,FALSE,,R1 2 R2
+173,bi-fold,wallets,#N/A,4487,57347,,,1,FALSE,losing intent,R1 2 R2
+174,bibs and collars,necklaces,#N/A,,27058,,,1,FALSE,not the same,R1 2 R2
+175,bikinis,swimwear,#N/A,1746,3498,,,1,FALSE,is a styletype,R1 2 R2
+176,blackbary,blackberry,#N/A,,8,2486,B421,,FALSE,,W2R
+177,blackpink,black pink,#N/A,,,12595,B421,,FALSE,,R2R
+178,blazer,coats,#N/A,4215,22609,,,1,FALSE,,R1 2 R2
+179,blazerfor,blazers,#N/A,,6049,14316,B426,,FALSE,split with one word as stop word,W2R
+180,blazers,jackets,blazers,6049,31735,,,1,FALSE,,R1 2 R2
+181,blazers,coats,#N/A,6049,22609,,,1,FALSE,,R1 2 R2
+182,blcakebrrys,blackberry,#N/A,,8,1002,B422,,FALSE,,W2R
+183,bleasure,blazers,#N/A,,6049,12828,B426,1,FALSE,closer to pleasure,W2R
+184,bleckbary,blackberry,#N/A,,8,180,B421,,FALSE,,W2R
+185,blejar,blazers,#N/A,,6049,22452,B426,,FALSE,,W2R
+186,blesar,blazers,#N/A,,6049,15050,B426,,FALSE,,W2R
+187,blesure,blazers,#N/A,,6049,12917,B426,1,FALSE,closer to pleasure,W2R
+188,blingy,hair accessories,#N/A,3,,,,1,FALSE,,R1 2 R2
+189,block heel,heels,#N/A,,20517,,,1,FALSE,losing intent,R1 2 R2
+190,block heels,heels,#N/A,,20517,,,1,FALSE,losing intent,R1 2 R2
+191,blouse,blouses,#N/A,91283,12466,,,,FALSE,plural,R1 2 R2
+192,blouses,blouses,#N/A,12466,12466,,,,TRUE,,R2R
+193,bnmx,dnmx,#N/A,,3992,76770,B520,,FALSE,,W2R
+194,bodar,border,#N/A,,48538,14124,B360,,FALSE,,W2R
+195,bodyfit,body fit,#N/A,2,,27532,B313,,FALSE,,R2R
+196,bodyshaper,shapewear,#N/A,,1778,,,,FALSE,,R1 2 R2
+197,bodysuit,shapewear,#N/A,1086,1778,,,?,FALSE,infant - bodysuits is a category,R1 2 R2
+198,bolero,shrugs,#N/A,26,13758,,,,FALSE,,R1 2 R2
+199,boleros,shrugs,#N/A,37,13758,,,,FALSE,,R1 2 R2
+200,bommer,bomber,#N/A,,5045,32595,B560,,FALSE,,W2R
+201,boots,boots,#N/A,6237,6237,,,,TRUE,,R2R
+202,bootsfor,boots,#N/A,,6237,11492,B321,,FALSE,split with one word as stop word,W2R
+203,borderless,borderless,#N/A,,,15054,B636,,TRUE,,R2R
+204,bottom wear,trousers,bottom wear,,49974,,,,FALSE,,R1 2 R2
+205,bottom wear,shorts,bottom wear,,45307,,,1,FALSE,,R1 2 R2
+206,bottom wear,"pants,trousers,skirts,shorts,jeans,jeggings,legging",#N/A,,,,,1,FALSE,"bad value, already covered",R1 2 R2
+207,bottoms,trousers,#N/A,374,49974,,,,FALSE,changed value,R1 2 R2
+208,bottomwear,trousers,bottomwear,99375,49974,,,,FALSE,,R1 2 R2
+209,bottomwear,shorts,bottomwear,99375,45307,,,1,FALSE,decided on intent for trousers since only 1to1 is supported,R1 2 R2
+210,bottomwear,"pants,trousers,skirts,shorts,jeans,jeggings,legging",bottomwear,99375,,,,1,FALSE,decided on intent for trousers since only 1to1 is supported,R1 2 R2
+211,bottomwear,leggings,bottomwear,99375,24525,,,1,FALSE,decided on intent for trousers since only 1to1 is supported,R1 2 R2
+212,bottomwear,ghagras,#N/A,99375,7081,,,1,FALSE,decided on intent for trousers since only 1to1 is supported,R1 2 R2
+213,bottomwears,skirts,bottomwears,,7437,,,1,FALSE,decided on intent for trousers since only 1to1 is supported,R1 2 R2
+214,bottomwears,ghagras,#N/A,,7081,,,1,FALSE,decided on intent for trousers since only 1to1 is supported,R1 2 R2
+215,boxer,boxers,#N/A,889,12174,,,,FALSE,plural,R1 2 R2
+216,boxer short,boxers,#N/A,,12174,,,,FALSE,,R1 2 R2
+217,boxers,boxers,#N/A,12174,12174,,,,TRUE,,R2R
+218,bra,bras,bra,28835,26980,,,,FALSE,plural,R1 2 R2
+219,bra,lingerie & innerwear,bra,28835,,,,1,FALSE,"women - bras is a category, this would be predicted instead",R1 2 R2
+220,bra,lingerie,#N/A,28835,52781,,,1,FALSE,"women - bras is a category, this would be predicted instead",R1 2 R2
+221,bracelet,bracelets,bracelet,10874,17480,,,,FALSE,plural,R1 2 R2
+222,bracelet,bracelets & bangles,#N/A,10874,,,,1,FALSE,bracelets should not result in bangles as well,R1 2 R2
+223,bracelets,bracelets,bracelets,17480,17480,,,,TRUE,,R2R
+224,bracelets,bracelets & bangles,#N/A,17480,,,,1,FALSE,bracelets should not result in bangles as well,R1 2 R2
+225,braclate,bracelets,#N/A,,17480,13606,B624,,FALSE,,W2R
+226,bras,bras,bras,26980,26980,,,,TRUE,,R2R
+227,bras,lingerie & innerwear,bras,26980,,,,1,FALSE,"women - bras is a category, this would be predicted instead",R1 2 R2
+228,bras,lingerie,#N/A,26980,52781,,,1,FALSE,"women - bras is a category, this would be predicted instead",R1 2 R2
+229,brassiere,bras,#N/A,24,26980,,,,FALSE,,R1 2 R2
+230,brazil,brazil,#N/A,17,17,30720,B624,,TRUE,,R2R
+231,brazzer,blazers,#N/A,,,16507,B626,,TRUE,,W2R
+232,brazzers,blazers,#N/A,,6049,14086,B626,,FALSE,,W2R
+233,breastpin,brooches & pins,breastpin,,,,,?,FALSE,,R1 2 R2
+234,breastpin,brooches & pins,#N/A,,,,,1,FALSE,,R1 2 R2
+235,breil,breil,#N/A,,,58119,B640,,TRUE,luxury watch brand,R2R
+236,breslet,bracelets,#N/A,,17480,55583,B624,,FALSE,,W2R
+237,bridal,wedding,#N/A,338,3610,,,,FALSE,,R1 2 R2
+238,bride,wedding,#N/A,8,3610,,,,FALSE,,R1 2 R2
+239,brief,briefs,#N/A,1119,15681,,,,FALSE,plural,R1 2 R2
+240,briefs,briefs,#N/A,15681,15681,,,,TRUE,,R2R
+241,brim,rings,#N/A,18,20811,,,1,FALSE,,R1 2 R2
+242,bro cade,brocade,#N/A,,2465,,,1,FALSE,will be there if split in history,R1 2 R2
+243,broaches,brooches,#N/A,,1283,,,1,FALSE,already spell corrected by our module to brooches,W2R
+244,broad bangle,bangles,#N/A,,13470,,,,FALSE,,R1 2 R2
+245,brocades,brocade,#N/A,,2465,,,,FALSE,plural,R1 2 R2
+246,brogan,boots,#N/A,,6237,,,,FALSE,type of boots,R1 2 R2
+247,brokade,brocade,#N/A,,2465,,,,FALSE,,W2R
+248,bucket ha,caps & hats,#N/A,,,,,1,FALSE,,W2R
+249,bud,hair accessories,#N/A,27,,,,1,FALSE,,R1 2 R2
+250,budget,budget,#N/A,46,46,27944,B323,,TRUE,,R2R
+251,buffer,buffer,#N/A,14,14,60476,B160,,TRUE,,R2R
+252,bun,hair accessories,#N/A,117,,,,1,FALSE,,R1 2 R2
+253,bundelkand,chanderi,#N/A,,9667,,,,FALSE,,W2R
+254,bundelkhand,chanderi,#N/A,,9667,,,,FALSE,,R1 2 R2
+255,burkha,burkha,#N/A,9,9,20123,B620,,TRUE,,R2R
+256,burqa,burkha,#N/A,287,9,16942,B620,,FALSE,,R1 2 R2
+257,caanchi,kanchi,#N/A,,207,,,,FALSE,,W2R
+258,caltwalk,catwalk,#N/A,,589,19373,C434,,TRUE,,W2R
+259,camisole,camisoles,#N/A,2176,3910,,,,FALSE,plural,R1 2 R2
+260,camisoles,camisoles,#N/A,3910,3910,,,,TRUE,,R2R
+261,campush,campus,#N/A,,13215,695,C512,,FALSE,,W2R
+262,can vas,canvas,#N/A,,8160,,,1,FALSE,,R2R
+263,can vase,canvas,#N/A,,8160,,,1,FALSE,,W2R
+264,cancan,cancan,#N/A,9,9,13028,C525,,TRUE,,R2R
+265,canchi,kanchi,#N/A,,207,,,,FALSE,,W2R
+266,canchi cotons,kanchi cottons,#N/A,,,,,1,FALSE,,W2R
+267,canderi,chanderi,#N/A,,9667,,,,FALSE,,W2R
+268,canva,canvas,#N/A,,8160,,,,FALSE,,W2R
+269,cap,caps & hats,cap,3551,,,,1,FALSE,,R1 2 R2
+270,cap,caps & hats,#N/A,3551,,,,1,FALSE,,R1 2 R2
+271,cape,shawls,capes,440,2231,,,,FALSE,plural,R1 2 R2
+272,cape,scarves,#N/A,440,5470,,,1,FALSE,,R1 2 R2
+273,caps,caps & hats,#N/A,4153,,,,1,FALSE,,R1 2 R2
+274,carcanet,necklaces,carcanet,,27058,,,,FALSE,means a jewelled necklace,R1 2 R2
+275,carcanet,necklaces & pendants,#N/A,,,,,1,FALSE,,R1 2 R2
+276,carry bag,travel bags,#N/A,,,,,,FALSE,,R1 2 R2
+277,carry-bag,handbags,#N/A,,22502,,,1,FALSE,,R1 2 R2
+278,carry-on,clutches & wristlets,#N/A,83,,,,1,FALSE,,R1 2 R2
+279,carrybag,travel bags,carrybag,,,,,,FALSE,,R1 2 R2
+280,carrybag,handbags,carrybag,,22502,,,1,FALSE,,R1 2 R2
+281,carrybag,backpacks,carrybag,,3901,,,1,FALSE,,R1 2 R2
+282,carrybag,backpacks,#N/A,,3901,,,1,FALSE,,R1 2 R2
+283,casavu,kasavu,casavu,,103,,,,FALSE,,W2R
+284,casavu,kerela kasavu,#N/A,,,,,1,FALSE,,W2R
+285,casualwear,casual,#N/A,43,1177030,,,,FALSE,,R1 2 R2
+286,casulal,casual,#N/A,,1177030,15661,C244,,FALSE,,W2R
+287,casusal,casual,#N/A,,1177030,21170,C224,,FALSE,,W2R
+288,casuval,casual,#N/A,,1177030,57652,C214,,FALSE,,W2R
+289,cell,smart phones,#N/A,140,,,,?,FALSE,"ajio has no products in this category, can't comment",R1 2 R2
+290,cell phone,smart phones,#N/A,,,,,?,FALSE,"ajio has no products in this category, can't comment",R1 2 R2
+291,cellphone,smart phones,#N/A,,,,,?,FALSE,"ajio has no products in this category, can't comment",R1 2 R2
+292,cerela,kerela,#N/A,,1,,,,FALSE,,W2R
+293,chambrey,chambray,#N/A,,162,,,,FALSE,,W2R
+294,chamda,leather,#N/A,,47905,,,,FALSE,,R1 2 R2
+295,champal,slippers,#N/A,,12169,71858,C514,,FALSE,,W2R
+296,chand bali,chandbali,#N/A,,1901,,,1,FALSE,will be there if split in history,R2R
+297,chandbali,chandbali,#N/A,1901,1901,,,,TRUE,,R2R
+298,chandbalis,chandbali,#N/A,555,1901,,,,FALSE,plural,R1 2 R2
+299,chanderee,chanderi,#N/A,,9667,,,,FALSE,,W2R
+300,chandri,chanderi,#N/A,,9667,,,,FALSE,,W2R
+301,chaniya,saree shapewear,#N/A,,,63930,C500,,TRUE,suggested word: lehengas (for chaniya choli) or saree shapewear ,R1 2 R2
+302,chapal,slippers,#N/A,2,12169,,,,,,W2R
+303,chapar,slippers,#N/A,,12169,11778,C160,,FALSE,,W2R
+304,chaples,slippers,#N/A,,12169,1836,C142,,FALSE,,W2R
+305,chappal,slippers,chappal,125,12169,,,,FALSE,,W2R
+306,chappal,slippers,#N/A,125,12169,,,1,FALSE,,W2R
+307,chappals,slippers,chappals,76,12169,,,,FALSE,,R1 2 R2
+308,chappals,slippers,#N/A,76,12169,,,1,FALSE,,R1 2 R2
+309,chapulu,slippers,#N/A,,,12449,C140,,TRUE,,R1 2 R2
+310,charging,charging,#N/A,76,76,22654,C625,,TRUE,,R2R
+311,chattisgarh,warli,#N/A,,132,,,1,FALSE,"chattisgarh not in catalogue, warli is in name_text",R1 2 R2
+312,chattisgarhi,warli,#N/A,,132,,,1,FALSE,"chattisgarhi not in catalogue, warli is in name_text",R1 2 R2
+313,chauth,chauth,#N/A,,,14028,C300,,TRUE,,R2R
+314,cheapest,cheapest,#N/A,,,40086,C123,,TRUE,,R2R
+315,cheques,checks,#N/A,,43994,17893,C220,,FALSE,"both have different meanings but for fashion search, the mapping is appropriate",R1 2 R2
+316,cherala,chirala,#N/A,,,,,,FALSE,,W2R
+317,chickan,chikankari,#N/A,14,1626,13432,C525,,FALSE,,W2R
+318,chikan,chikankari,#N/A,505,1626,13432,C525,,FALSE,,R1 2 R2
+319,chiken,chikankari,#N/A,,1626,,,,FALSE,,W2R
+320,child,infants,#N/A,623,16402,,,?,FALSE,,R1 2 R2
+321,childerns,children,#N/A,,263,13489,C436,,FALSE,plural,R1 2 R2
+322,children,infants,#N/A,263,16402,,,?,FALSE,,R1 2 R2
+323,children's,infants,#N/A,54,16402,,,?,FALSE,,R1 2 R2
+324,childrens,infants,#N/A,21,16402,,,?,FALSE,,R1 2 R2
+325,chinkankari,chikankari,#N/A,3,1626,13432,C525,,FALSE,,W2R
+326,chiralla,chirala,#N/A,,,,,,FALSE,,W2R
+327,chirrala,chirala,#N/A,,,,,,FALSE,,W2R
+328,chitar,chitar,#N/A,,,24340,C360,,TRUE,,R2R
+329,chockers,necklaces,#N/A,,27058,,,1,FALSE,"chokers is a style type, but when searched is getting converted to choker which has no entity, need to debug",W2R
+330,choli,blouses,choli,7886,12466,,,,FALSE,,R1 2 R2
+331,choli,lehenga,#N/A,7886,7996,,,1,FALSE,incorrect,R1 2 R2
+332,choli cu,blouses,#N/A,,12466,,,,FALSE,,W2R
+333,choli cut blouse,blouses,#N/A,,12466,,,1,FALSE,,R1 2 R2
+334,cholis,lehenga,#N/A,4,7996,,,1,FALSE,,R1 2 R2
+335,choliset,choli set,#N/A,,,12127,C423,,FALSE,,R2R
+336,choodidar,churidar,#N/A,,5771,14763,C336,,FALSE,,W2R
+337,choori,bangles,choori,,13470,,,,FALSE,,W2R
+338,choori,bracelets & bangles,#N/A,,,,,1,FALSE,,W2R
+339,chooridar,churidars,#N/A,,17160,,,,FALSE,,W2R
+340,chronometer,watches,chronometer,6,13589,,,1,FALSE,watch brand,R1 2 R2
+341,chronometer,smartwatch,#N/A,6,113,,,1,FALSE,,R1 2 R2
+342,chuddi,bangles,#N/A,,13470,19469,C300,,FALSE,,W2R
+343,chudidhar,churidars,#N/A,,17160,,,,FALSE,,W2R
+344,chudhidar,churidars,#N/A,,17160,,,,FALSE,,W2R
+345,chudhidars,churidars,chudhidars,,17160,,,,FALSE,,W2R
+346,chudhidars,churidars,#N/A,,17160,,,1,FALSE,,W2R
+347,chudhidhar,churidars,#N/A,,17160,,,,FALSE,,W2R
+348,chudhithar,churidars,#N/A,,17160,,,,FALSE,,W2R
+349,chudidar,churidars,#N/A,246,17160,,,,FALSE,,W2R
+350,chudidars,churidars,chudidars,1,17160,,,,FALSE,,W2R
+351,chudidars,churidars,#N/A,1,17160,,,1,FALSE,,W2R
+352,chudithar,churidara,chudithar,,,13505,C336,1,FALSE,,W2R
+353,chudithar,churidars,chudithar,,17160,,,,FALSE,,W2R
+354,chudithar,churidars,#N/A,,17160,,,1,FALSE,,W2R
+355,chudithars,churidars,#N/A,,17160,,,,FALSE,,W2R
+356,chukka,boots,#N/A,159,6237,,,,FALSE,type of boots,R1 2 R2
+357,chunari,dupattas,#N/A,,5530,44360,C560,,FALSE,,R1 2 R2
+358,chunky heels,heels,#N/A,,20517,,,1,FALSE,,R1 2 R2
+359,chunky necklace,necklaces,#N/A,,27058,,,1,FALSE,,R1 2 R2
+360,chunni,dupattas,#N/A,2,5530,,,,FALSE,,R1 2 R2
+361,chunri,dupattas,#N/A,4,5530,108097,C560,,FALSE,,W2R
+362,churdidar,churidar,#N/A,,5771,11378,C633,,FALSE,,W2R
+363,churi,bangles,churi,,13470,,,,FALSE,,W2R
+364,churi,bangles,#N/A,,13470,,,1,FALSE,,W2R
+365,churidar,churidars,#N/A,5771,17160,,,,FALSE,plural,R1 2 R2
+366,churidars,churidars,churidars,17160,17160,,,,TRUE,,R2R
+367,churidars,churidars,#N/A,17160,17160,,,1,TRUE,,R2R
+368,cigerate,cigarette,#N/A,,65,11672,C263,,FALSE,,W2R
+369,ciggarate,cigarette,#N/A,,65,17054,C263,,FALSE,,W2R
+370,ciggrate,cigarette,#N/A,,65,11687,C263,,FALSE,,W2R
+371,cigrate,cigarette,#N/A,,65,36431,C263,,FALSE,,W2R
+372,cigret,cigarette,#N/A,,65,12724,C263,,FALSE,,W2R
+373,circlet,rings,circlet,6,20811,,,1,FALSE,means some head ornament,R1 2 R2
+374,circlet,tiara,tiara,6,63,,,,FALSE,,R1 2 R2
+375,circlet,bracelets,circlet,6,17480,,,1,FALSE,wrong,R1 2 R2
+376,circlet,bangles,#N/A,6,13470,,,1,FALSE,wrong,R1 2 R2
+377,citizen,citizen,#N/A,5,5,14496,C325,,TRUE,,R2R
+378,clamps,brooches & pins,#N/A,2,,,,,FALSE,,R1 2 R2
+379,clasp,hair accessories,#N/A,5425,,,,1,FALSE,,R1 2 R2
+380,clasps,brooches & pins,#N/A,9,,,,1,FALSE,,R1 2 R2
+381,classic bangle,bangles,#N/A,,13470,,,1,FALSE,,R1 2 R2
+382,classic belts,belts,#N/A,,57385,,,1,FALSE,,R1 2 R2
+383,classic clutch,clutches,#N/A,,3666,,,1,FALSE,,R1 2 R2
+384,classic rings,rings,#N/A,,20811,,,1,FALSE,,R1 2 R2
+385,classy,evening,#N/A,1430,35581,,,,FALSE,,R1 2 R2
+386,clearance,clearance,#N/A,2,2,99483,C465,,TRUE,,R2R
+387,clinched,cinched,#N/A,16,16,27059,C452,,TRUE,,R2R
+388,clip,hair accessories,#N/A,1466,,,,1,FALSE,,R1 2 R2
+389,clipon,earrings,#N/A,,67238,,,1,FALSE,it is a style type in girls nose pins and mens earrings.,R1 2 R2
+390,clipons,clipon,#N/A,,,,,,FALSE,plural,R1 2 R2
+391,clips,hair accessories,clips,2111,,,,1,FALSE,,R1 2 R2
+392,clips,brooches & pins,#N/A,2111,,,,1,FALSE,,R1 2 R2
+393,cloth,dress materials,cloth,144580,,,,,FALSE,,R1 2 R2
+394,cloth,dress material,#N/A,144580,,,,1,FALSE,,R1 2 R2
+395,cloth material,dress materials,#N/A,,,,,,FALSE,,R1 2 R2
+396,clubwear,evening,#N/A,,35581,,,,FALSE,,R1 2 R2
+397,clutch,clutches & wristlets,#N/A,3415,,,,1,FALSE,,R1 2 R2
+398,clutches,clutches & wristlets,#N/A,3666,,,,1,FALSE,,R1 2 R2
+399,coat,coats,#N/A,1768,22609,,,,FALSE,plural,R1 2 R2
+400,coats,coats,#N/A,22609,22609,,,,TRUE,,R2R
+401,cocktail rings,rings,#N/A,,20811,,,1,FALSE,,R1 2 R2
+402,coin bag,wallets,#N/A,,57347,,,,FALSE,,R1 2 R2
+403,coin purse,wallets,#N/A,,57347,,,,FALSE,,R1 2 R2
+404,coin-bag,wallets,#N/A,,57347,,,,FALSE,,R1 2 R2
+405,coinpurse,wallets,#N/A,,57347,,,,FALSE,,R1 2 R2
+406,collarless,collarless,#N/A,34,34,14582,C464,,TRUE,,R2R
+407,combopack,combopack,#N/A,,,21588,C511,,TRUE,,R2R
+408,combs,hair accessories,#N/A,201,,,,1,FALSE,"combs is a style type, but when searched is getting converted to comb which has no entity, need to debug",R1 2 R2
+409,condom,condom,#N/A,,,42949,C535,,TRUE,,R2R
+410,cone heel,heels,#N/A,,20517,,,1,FALSE,,R1 2 R2
+411,corset,shapewear,#N/A,419,1778,,,1,FALSE,corset is a styletype,R1 2 R2
+412,corsica,corsica,#N/A,21,21,12115,C622,,TRUE,,R2R
+413,cortez,cortez,#N/A,2,2,15585,C632,,TRUE,,R2R
+414,coton,cotton,#N/A,8,664803,,,,FALSE,,W2R
+415,cotrise,cotrise,#N/A,,,19441,C362,,TRUE,,R2R
+416,cotswool,cotswool,#N/A,,,16745,C324,,TRUE,,R2R
+417,cotta,kota,#N/A,4,868,,,?,FALSE,,W2R
+418,cottern,cotton,#N/A,,664803,13510,C365,,FALSE,,W2R
+419,cottswool,cotts wool,#N/A,,,12470,C324,,FALSE,,R2R
+420,coudroy,coudroy,#N/A,,,16273,C360,,TRUE,,R2R
+421,coupen,coupons,#N/A,,1,35421,C150,,FALSE,,W2R
+422,coupon,coupons,#N/A,,1,176683,C150,,TRUE,,R1 2 R2
+423,coupons,coupons,#N/A,1,1,24889,C152,,TRUE,,R2R
+424,courture,couture,#N/A,238,745,19677,C636,,FALSE,,W2R
+425,cquen,sequin,#N/A,,1178,,,,FALSE,,W2R
+426,cquin,sequin,#N/A,,1178,,,,FALSE,,W2R
+427,crew,vests,#N/A,98754,4164,,,1,FALSE,,W2R
+428,cricket jersey,indian jersey,#N/A,,,,,?,FALSE,"both don't exist as a phrase in catalogue, zsr with filters on individual tokens",W2R
+429,crocsmen,crocs men,#N/A,,,12158,C625,,FALSE,,W2R
+430,crown,hair accessories,#N/A,366,,,,,FALSE,,W2R
+431,curtha,kurtas,#N/A,,70622,53599,C630,,FALSE,,W2R
+432,curthas,kurtas,#N/A,,70622,20675,C632,,FALSE,,W2R
+433,curthis,kurtis,#N/A,,56222,12100,C632,,FALSE,,W2R
+434,cutch,kutch,#N/A,,389,,,1,FALSE,,W2R
+435,cutch footwear,kutch footwear,#N/A,,,,,1,FALSE,,W2R
+436,cutecucumber,cutecumber,#N/A,,1271,14619,C322,1,FALSE,,W2R
+437,cutshoes,cut shoes,#N/A,,,40886,C322,,FALSE,,W2R
+438,cwc tshirts,indian jersey,#N/A,,,,,,FALSE,,W2R
+439,da bu,dabu,#N/A,,449,,,1,FALSE,"""dab u"" mapping will handle this",W2R
+440,dab u,dabu,#N/A,,449,,,1,FALSE,,W2R
+441,dabal,double,#N/A,,16397,29222,D140,,FALSE,,W2R
+442,dabbu,dabu,#N/A,,449,,,1,FALSE,,W2R
+443,daboo,dabu,#N/A,,449,,,1,FALSE,,W2R
+444,dabu,jaipur,#N/A,449,2941,,,1,FALSE,"both go into open tokens, dabu has less categories than jaipur",W2R
+445,daby,dabu,#N/A,,449,,,1,FALSE,,W2R
+446,dag,bag,#N/A,,25401,683,D200,1,FALSE,,W2R
+447,dangari,dungarees,#N/A,,3203,88304,D526,,FALSE,,W2R
+448,dangler,earrings,#N/A,6211,67238,,,,FALSE,,W2R
+449,dangler earring,earrings,#N/A,,67238,,,,FALSE,,R1 2 R2
+450,danglers,earrings,#N/A,19379,67238,,,,FALSE,,R1 2 R2
+451,dangrees,dungarees,#N/A,1,3203,,,,FALSE,,W2R
+452,dangri,dungarees,#N/A,,3203,,,,FALSE,,W2R
+453,dasara,dasara,#N/A,,,11921,D260,1,TRUE,,R2R
+454,dashride,dashride,#N/A,,,11344,D263,,TRUE,,R2R
+455,dastaane,gloves,#N/A,,2059,,,,FALSE,,W2R
+456,dastane,gloves,#N/A,,2059,,,,FALSE,,W2R
+457,decathlon,decathlon,#N/A,,,63400,D234,,TRUE,,R2R
+458,decent,decent,#N/A,30,30,31449,D253,,TRUE,,R2R
+459,deerupt,deerupt,#N/A,,,28450,D613,,TRUE,,R2R
+460,demej,damage,#N/A,,238,13366,D520,,FALSE,,W2R
+461,denim,jeans,#N/A,21354,48476,,,1,FALSE,,W2R
+462,denims,jeans,#N/A,492,48476,,,1,FALSE,,W2R
+463,dennis,dennis,#N/A,165,165,20666,D520,,TRUE,,R2R
+464,designer,evening,#N/A,6795,35581,,,,FALSE,,W2R
+465,designer sari,sarees,#N/A,,119194,,,,FALSE,"designer will go into open tokens, no harm in not keeping. might help boosting score later if retained",W2R
+466,desingn,design,#N/A,,37378,15065,D252,,FALSE,,W2R
+467,desingner,designer,#N/A,,6795,51446,D252,,FALSE,,W2R
+468,desion,desion,#N/A,,,32523,D250,1,TRUE,,R2R
+469,device,gadgets,device,146,320,,,,FALSE,,W2R
+470,device,appliances,#N/A,146,59,,,1,FALSE,,W2R
+471,dhaniyakhali,dhaniakhali,#N/A,,6,11447,D524,,FALSE,,W2R
+472,dharmavaram,dharmavaram,#N/A,258,258,12755,D651,,TRUE,,R2R
+473,dhokra,dhokra,#N/A,41,41,,,,TRUE,,R2R
+474,dhoti salwar,salwars,#N/A,,14403,,,,FALSE,dhoti is styletype in mens and boys categories,W2R
+475,dhuppata,dupattas,#N/A,,5530,74802,D130,,FALSE,,W2R
+476,dhuppatas,dupattas,#N/A,,5530,42933,D132,,FALSE,,W2R
+477,dijain,design,#N/A,,37378,25520,D250,,FALSE,,W2R
+478,dikhaiye,dikhaiye,#N/A,,,24193,D200,,TRUE,,R2R
+479,dinner dress,gowns,#N/A,,8206,,,,FALSE,,W2R
+480,dinner gown,gowns,#N/A,,8206,,,,FALSE,,W2R
+481,dinnergown,gowns,#N/A,,8206,,,1,FALSE,,W2R
+482,disain,design,#N/A,,37378,14492,D250,,FALSE,,W2R
+483,disnep,disney,#N/A,,2111,14066,D251,,FALSE,,W2R
+484,distress,distressed,#N/A,5206,2671,,,,FALSE,,W2R
+485,dndx,dnmx,#N/A,,3992,38499,D532,,FALSE,,W2R
+486,dobbi,dobby,#N/A,,2318,,,,FALSE,,W2R
+487,dobee,dobby,#N/A,,2318,,,,FALSE,,W2R
+488,dobie,dobby,#N/A,,2318,,,,FALSE,,W2R
+489,doby,dobby,#N/A,3,2318,,,,FALSE,,W2R
+490,dokara,dhokra,#N/A,,41,,,,FALSE,,W2R
+491,dokhara,dhokra,#N/A,,41,,,,FALSE,,W2R
+492,dokhra,dhokra,dokhra,4,41,,,,FALSE,,W2R
+493,dokhra,dhokra,#N/A,4,41,,,,FALSE,,W2R
+494,dokra,dhokra,#N/A,69,41,,,,FALSE,,W2R
+495,dorothy,dorothy,#N/A,1,1,27965,D630,,TRUE,,R2R
+496,dpungree,dungaree,#N/A,,1130,492,D152,,FALSE,,W2R
+497,draw strings,gym bags,#N/A,,,,,1,FALSE,,W2R
+498,dreed,dresses,#N/A,,79789,352,D630,1,FALSE,,W2R
+499,dress,dresses,#N/A,98726,79789,,,,FALSE,,R1 2 R2
+500,dress fabric,dress materials,#N/A,,,,,,FALSE,,R1 2 R2
+501,dress material,dress materials,#N/A,,,,,,FALSE,,R1 2 R2
+502,dress materials,dress materials,#N/A,,,,,,TRUE,,R2R
+503,dressberry,dressberry,#N/A,,,569037,D621,,TRUE,,R2R
+504,dressbery,dressberry,#N/A,,,74894,D621,,FALSE,,W2R
+505,dresse,dresses,#N/A,1,79789,,,,FALSE,,W2R
+506,dressesfor,dresses,#N/A,,79789,50986,D622,,FALSE,,W2R
+507,dressfor,dress,#N/A,,98726,102357,D621,,FALSE,,W2R
+508,driftcat,driftcat,#N/A,,,11777,D613,,TRUE,,R2R
+509,drops,earrings,#N/A,20107,67238,,,,FALSE,,R1 2 R2
+510,drops and danglers,earrings,#N/A,,67238,,,,FALSE,,R1 2 R2
+511,dubal,dual,#N/A,,4543,12055,D140,,FALSE,,W2R
+512,duffel,gym bags,#N/A,383,,,,,FALSE,,R1 2 R2
+513,duffel bags,gym bags,#N/A,,,,,,FALSE,,R1 2 R2
+514,dulhan,dulhan,#N/A,715,715,69451,D450,,TRUE,,R2R
+515,dungarees,dungarees,#N/A,3203,3203,,,,TRUE,,R2R
+516,dungri,dungarees,#N/A,,3203,,,,FALSE,,W2R
+517,dungris,dungaree,#N/A,,1130,894,D526,,FALSE,,W2R
+518,dupatta,dupattas,#N/A,37600,5530,,,,FALSE,,R1 2 R2
+519,dupattas,dupattas,#N/A,5530,5530,,,,TRUE,,R2R
+520,duplicate,duplicate,#N/A,,,12025,D142,,TRUE,,R2R
+521,duppat,dupattas,#N/A,,5530,16673,D130,,FALSE,,W2R
+522,duppata,dupattas,#N/A,11,5530,,,,FALSE,,W2R
+523,duppatad,dupattas,#N/A,,5530,11960,D133,,FALSE,,W2R
+524,duppatas,dupattas,#N/A,,5530,,,,FALSE,,W2R
+525,duppats,dupattas,#N/A,,5530,81612,D132,,FALSE,,W2R
+526,duppatta,dupattas,#N/A,19,5530,,,,FALSE,,R1 2 R2
+527,duppattaps,dupattas,#N/A,,5530,445,D131,,FALSE,,W2R
+528,duppqtq,dupattas,#N/A,,5530,210,D123,,FALSE,,W2R
+529,dxmx,dnmx,#N/A,,3992,23139,D252,,FALSE,,W2R
+530,dxnm,dnmx,#N/A,,3992,14268,D250,,FALSE,,W2R
+531,ear ring,earrings,ear ring,,67238,,,,FALSE,,R1 2 R2
+532,ear ring,earrings,#N/A,,67238,,,,FALSE,,R1 2 R2
+533,ear rings,earrings,#N/A,,67238,,,,FALSE,will be there if split in history,R1 2 R2
+534,ear-ring,earrings,ear-ring,19,67238,,,,FALSE,,W2R
+535,ear-ring,earrings,#N/A,19,67238,,,,FALSE,,W2R
+536,ear-rings,earrings,#N/A,,67238,,,,FALSE,,W2R
+537,eardrop,earrings,#N/A,,67238,,,,FALSE,,W2R
+538,eardrops,earrings,#N/A,,67238,,,,FALSE,,W2R
+539,earnings,earrings,#N/A,11,67238,36671,E655,,FALSE,,W2R
+540,earphone,earphones,#N/A,18,83,18522,E615,,TRUE,,W2R
+541,earphones,earphones,#N/A,83,83,15842,E615,,TRUE,,R2R
+542,earring,earrings,#N/A,4915,67238,,,,FALSE,,R1 2 R2
+543,earrings,earrings,earrings,67238,67238,,,,TRUE,,R2R
+544,earrings,earrings,#N/A,67238,67238,,,,TRUE,,R2R
+545,ebernon,ebernon,#N/A,,,13732,E165,,TRUE,,R2R
+546,eerie,eri,eerie,4,22,,,1,FALSE,no idea how it is related to boxers,W2R
+547,eerie,boxers,#N/A,4,12174,,,1,FALSE,no idea how it is related to boxers,W2R
+548,ehinic,ethnic,#N/A,,326887,13356,E520,,FALSE,,R2R
+549,ekkath,ikat,#N/A,,4018,15783,E230,,FALSE,,W2R
+550,elderly,elderly,#N/A,13,13,11303,E436,,TRUE,,R2R
+551,emboridary,embroidery,#N/A,,67045,15325,E516,,FALSE,,W2R
+552,emboried,embroidery,#N/A,,67045,16171,E516,,FALSE,,W2R
+553,embradary,embroidary,#N/A,,9,12632,E516,,FALSE,,W2R
+554,embrodari,embroidery,#N/A,,67045,45067,E516,,FALSE,,W2R
+555,embrodaried,embroidered,#N/A,,62278,13417,E516,,FALSE,,W2R
+556,embrodoried,embroidery,#N/A,9,67045,15924,E516,,FALSE,,W2R
+557,embrodri,embroidery,#N/A,,67045,17306,E516,,FALSE,,W2R
+558,embroiding,embroidery,#N/A,,67045,20159,E516,,FALSE,,W2R
+559,embroydari,embroidery,#N/A,,67045,18382,E516,,FALSE,,W2R
+560,emroidary,embroidery,#N/A,,67045,13731,E563,,FALSE,,W2R
+561,enamel,meenakari,#N/A,5918,1749,,,1,FALSE,both are open tokens and related to earrings,R1 2 R2
+562,enthic,ethnic,#N/A,,326887,66956,E532,,FALSE,,W2R
+563,enthnic,ethnic,#N/A,,326887,34337,E535,,FALSE,,W2R
+564,envelope,clutches & wristlets,#N/A,403,,,,1,FALSE,,R1 2 R2
+565,envelope clutch,clutches & wristlets,#N/A,,,,,,FALSE,,R1 2 R2
+566,eomrn,eomrn,#N/A,,,30043,E565,1,TRUE,not sure what is this,R2R
+567,erie,eri,erie,1,22,,,1,FALSE,,W2R
+568,erie,boxers,#N/A,1,12174,,,1,FALSE,,W2R
+569,ethentic,ethnic,#N/A,,326887,100065,E353,,FALSE,,W2R
+570,ethnic top,kurtis,#N/A,,56222,,,,FALSE,,W2R
+571,ethnictop,kurtis,ethnictop,,56222,,,,FALSE,,W2R
+572,ethnictop,kurtas,#N/A,,70622,,,,FALSE,,W2R
+573,ethnicware,ethnicwear,#N/A,,24,14070,E352,,FALSE,,W2R
+574,ethntic,ethnic,#N/A,,326887,11347,E353,,FALSE,,W2R
+575,evening bag,clutches,#N/A,,3666,,,,FALSE,,R1 2 R2
+576,evening dress,gowns,evening dress,,8206,,,,FALSE,,R1 2 R2
+577,evening dress,dresses,#N/A,,79789,,,,FALSE,,R1 2 R2
+578,evening gown,gowns,#N/A,,8206,,,1,FALSE,,R1 2 R2
+579,ewomen,women,#N/A,1,895690,16668,E550,,FALSE,,W2R
+580,excee,excel,#N/A,14,100,11904,E200,,FALSE,,W2R
+581,executive,work,#N/A,2,45097,,,,FALSE,"will show men perfumes if not converted, workwear coming as primary colour",R1 2 R2
+582,executives,work,#N/A,,45097,,,,FALSE,"will show men perfumes if not converted, workwear coming as primary colour",R1 2 R2
+583,exicutive,executive,#N/A,,2,15427,E223,,FALSE,,W2R
+584,eyewear,sunglasses,eyewear,19303,15252,,,,FALSE,,R1 2 R2
+585,eyewear,frames,#N/A,19303,4900,,,,FALSE,,R1 2 R2
+586,eyewear frames,frames,#N/A,,4900,,,,FALSE,,R1 2 R2
+587,eyewears,sunglasses,#N/A,,15252,,,,FALSE,,R1 2 R2
+588,fabindia,fabindia,#N/A,2342,2342,40779,F153,,TRUE,,R2R
+589,fabric,dress materials,#N/A,124674,,,,,FALSE,,R1 2 R2
+590,faison,fashion,#N/A,,145455,15931,F250,,FALSE,,W2R
+591,fancy,special occasion,fancy,1488,,,,,FALSE,,R1 2 R2
+592,fancy,evening,#N/A,1488,35581,,,,FALSE,,R1 2 R2
+593,fantes,pants,#N/A,,103686,1064,F532,,FALSE,,W2R
+594,fasan,fashion,#N/A,,145455,13538,F250,,FALSE,,W2R
+595,fashion jewellery,necklaces & pendants,fashion jewellery,,,,,1,FALSE,,R1 2 R2
+596,fashion jewellery,necklaces,fashion jewellery,,27058,,,1,FALSE,,R1 2 R2
+597,fashion jewellery,jewellery,fashion jewellery,,165164,,,,FALSE,is a category according to website,R1 2 R2
+598,fashion jewellery,jewellery,#N/A,,165164,,,,FALSE,,R1 2 R2
+599,fashion pin,brooches & pins,#N/A,,,,,,FALSE,,R1 2 R2
+600,fashion pins,brooches & pins,#N/A,,,,,,FALSE,,R1 2 R2
+601,fashion set,jewellery,#N/A,,165164,,,,FALSE,"fashion jewellery is a better match, shows both men and women categories for fashion accessories, brooches & pins, bracelets etc. Fashion jewellery sets is another match but only there for Women",R1 2 R2
+602,fashion sets,jewellery,#N/A,,165164,,,,FALSE,"fashion jewellery is a better match, shows both men and women categories for fashion accessories, brooches & pins, bracelets etc. Fashion jewellery sets is another match but only there for Women",R1 2 R2
+603,fashionable,evening,#N/A,1365,35581,,,,FALSE,,R1 2 R2
+604,fashionjewellerysets,fashion jewellery sets,#N/A,17542,,1167168,F252,,FALSE,,R1 2 R2
+605,fasteners,brooches & pins,#N/A,3,,,,,FALSE,,R1 2 R2
+606,fastens,brooches & pins,#N/A,43,,,,,FALSE,,W2R
+607,fation,fashion,#N/A,,145455,1921,F350,,FALSE,,W2R
+608,feeding,maternity,#N/A,630,4922,,,,FALSE,,W2R
+609,fenshi,fancy,#N/A,,1488,22333,F520,,FALSE,,W2R
+610,festive,special occasion,#N/A,4992,,,,,FALSE,,R1 2 R2
+611,filflop,flipflops,#N/A,,4356,14442,F414,,FALSE,,W2R
+612,filpflop,flipflops,#N/A,,4356,82905,F414,,FALSE,,W2R
+613,fishcut,fishcut,#N/A,1,1,12321,F230,,TRUE,,R2R
+614,fitbit,smart watch,#N/A,,,12125,F313,,FALSE,,R1 2 R2
+615,fitflop,flipflops,#N/A,10,4356,21297,F314,,FALSE,,W2R
+616,fitflops,flipflops,#N/A,,4356,14813,F314,,FALSE,,W2R
+617,flat,flats,flat,117363,15611,,,,FALSE,,R1 2 R2
+618,flat,flats,#N/A,117363,15611,,,,FALSE,,R1 2 R2
+619,flat sandals,flat sandals,#N/A,,,,,1,TRUE,,R2R
+620,flatered,flattered,#N/A,,,16759,F436,,FALSE,,R2R
+621,flats,flats,#N/A,15611,15611,,,,TRUE,,R2R
+622,flip flops,flipflops,flip flops,,4356,,,1,TRUE,,R1 2 R2
+623,flip flops,flipflops,#N/A,,4356,,,1,TRUE,,R1 2 R2
+624,flip-flop,flipflops,#N/A,61,4356,,,,FALSE,,W2R
+625,flip-flops,flipflops,#N/A,5946,4356,,,,FALSE,,W2R
+626,flipflop,flipflops,flipflop,30,4356,,,,FALSE,,R1 2 R2
+627,flipflop,flipflops,flipflop,30,4356,,,,FALSE,,R1 2 R2
+628,flipflop,slippers,#N/A,30,12169,,,,FALSE,,R1 2 R2
+629,flipflops,flipflops,flipflops,4356,4356,,,,FALSE,,R1 2 R2
+630,flipflops,flipflops,#N/A,4356,4356,,,,FALSE,,R1 2 R2
+631,flippers,slippers,#N/A,,12169,21230,F416,,FALSE,,R1 2 R2
+632,floatride,floatride,#N/A,11,11,13663,F436,,TRUE,,R2R
+633,flolar,floral,#N/A,,195958,26576,F446,,FALSE,,W2R
+634,floppers,slippers,#N/A,,12169,11314,F416,,FALSE,,W2R
+635,floran,floral,#N/A,,195958,12307,F465,,FALSE,,W2R
+636,florar,floral,#N/A,,195958,19850,F466,,FALSE,,W2R
+637,florocent,fluorescent,#N/A,,70,14201,F462,,FALSE,,W2R
+638,flurocent,fluorescent,#N/A,,70,11739,F462,,TRUE,,W2R
+639,flymachine,flying machine,#N/A,,,20667,F452,,TRUE,,W2R
+640,fold over clutch,clutches & wristlets,#N/A,,,,,,FALSE,,R1 2 R2
+641,folk,ethnic,#N/A,34,326887,,,,FALSE,,W2R
+642,footwear,slippers,#N/A,109383,12169,,,1,FALSE,,W2R
+643,footwers,footwear,#N/A,,109383,15526,F362,,FALSE,,W2R
+644,forbaby,infants,#N/A,,16402,16813,F611,,FALSE,,W2R
+645,forbmen,men,#N/A,,460796,45174,F615,,FALSE,,W2R
+646,forboys,boys,#N/A,,78014,52014,F612,,FALSE,,W2R
+647,forbwomen,women,#N/A,,895690,118609,F615,,FALSE,,W2R
+648,forbwomens,women,#N/A,,895690,13342,F615,,FALSE,,W2R
+649,forcwomen,women,#N/A,,895690,28328,F625,,FALSE,,W2R
+650,foreign,foreign,#N/A,,,34464,F625,,TRUE,,R2R
+651,forgirl,girls,#N/A,,101217,20379,F626,,FALSE,,W2R
+652,forgirls,girls,#N/A,,101217,164366,F626,,FALSE,,W2R
+653,forkids,kids,#N/A,,9193,38062,F623,,FALSE,,W2R
+654,formal,work,#N/A,10981,45097,,,,FALSE,workwear coming as primary colour,R1 2 R2
+655,formal wear,work,#N/A,,45097,,,,FALSE,workwear coming as primary colour,R2R
+656,formals,work,#N/A,36,45097,,,,FALSE,"workwear coming as primary colour, formals getting mapped to formal shoes",R2R
+657,formalwear,work,#N/A,3,45097,,,,FALSE,workwear coming as primary colour,R2R
+658,fornmen,men,#N/A,,460796,17211,F655,,FALSE,,W2R
+659,fornwomen,women,#N/A,,895690,59468,F655,,FALSE,,W2R
+660,fortcollin,fortcollin,#N/A,,,24572,F632,,TRUE,,R2R
+661,fortune,fortune,#N/A,59,59,12285,F635,,TRUE,not sure meaning,R2R
+662,forvmen,men,#N/A,,460796,28831,F615,,FALSE,,W2R
+663,forvwomen,women,#N/A,,895690,155253,F615,,FALSE,,W2R
+664,forvwomens,women,#N/A,,895690,12072,F615,,FALSE,,W2R
+665,forwoman,women,#N/A,,895690,88105,F655,,FALSE,,W2R
+666,forwomen,women,#N/A,,895690,1024825,F655,,FALSE,,W2R
+667,forwomens,women,#N/A,,895690,73759,F655,,FALSE,,W2R
+668,frack,frocks,#N/A,,18579,,,,FALSE,,W2R
+669,frak,frocks,#N/A,,18579,,,,FALSE,,W2R
+670,frame,frames,frame,12160,4900,,,,FALSE,,R1 2 R2
+671,frame,frames,#N/A,12160,4900,,,,FALSE,,R1 2 R2
+672,freedel,freedel,#N/A,,,19553,F634,1,TRUE,,R2R
+673,frock,frocks,#N/A,616,18579,,,,FALSE,,R1 2 R2
+674,frockfor,frocks,#N/A,,18579,17220,F621,,FALSE,,W2R
+675,frocksfor,frocks,#N/A,,18579,21809,F621,,FALSE,,W2R
+676,frocksuit,frocksuit,#N/A,,,19932,F623,,TRUE,,R2R
+677,frok,frocks,#N/A,,18579,,,,FALSE,,W2R
+678,frokes,frocks,#N/A,,18579,101896,F622,,FALSE,,W2R
+679,froks,frocks,#N/A,,18579,,,,FALSE,,W2R
+680,froral,floral,#N/A,,195958,46583,F664,,FALSE,,W2R
+681,fsports,sports,#N/A,,39492,26172,F216,,FALSE,,W2R
+682,fulkari,phulkari,#N/A,,69,,,,FALSE,,W2R
+683,fullhand,full sleeves,#N/A,,,173616,F453,,FALSE,,W2R
+684,fullhands,full sleeves,#N/A,,,162642,F453,,FALSE,,W2R
+685,fullneck,full neck,#N/A,,,13866,F452,,FALSE,,W2R
+686,fullslevees,full sleeves,#N/A,,,12326,F424,,FALSE,,W2R
+687,fullslive,full sleeves,#N/A,,,29115,F424,,FALSE,,W2R
+688,fullslives,full sleeves,#N/A,,,28936,F424,,FALSE,,W2R
+689,fulltshirt,full tshirts,#N/A,,,18538,F432,,FALSE,,W2R
+690,fulsleev,full sleeves,#N/A,,,19040,F424,,FALSE,,W2R
+691,fusion sets,fusion wear,#N/A,,,,,1,FALSE,,R1 2 R2
+692,fusion wear,fusion wear,#N/A,,,,,,TRUE,,R2R
+693,fusionset,fusion wear,#N/A,,,,,,FALSE,,R1 2 R2
+694,fusionsets,fusion wear,#N/A,,,,,,FALSE,,R1 2 R2
+695,fusionwear,fusion wear,#N/A,,,,,,FALSE,,R1 2 R2
+696,fusionwear set,fusion wear,#N/A,,,,,,FALSE,,W2R
+697,futsal,causal,#N/A,4,113,12209,F324,1,FALSE,,W2R
+698,gadgets,gadgets,gadgets,320,320,,,1,TRUE,,R2R
+699,gadgets,appliances,#N/A,320,59,,,,FALSE,,R1 2 R2
+700,gaket,jacket,#N/A,,30445,23064,G230,,FALSE,,W2R
+701,galosh,boots,#N/A,,6237,,,1,FALSE,,W2R
+702,galoshe,boots,#N/A,,6237,,,1,FALSE,,W2R
+703,gamble,gamble,#N/A,4,4,14850,G514,,TRUE,,R2R
+704,ganji,bras,#N/A,,26980,,,1,FALSE,,W2R
+705,garara,garara,#N/A,12,12,278622,G660,1,TRUE,,R2R
+706,geggings,jeggings,#N/A,,16311,15411,G252,,FALSE,,W2R
+707,geggins,jeggings,#N/A,,16311,14298,G252,,FALSE,,W2R
+708,gemsuit,jumpsuit,#N/A,,4821,21037,G523,,FALSE,,W2R
+709,geniun,genuine,#N/A,,23140,23890,G550,,FALSE,,W2R
+710,gent,men,#N/A,5,460796,,,,FALSE,,W2R
+711,gents,men,#N/A,40,460796,,,,FALSE,,R1 2 R2
+712,geogertte,georgette,#N/A,,42430,19085,G263,,FALSE,,W2R
+713,geoget,georgette,#N/A,,42430,14227,G230,,FALSE,,W2R
+714,geograte,georgette,#N/A,,42430,13385,G263,,FALSE,,W2R
+715,geogratte,georgette,#N/A,,42430,14292,G263,,FALSE,,W2R
+716,geomentric,geometric,#N/A,,41986,26892,G553,,FALSE,,W2R
+717,georgget,georgette,#N/A,,42430,20955,G623,,FALSE,,W2R
+718,georjet,georgette,#N/A,,42430,51027,G623,,FALSE,,W2R
+719,gerget,geogertte,#N/A,,,28731,G623,,FALSE,,W2R
+720,ghaghar,ghagras,#N/A,,7081,,,,FALSE,,W2R
+721,ghaghara,ghagras,#N/A,,7081,,,,FALSE,,W2R
+722,ghagharas,ghagras,ghagharas,,7081,,,,FALSE,,W2R
+723,ghagharas,skirts & ghagras,#N/A,,,,,,FALSE,,W2R
+724,ghaghra,ghagras,ghaghra,1,7081,,,,FALSE,,W2R
+725,ghaghra,skirts & ghagras,#N/A,1,,,,,FALSE,,W2R
+726,ghaghras,ghagras,ghaghras,,7081,,,,FALSE,,R1 2 R2
+727,ghaghras,skirts & ghagras,#N/A,,,,,,FALSE,,R1 2 R2
+728,ghagra,ghagras,ghagra,85,7081,,,,FALSE,,R1 2 R2
+729,ghagra,skirts & ghagras,#N/A,85,,,,,FALSE,,R1 2 R2
+730,ghagras,ghagras,ghagras,7081,7081,,,,TRUE,,R1 2 R2
+731,ghagras,skirts & ghagras,ghagras,7081,,,,,FALSE,,R1 2 R2
+732,ghagras,skirts & ghagras,#N/A,7081,,,,,FALSE,,R1 2 R2
+733,ghalam kari,kalamkari,#N/A,,2540,,,,FALSE,,W2R
+734,gharara,garara,#N/A,5,12,85247,G660,1,FALSE,,W2R
+735,ghicha,gicha,#N/A,46,3,,,,FALSE,,W2R
+736,ghichha,gicha,#N/A,,3,,,,FALSE,,W2R
+737,gica,gicha,#N/A,,3,,,,FALSE,,W2R
+738,gicha,gicha,#N/A,3,3,,,,TRUE,,R2R
+739,gilrls,girls,#N/A,,101217,15070,G464,,FALSE,,W2R
+740,gince,jeans,#N/A,,48476,12067,G520,,FALSE,,W2R
+741,girdle,shapewear,#N/A,,1778,,,,FALSE,,W2R
+742,girl,girls,#N/A,4490,101217,,,,FALSE,,R1 2 R2
+743,girl's,girls,#N/A,593,101217,,,,FALSE,,W2R
+744,girlkids,girls,#N/A,,101217,13418,G642,,FALSE,,W2R
+745,girls,girls,#N/A,101217,101217,,,,TRUE,,R2R
+746,glare,sunglasses,#N/A,21,15252,,,,FALSE,,R1 2 R2
+747,glares,sunglasses,#N/A,1,15252,,,,FALSE,,R1 2 R2
+748,global,universal,#N/A,3012,216015,,,1,FALSE,"universal is an occasiontype, global is going to open tokens",R1 2 R2
+749,globalwear,universal,#N/A,,216015,,,,FALSE,,R1 2 R2
+750,gloves,gloves,#N/A,2059,2059,,,,TRUE,,R2R
+751,gocolours,go colors,#N/A,,,47971,G246,,FALSE,,W2R
+752,gogger,joggers,#N/A,,16261,22149,G260,,FALSE,,W2R
+753,goggers,joggers,#N/A,,16261,32643,G262,,FALSE,,W2R
+754,goggle,sunglasses,#N/A,5,15252,,,,FALSE,,W2R
+755,goggles,sunglasses,#N/A,9,15252,,,,FALSE,,W2R
+756,goldstar,goldstar,#N/A,,,11397,G432,,TRUE,,R2R
+757,goon,gowns,#N/A,1,8206,1487,G500,,FALSE,,W2R
+758,gorgeet,georgette,#N/A,,42430,19193,G623,,FALSE,,W2R
+759,gosriki,gosriki,#N/A,21,21,12716,G262,,TRUE,,R2R
+760,gotapatti,gotapatti,#N/A,9,9,18561,G313,,TRUE,,R2R
+761,gown,gowns,#N/A,4804,8206,,,,FALSE,,R1 2 R2
+762,gowns,gowns,#N/A,8206,8206,,,,TRUE,,R2R
+763,grara,garara,#N/A,,12,26835,G660,,FALSE,,W2R
+764,grawn,gowns,#N/A,,8206,1516,G650,1,FALSE,,W2R
+765,grorget,georgette,#N/A,,42430,180,G662,,FALSE,,W2R
+766,gumboots,gumboots,#N/A,13,13,26260,G513,1,TRUE,,R2R
+767,gurtha,kurtas,#N/A,,70622,11246,G630,,FALSE,,W2R
+768,gym,gym bags,#N/A,5560,,,,1,FALSE,,R1 2 R2
+769,gym bag,gym bags,#N/A,,,,,,FALSE,,R1 2 R2
+770,gym-bags,gym bags,#N/A,,,,,,FALSE,,W2R
+771,gymbag,gym bags,#N/A,,,,,1,FALSE,,W2R
+772,gymbags,gym bags,#N/A,,,,,1,FALSE,,W2R
+773,gymwear,activewear,#N/A,35,,122465,G560,,FALSE,,R1 2 R2
+774,hair band,hair bands,#N/A,,,,,,FALSE,,R1 2 R2
+775,hair clutch,claw,#N/A,,,,,1,FALSE,"clutchers in name_text_en is a better match, but currently getting converted to clutches. clutcher is not a rightword because of low count (total count 3)",R1 2 R2
+776,hair-band,hair bands,#N/A,,,,,,FALSE,,W2R
+777,hairband,hair bands,#N/A,457,,,,,FALSE,,R1 2 R2
+778,hairbun,hair accessories,#N/A,1,,,,1,FALSE,It is generalising the meaning,W2R
+779,hairclip,hair clips,#N/A,9,,,,1,FALSE,,W2R
+780,hairclutch,claw,#N/A,,,,,,FALSE,"clutchers in name_text_en is a better match, but currently getting converted to clutches. clutcher is not a rightword because of low count (total count 3)",W2R
+781,hairpin,hair pins,hairpin,14,,,,?,FALSE,need to check entity and products with both,W2R
+782,hairpin,hair pins,hairpin,14,,,,1,FALSE,,W2R
+783,hairpin,hair pins,#N/A,14,,,,1,FALSE,,W2R
+784,half saree,lehenga,#N/A,,7996,,,,FALSE,,R1 2 R2
+785,half saris,sarees,#N/A,,119194,,,1,FALSE,,W2R
+786,halfhand,half sleeves,#N/A,,,25867,H415,,FALSE,,W2R
+787,halfhands,half sleeves,#N/A,,,23560,H415,,FALSE,,W2R
+788,halfjacket,half jacket,#N/A,,,11654,H412,,FALSE,,W2R
+789,halfpant,half pants,#N/A,,,13128,H415,,FALSE,,W2R
+790,halfpants,half pants,#N/A,,,14254,H415,,FALSE,,W2R
+791,halfsarees,half sarees,#N/A,,,22370,H412,,FALSE,,W2R
+792,hand bag,handbags,#N/A,,22502,,,1,FALSE,,R1 2 R2
+793,hand bags,handbags,#N/A,,22502,,,1,FALSE,,R1 2 R2
+794,hand bangs,handbags,#N/A,,22502,,,1,FALSE,,R1 2 R2
+795,hand craft,handicraft,#N/A,,149,,,,FALSE,,R1 2 R2
+796,hand jewellery,bracelets & bangles,#N/A,,,,,,FALSE,,R1 2 R2
+797,hand ornaments,bracelets & bangles,hand ornaments,,,,,,FALSE,,R1 2 R2
+798,hand ornaments,bracelets,hand ornaments,,17480,,,1,FALSE,,R1 2 R2
+799,hand ornaments,bangles,#N/A,,13470,,,1,FALSE,,R1 2 R2
+800,hand picked,handicraft,#N/A,,149,,,1,FALSE,seems wrong,R1 2 R2
+801,hand-bag,handbags,#N/A,,22502,,,1,FALSE,,W2R
+802,handbag,handbags,#N/A,2349,22502,,,,FALSE,,R1 2 R2
+803,handbags,handbags,#N/A,22502,22502,,,1,TRUE,,R2R
+804,handband,bracelets & bangles,handband,,,,,,FALSE,,W2R
+805,handband,bracelets,#N/A,,17480,,,1,FALSE,,W2R
+806,handcraft,handicraft,#N/A,22,149,,,,FALSE,,W2R
+807,handcrafts,handicraft,#N/A,,149,,,,FALSE,,W2R
+808,handgloves,hand gloves,#N/A,,,33056,H532,,FALSE,,W2R
+809,handwear,gloves,#N/A,,2059,,,,FALSE,,W2R
+810,hangbag,handbags,#N/A,,22502,37021,H521,,FALSE,,W2R
+811,hangbags,handbags,#N/A,,22502,36019,H521,,FALSE,,W2R
+812,hat,caps & hats,hat,554,,,,,FALSE,,R1 2 R2
+813,hat,caps & hats,#N/A,554,,,,,FALSE,,R1 2 R2
+814,hats,caps & hats,#N/A,3745,,,,,FALSE,,R1 2 R2
+815,hawai,hawai,#N/A,6,6,40760,H000,,TRUE,,R2R
+816,head band,hair bands,#N/A,,,,,?,FALSE,,R1 2 R2
+817,headband,hair bands,#N/A,254,,,,?,FALSE,hair bands might be better depending on the entity; hairbands exists in name_text but current output is marking it as bricklength,R1 2 R2
+818,heelded,heels,#N/A,4,20517,12477,H433,,FALSE,,W2R
+819,heele sandal,heeled sandals,#N/A,,,,,,FALSE,,W2R
+820,heeled,heels,#N/A,24689,20517,,,1,FALSE,heels should be added to synonym,R1 2 R2
+821,heeled sandals,heeled sandals,#N/A,,,,,,TRUE,,R2R
+822,heeled shoes,heels,#N/A,,20517,,,1,FALSE,"need to check products with ""heels""",R1 2 R2
+823,heeledsandals,heeled sandals,#N/A,,,,,1,FALSE,"is a category, already exists in phrase corpus",W2R
+824,heels,heels,#N/A,20517,20517,,,,TRUE,,R2R
+825,heels sandals,heeled sandals,#N/A,,,,,1,FALSE,Not Sure,R1 2 R2
+826,heelsfor,heels,#N/A,,20517,16505,H421,,FALSE,,W2R
+827,highdesign,hidesign,#N/A,,964,28405,H232,,TRUE,,W2R
+828,highwaisted,highwaist,#N/A,3,5,26586,H223,,FALSE,,W2R
+829,highwaste,highwaist,#N/A,,5,16489,H223,,FALSE,,W2R
+830,hign,high,#N/A,,64910,16749,H250,,FALSE,,W2R
+831,hijab,hijab,#N/A,55,55,32260,H210,,TRUE,,R2R
+832,hilfinger,hilfiger,#N/A,,2662,14457,H415,,FALSE,,W2R
+833,hineck,high neck,#N/A,,,66405,H520,,FALSE,,W2R
+834,historic,ethnic,#N/A,21,326887,,,,FALSE,,R1 2 R2
+835,hodfies,hoodies,#N/A,,41538,15896,H312,,FALSE,,W2R
+836,homewear,casual wear,#N/A,2,,79085,H560,,FALSE,,R1 2 R2
+837,hoodie,hoodies,hoodie,25969,41538,,,,FALSE,,R1 2 R2
+838,hoodie,sweatshirts,#N/A,25969,40922,,,1,FALSE,Since this token is already mapped to `hoodies`,R1 2 R2
+839,hoodies,sweatshirts,#N/A,41538,40922,,,1,FALSE,,R1 2 R2
+840,hoodiesfor,hoodies,#N/A,,41538,18664,H321,,FALSE,,W2R
+841,hoody,hoodies,#N/A,10,41538,,,,FALSE,,W2R
+842,hoodys,hoodies,#N/A,,41538,,,,FALSE,,W2R
+843,hooks,brooches & pins,#N/A,621,,,,1,FALSE,Not Sure,R1 2 R2
+844,hoops,earrings,#N/A,3901,67238,,,1,FALSE,Not Sure,R1 2 R2
+845,hoops&huggies,earrings,#N/A,,67238,,,1,FALSE,Not Sure,R1 2 R2
+846,hopscotch,hopscotch,#N/A,6,6,22367,H123,,TRUE,,R2R
+847,hot,evening,#N/A,3599,35581,,,1,FALSE,Its an incorrect mapping I feel,R1 2 R2
+848,hot pant,shorts,#N/A,,45307,,,,FALSE,,R1 2 R2
+849,hotpant,shorts,#N/A,,45307,,,,FALSE,,R1 2 R2
+850,hotpants,shorts,#N/A,1,45307,,,,FALSE,,R1 2 R2
+851,hqndbqgs,handbags,#N/A,,22502,1008,H253,,FALSE,,W2R
+852,hrithik,hrithik,#N/A,,,27997,H632,,TRUE,,R2R
+853,hritik,hrithik,#N/A,,,16376,H632,,FALSE,,W2R
+854,https,https,#N/A,3,3,242443,H312,,TRUE,,R2R
+855,huddis,hoodies,#N/A,,41538,11915,H320,,FALSE,,W2R
+856,hudis,hoodies,#N/A,,41538,16031,H320,,FALSE,,W2R
+857,huesan,huesen,#N/A,,,61984,H250,,TRUE,,W2R
+858,huggies,earrings,#N/A,3598,67238,,,1,FALSE,Not Sure,R1 2 R2
+859,hundred,hundred,#N/A,2,2,63967,H536,,TRUE,,R2R
+860,hunkermoller,hunkemoller,#N/A,,3179,37009,H526,,FALSE,,W2R
+861,husain,heusen,#N/A,,7458,41600,H250,,FALSE,,W2R
+862,husband,husband,#N/A,426,426,23806,H215,,TRUE,,R2R
+863,hussain,hussain,#N/A,,,70042,H250,,TRUE,Not Sure,R2R
+864,hussan,heusen,#N/A,,7458,20339,H250,,FALSE,,R1 2 R2
+865,hyneck,high neck,#N/A,,,17960,H520,,FALSE,,W2R
+866,iacket,jackets,#N/A,,31735,42741,I230,,FALSE,,W2R
+867,ikat andhra,andhra ikat,#N/A,,,,,1,FALSE,,R1 2 R2
+868,ikatsarees,sarees,#N/A,,119194,376,I232,1,FALSE,,W2R
+869,ikatt,ikat,#N/A,,4018,,,,FALSE,,W2R
+870,ikatt orissa,orissa ikat,#N/A,,,,,1,FALSE,Not Sure,W2R
+871,ikhat,ikat,#N/A,,4018,,,,FALSE,,W2R
+872,ikkat,ikat,#N/A,97,4018,,,,FALSE,,W2R
+873,ikkhat,ikat,#N/A,,4018,,,,FALSE,,W2R
+874,imitation,jewellery,imitation,46,165164,,,1,FALSE,Not Sure,R1 2 R2
+875,imitation jewellery,fashion jewellery,#N/A,,,,,,FALSE,,R1 2 R2
+876,imported,universal,#N/A,365,216015,,,,FALSE,Not Sure,R1 2 R2
+877,inbwomen,women,#N/A,,895690,19393,I515,,FALSE,Not Sure,W2R
+878,indalia,idalia,#N/A,,357,20566,I534,,TRUE,Not Sure,W2R
+879,india t-shirt,indian jersey,#N/A,,,,,,FALSE,Not Sure,R1 2 R2
+880,india world cup jersey,indian jersey,#N/A,,,,,,FALSE,Not Sure,R1 2 R2
+881,indian,ethnic,#N/A,75094,326887,,,,FALSE,,R1 2 R2
+882,indian cricket team jersy,indian jersey,#N/A,,,,,?,FALSE,Not Sure,R1 2 R2
+883,informal,informal,informal,429,429,37492,I516,1,TRUE,Not Sure,R2R
+884,informal,casual,#N/A,429,1177030,,,,FALSE,Not Sure,R1 2 R2
+885,ingirls,girls,#N/A,,101217,23639,I526,,FALSE,,W2R
+886,inmen,men,#N/A,,460796,57490,I550,,FALSE,,W2R
+887,innars,innerwear,#N/A,,55299,13754,I562,,FALSE,,W2R
+888,inners,innerwear,inners,14,55299,,,,FALSE,,R1 2 R2
+889,inners,camisoles,#N/A,14,3910,,,1,FALSE,"kept ""innerwear"" instead of ""camisoles""",R1 2 R2
+890,innerwares,innerwear,#N/A,,55299,21448,I566,,FALSE,,W2R
+891,innerwear,vests,innerwear,55299,4164,,,1,FALSE,is a category word,R1 2 R2
+892,innerwear,lingerie,innerwear,55299,52781,,,1,FALSE,,R1 2 R2
+893,innerwear,briefs,innerwear,55299,15681,,,1,FALSE,,R1 2 R2
+894,innerwear,boxers,#N/A,55299,12174,,,1,FALSE,,R1 2 R2
+895,innwomen,women,#N/A,,895690,20695,I555,,FALSE,,W2R
+896,inshin,ishin,#N/A,,929,11387,I525,,FALSE,,W2R
+897,instrument,gadgets,instrument,18,320,,,,FALSE,,R1 2 R2
+898,instrument,appliances,#N/A,18,59,,,1,FALSE,"kept  ""gadgets"" instead of ""appliances""",R1 2 R2
+899,insua,insua,#N/A,,,13907,I520,,TRUE,Not Sure,R2R
+900,interflex,interflex,#N/A,3,3,34276,I536,,TRUE,,R2R
+901,international,universal,#N/A,1904,216015,,,,FALSE,,R1 2 R2
+902,intimate,bras,#N/A,108,26980,,,1,FALSE,Not Sure,R1 2 R2
+903,intimates,lingerie & innerwear,intimates,9,,,,,FALSE,,R1 2 R2
+904,intimates,lingerie,intimates,9,52781,,,1,FALSE,"kept ""lingerie & innerwear"" instead of ""lingerie""",R1 2 R2
+905,intimates,bras,#N/A,9,26980,,,1,FALSE,"kept ""lingerie & innerwear"" instead of ""bras""",R1 2 R2
+906,invictus,invictus,#N/A,2,2,53850,I512,,TRUE,,R2R
+907,inwoman,women,#N/A,,895690,25560,I555,,FALSE,,W2R
+908,inwomen,women,#N/A,,895690,264795,I555,,FALSE,,W2R
+909,inwomens,women,#N/A,,895690,11930,I555,,FALSE,,W2R
+910,irie,eri,irie,,22,,,1,FALSE,,W2R
+911,irie,boxers,irie,,12174,,,?,FALSE,,W2R
+913,jacaket,jackets,#N/A,,31735,43425,J223,,FALSE,,W2R
+914,jacakets,jackets,#N/A,,31735,12613,J223,,FALSE,,W2R
+915,jacakt,jackets,#N/A,,31735,15807,J223,,FALSE,,W2R
+916,jacard,jacquard,#N/A,19,13085,,,,FALSE,,W2R
+917,jacate,jackets,#N/A,,31735,13569,J230,,FALSE,,W2R
+918,jaceket,jackets,#N/A,,31735,32164,J223,,FALSE,,W2R
+919,jackard,jacquard,#N/A,,13085,,,,FALSE,,W2R
+920,jackect,jackets,#N/A,,31735,134878,J223,,FALSE,,W2R
+921,jackects,jackets,#N/A,,31735,96349,J223,,FALSE,,W2R
+922,jackek,jackets,#N/A,,31735,25249,J220,,FALSE,,W2R
+923,jackert,jackets,#N/A,,31735,33614,J263,,FALSE,,W2R
+924,jackerts,jackets,#N/A,,31735,16193,J263,,FALSE,,W2R
+925,jackests,jackets,#N/A,,31735,66618,J223,,FALSE,,W2R
+926,jacket,jackets,#N/A,30445,31735,,,,FALSE,,R1 2 R2
+927,jacketfor,jackets,#N/A,,31735,48428,J231,,FALSE,,W2R
+928,jacketmen,men jackets,#N/A,,,19270,J235,,FALSE,,W2R
+929,jackets,jackets,#N/A,31735,31735,,,,TRUE,,R2R
+930,jacketsfor,jackets,#N/A,,31735,28291,J232,,FALSE,,W2R
+931,jacktet,jackets,#N/A,,31735,12280,J233,,FALSE,,W2R
+932,jacktets,jackets,#N/A,,31735,12015,J233,,FALSE,,W2R
+933,jacqard,jacquard,#N/A,17,13085,,,,FALSE,,W2R
+934,jactek,jackets,#N/A,,31735,12530,J232,,FALSE,,W2R
+935,jactet,jackets,#N/A,,31735,28552,J233,,FALSE,,W2R
+936,jactets,jackets,#N/A,,31735,16629,J233,,FALSE,,W2R
+937,jadau,kundan,#N/A,1380,9774,,,1,FALSE,is a style/design type,R1 2 R2
+938,jaggin,jeggings,#N/A,,16311,30352,J250,,FALSE,,W2R
+939,jagins,jeggings,#N/A,,16311,45368,J252,,FALSE,,W2R
+940,jaguar,jaguar,#N/A,46,46,17557,J260,,TRUE,,R2R
+941,jaipur jooties,mojari,#N/A,,35,,,,FALSE,,W2R
+942,jaipuri,jaipur,#N/A,353,2941,,,,FALSE,,R1 2 R2
+943,jaipuri jutties,mojari,#N/A,,35,,,,FALSE,,W2R
+944,jakait,jackets,#N/A,,31735,12724,J230,,FALSE,,W2R
+945,jakcat,jackets,#N/A,,31735,13666,J230,,FALSE,,W2R
+946,jakect,jackets,#N/A,,31735,203985,J223,,FALSE,,W2R
+947,jakects,jackets,#N/A,,31735,56093,J223,,FALSE,,W2R
+948,jaket,jackets,#N/A,,31735,,,,FALSE,,W2R
+949,jakets,jackets,#N/A,,31735,,,,FALSE,,W2R
+950,jakite,jackets,#N/A,,31735,28059,J230,,FALSE,,W2R
+951,jamdhani,jamdani,#N/A,16,2484,,,,FALSE,,W2R
+952,jamsuit,jumpsuits,#N/A,,8201,90895,J523,,FALSE,,W2R
+953,jamsuits,jumpsuits,#N/A,,8201,20040,J523,,FALSE,,W2R
+954,jarjet,georgette,#N/A,,42430,25967,J623,,FALSE,,W2R
+955,jarken,jackets,#N/A,,31735,23789,J625,,FALSE,,W2R
+956,jarkin,jackets,#N/A,,31735,100989,J625,,FALSE,,W2R
+957,jarkins,jackets,#N/A,,31735,22469,J625,,FALSE,,W2R
+958,jarmsuit,jumpsuits,#N/A,,8201,426,J652,,FALSE,,W2R
+959,jbl,jbl,#N/A,37,37,40877,J140,,TRUE,,R2R
+960,jean,jeans,jean,616,48476,,,,FALSE,,W2R
+962,jeans,jeans,#N/A,48476,48476,,,,TRUE,,R2R
+963,jeansfor,jeans,#N/A,,48476,61803,J521,,FALSE,,W2R
+964,jeansin,jeans,#N/A,,48476,21607,J525,,FALSE,,W2R
+965,jeasns,jeans,#N/A,,48476,12491,J252,,FALSE,,W2R
+966,jecat,jackets,#N/A,,31735,35550,J230,,FALSE,,W2R
+967,jeggies,jeggings,#N/A,,16311,11981,J220,,FALSE,,W2R
+968,jekat,jackets,#N/A,,31735,70907,J230,,FALSE,,W2R
+969,jekect,jackets,#N/A,,31735,31421,J223,,FALSE,,W2R
+970,jekit,jackets,#N/A,,31735,85561,J230,,FALSE,,W2R
+971,jekits,jackets,#N/A,,31735,12199,J232,,FALSE,,W2R
+972,jellwery,jewellery,#N/A,,165164,35037,J460,,FALSE,,W2R
+973,jemsuit,jumpsuits,#N/A,,8201,46407,J523,,FALSE,,W2R
+974,jemsuits,jumpsuits,#N/A,,8201,25544,J523,,FALSE,,W2R
+975,jenans,jeans,#N/A,,48476,21988,J552,,FALSE,,W2R
+976,jenes,jeans,#N/A,,48476,6478,J520,,FALSE,,W2R
+977,jenim,denim,#N/A,,21354,21271,J550,,FALSE,,W2R
+978,jerkin,jackets,jerkin,,31735,997120,J625,,FALSE,,R1 2 R2
+980,jerking,jackets,#N/A,,31735,18495,J625,,FALSE,,R1 2 R2
+981,jerkins,jackets,jerkins,,31735,675885,J625,,FALSE,,R1 2 R2
+983,jewelery,jewellery,jewelery,,165164,,,,FALSE,,W2R
+986,jewelery set,jewellery,#N/A,,165164,,,1,FALSE,is a category according to website,W2R
+987,jeweller,necklaces & pendants,#N/A,8822,,,,1,FALSE,,W2R
+988,jewelleri,jewellery,#N/A,,165164,,,,FALSE,,W2R
+989,jewellery,jewellery,jewellery,165164,165164,,,,TRUE,,R2R
+990,jewellery,jewellery,jewellery,165164,165164,,,1,TRUE,,R2R
+991,jewellery,necklaces,jewellery,165164,27058,,,1,FALSE,Not Sure,R1 2 R2
+992,jewellery,earrings,jewellery,165164,67238,,,1,FALSE,,R1 2 R2
+993,jewellery,bracelets & bangles,jewellery,165164,,,,1,FALSE,,R1 2 R2
+994,jewellery,bangles,#N/A,165164,13470,,,1,FALSE,,R1 2 R2
+995,jewellery se,jewellery,#N/A,,165164,,,1,FALSE,,W2R
+996,jewellery set,jewellery,#N/A,,165164,,,1,FALSE,,W2R
+997,jewellery sets,jewellery,#N/A,,165164,,,1,FALSE,,W2R
+998,jewerlly,jewellery,#N/A,,165164,18712,J640,,FALSE,,W2R
+999,jhonplayer,john players,#N/A,,,41472,J514,,FALSE,,W2R
+1000,jhonplayers,john players,#N/A,,,36197,J514,,FALSE,,W2R
+1001,jhumka,jhumkas,jhumka,3422,6197,,,,FALSE,,R1 2 R2
+1002,jhumka,earrings,#N/A,3422,67238,,,1,FALSE,Not Sure,R1 2 R2
+1003,jhumka earrings,earrings,#N/A,,67238,,,1,FALSE,Not Sure,R1 2 R2
+1004,jhumki,jhumkas,jhumki,470,6197,,,,FALSE,,W2R
+1005,jhumki,jhumkas,#N/A,470,6197,,,1,FALSE,,W2R
+1006,jimmikis,jhumkas,#N/A,,6197,164,J522,,FALSE,Not Sure,R1 2 R2
+1007,jince,jeans,#N/A,,48476,138635,J520,,FALSE,,W2R
+1008,jins,jeans,#N/A,,48476,138635,J520,,FALSE,,W2R
+1009,jodger,joggers,#N/A,,16261,487,J326,,FALSE,,W2R
+1010,johhers,joggers,#N/A,,16261,25319,J620,,FALSE,,W2R
+1011,johnplayer,john players,#N/A,,,76326,J514,,TRUE,,W2R
+1012,jokit,jackets,#N/A,,31735,27434,J230,,FALSE,,W2R
+1013,jonplayer,john players,#N/A,,,11769,J514,,FALSE,,W2R
+1014,joote,shoes,#N/A,,62160,,,,FALSE,,W2R
+1015,jooti,juttis,#N/A,,1934,,,,FALSE,,W2R
+1016,jorget,georgette,#N/A,,42430,14523,J623,,FALSE,,W2R
+1017,joyride,joyride,#N/A,2,2,219815,J630,,TRUE,,R2R
+1018,jubba,jubba,#N/A,,,22565,J100,,TRUE,,R2R
+1019,juimsuit,jumpsuits,#N/A,,8201,12999,J523,,FALSE,,W2R
+1020,juliet,juliet,#N/A,226,226,28610,J430,,TRUE,,R2R
+1021,jullery,jewellery,#N/A,,165164,12712,J460,,FALSE,,W2R
+1022,jumbsuit,jumpsuits,#N/A,,8201,,,,FALSE,,W2R
+1023,jumbsuits,jumpsuits,#N/A,,8201,,,,FALSE,,W2R
+1024,jumkas,earrings,#N/A,3,67238,,,1,FALSE,Not Sure,R1 2 R2
+1025,jumper,sweaters,jumper,231,43282,,,,FALSE,,R1 2 R2
+1026,jumper,sweatshirts,jumper,231,40922,,,1,FALSE,,R1 2 R2
+1027,jumper,hoodies,#N/A,231,41538,,,1,FALSE,"As its mapped to  ""sweater"" instead of ""hoodies""",R1 2 R2
+1028,jumpshoot,jumpsuits,#N/A,,8201,16715,J512,,FALSE,,W2R
+1029,jumpsuit,jumpsuits,#N/A,4821,8201,,,,FALSE,,R1 2 R2
+1030,jumpsuits,jumpsuits,#N/A,8201,8201,,,,TRUE,,R2R
+1031,jumshuit,jumpsuits,#N/A,,8201,23187,J523,,FALSE,,W2R
+1032,jumshut,jumpsuits,#N/A,,8201,35856,J523,,FALSE,,W2R
+1033,jumsuite,jumpsuits,#N/A,,8201,29542,J523,,FALSE,,W2R
+1034,jumsuites,jumpsuits,#N/A,,8201,153,J523,,FALSE,,W2R
+1035,jumsute,jumpsuits,#N/A,,8201,14067,J523,,FALSE,,W2R
+1036,juraab,socks & stockings,#N/A,,,,,,FALSE,,R1 2 R2
+1037,jurkin,jackets,#N/A,,31735,20059,J625,,FALSE,,W2R
+1038,juti,juttis,#N/A,9,1934,,,,FALSE,,R1 2 R2
+1039,juties,juttis,#N/A,,1934,,,,FALSE,,W2R
+1040,jutti,juttis,#N/A,166,1934,,,,FALSE,,R1 2 R2
+1041,jutties,juttis,#N/A,73,1934,,,,FALSE,,R1 2 R2
+1042,jutty,juttis,#N/A,,1934,,,,FALSE,,W2R
+1043,juventus,juventus,#N/A,11,11,11506,J153,,TRUE,,R2R
+1044,jwcket,jackets,#N/A,,31735,29905,J300,,FALSE,,W2R
+1045,jwelarry,jewellery,#N/A,,165164,19791,J460,,FALSE,,W2R
+1046,jwelerry,jewellery,#N/A,,165164,18230,J460,,FALSE,,W2R
+1047,jwelkery,jewellery,#N/A,,165164,13303,J426,,FALSE,,W2R
+1048,jwelleey,jewellery,#N/A,,165164,52461,J400,,FALSE,,W2R
+1049,jwelleries,jewellery,#N/A,,165164,30155,J462,,FALSE,,W2R
+1050,jwellert,jewellery,#N/A,,165164,11362,J463,,FALSE,,W2R
+1051,jwellwer,jewellery,#N/A,,165164,231,J460,,FALSE,,W2R
+1052,kaanchi,kanchi,#N/A,,207,,,,FALSE,,W2R
+1053,kaanchi cotton,kanchi cottons,#N/A,,,,,1,FALSE,,W2R
+1054,kaataan,katan,#N/A,,163,,,,FALSE,,W2R
+1055,kaccha,boxers,#N/A,,12174,,,,FALSE,,R1 2 R2
+1056,kachipuram,kanchipuram,#N/A,,83,13032,K216,,FALSE,,W2R
+1057,kadhi,khadi,#N/A,,847,,,,FALSE,,W2R
+1058,kadi,khadi,#N/A,,847,,,,FALSE,,W2R
+1059,kadigan,cardigan,#N/A,,3359,15339,K325,,FALSE,,W2R
+1060,kalam kari,kalamkari,#N/A,,2540,,,,FALSE,,W2R
+1061,kalamakari,kalamkari,#N/A,,2540,,,,FALSE,,W2R
+1062,kalamkaari,kalamkari,#N/A,2,2540,,,,FALSE,,W2R
+1063,kalenji,kalenji,#N/A,,,22121,K452,,TRUE,,R2R
+1064,kalt,salt,#N/A,334,160,12487,K430,,FALSE,,W2R
+1065,kamdani,mukaish,#N/A,,43,,,?,FALSE,Not Sure,R1 2 R2
+1066,kameez,shirts,kameez,2,220084,169277,K520,,FALSE,,R1 2 R2
+1067,kameez,kurtas,kameez,2,70622,,,1,FALSE,Not Sure,R1 2 R2
+1068,kameez,kurtis,kameez,2,56222,,,1,FALSE,Not Sure,R1 2 R2
+1069,kameez,kurta suit sets,#N/A,2,,,,1,FALSE,Not Sure,R1 2 R2
+1070,kameez set,kurta suit sets,#N/A,,,,,1,FALSE,Not Sure,R1 2 R2
+1071,kameezset,kurta suit sets,#N/A,,,,,1,FALSE,Not Sure,W2R
+1072,kamij,shirts,#N/A,,220084,12875,K520,,FALSE,,W2R
+1073,kamiz,shirts,#N/A,,220084,15933,K520,,FALSE,,R1 2 R2
+1074,kanchee,kanchi,#N/A,,207,,,,FALSE,,W2R
+1075,kanchee cotton,kanchi cottons,#N/A,,,,,1,FALSE,Not Sure,W2R
+1076,kancheepuram,kanchipuram,#N/A,34,83,36598,K521,,FALSE,,R1 2 R2
+1077,kanchipattu,kanchipattu,#N/A,,,21020,K521,,TRUE,,R2R
+1078,kanchipuram,kanchipuram,#N/A,83,83,195161,K521,,TRUE,,R2R
+1079,kanjivarm,kanjeevaram,#N/A,7,9531,1872,K521,,FALSE,,W2R
+1080,kanjiwarm,kanjeevaram,#N/A,,9531,43307,K526,,FALSE,,W2R
+1081,kapda,clothes,#N/A,,1119,72891,K130,,FALSE,,R1 2 R2
+1082,kapde,clothes,#N/A,,1119,85661,K130,,FALSE,,R1 2 R2
+1083,karela,kerela,#N/A,1,1,,,,FALSE,,W2R
+1084,karela kasavu,kerela kasavu,#N/A,,,,,,FALSE,,W2R
+1085,karwachauth,karwachauth,#N/A,,,11780,K623,,TRUE,,R2R
+1086,kasau,kasavu,#N/A,,103,,,,FALSE,,W2R
+1087,kasauti,kasuti,#N/A,,11,,,,FALSE,,W2R
+1088,kashida,kasuti,#N/A,,11,,,?,FALSE,Not Sure,R1 2 R2
+1089,kashidakari,kasuti,#N/A,,11,,,?,FALSE,Not Sure,R1 2 R2
+1090,kasoti,kasuti,#N/A,,11,,,,FALSE,,R1 2 R2
+1091,kasuthi,kasuti,#N/A,3,11,,,,FALSE,,W2R
+1092,kataan,katan,#N/A,21,163,,,,FALSE,,W2R
+1093,katha,kantha,#N/A,24,355,,,,FALSE,,W2R
+1094,kathan,katan,kathan,1,163,,,,FALSE,"appears to be phonetically and contextually closest to ""Katan"" which is a type of silk fabric. ",W2R
+1095,kathan,kantha,#N/A,1,355,,,1,FALSE,which to use? kantha is weave pattern,W2R
+1096,kauraz,kauraz,#N/A,,,13491,K620,,TRUE,,R2R
+1097,kbteam,kb team,#N/A,,,12768,K135,,FALSE,,W2R
+1098,kelim,kilim,#N/A,,21,,,,FALSE,,W2R
+1099,kelvin,calvin,#N/A,1,1050,51505,K415,,FALSE,,R1 2 R2
+1100,kepri,capri,#N/A,,422,23887,K160,,FALSE,,W2R
+1101,kerala,kerela,#N/A,45,1,,,,TRUE,,R2R
+1102,kerala kasavu,kerela kasavu,#N/A,,,,,,FALSE,,R2R
+1103,kerchief,handkerchiefs,kerchief,3,371,29396,K621,,FALSE,,R1 2 R2
+1104,kerchief,shawls,kerchief,3,2231,,,1,FALSE,Not Sure,R1 2 R2
+1105,kerchief,scarves,kerchief,3,5470,,,1,FALSE,Not Sure,R1 2 R2
+1106,kerchief,scarves,#N/A,3,5470,,,1,FALSE,Not Sure,R1 2 R2
+1107,kerele,kerela,#N/A,,1,,,,FALSE,,W2R
+1108,kesavu,kasavu,#N/A,,103,,,,FALSE,,W2R
+1109,khaadi,khadi,#N/A,1,847,,,,FALSE,,W2R
+1110,khadim,khadim,#N/A,,,62705,K350,,TRUE,,R2R
+1111,khadims,khadims,#N/A,,,126584,K352,,TRUE,,R2R
+1112,khhalisi,khhalisi,#N/A,,,11828,K420,,TRUE,,R2R
+1113,khun,khun,#N/A,,,,,,TRUE,,R2R
+1114,khuna,khun,#N/A,,,,,,FALSE,,W2R
+1115,khuun,khun,#N/A,,,,,,FALSE,,W2R
+1116,kid,kids,kid,1802,9193,,,1,FALSE,Not Sure,R1 2 R2
+1117,kid,infants,#N/A,1802,16402,,,1,FALSE,Not Sure,R1 2 R2
+1118,kid's,infants,#N/A,1387,16402,,,1,FALSE,Not Sure,R1 2 R2
+1119,kids,infants,#N/A,9193,16402,,,1,FALSE,Not Sure,R1 2 R2
+1120,kids wear,kidswear,#N/A,,5,,,1,FALSE,Not Sure,R1 2 R2
+1121,kidswear,infants,#N/A,5,16402,27627,K326,1,FALSE,,R1 2 R2
+1122,kilam,kilim,#N/A,,21,,,,FALSE,,W2R
+1123,kiliim,kilim,#N/A,,21,,,,FALSE,,W2R
+1124,kitten heel,heels,#N/A,,20517,,,1,FALSE,,R1 2 R2
+1125,kitten heels,heels,#N/A,,20517,,,1,FALSE,,R1 2 R2
+1126,knapsack,backpacks,#N/A,,3901,,,,FALSE,,R1 2 R2
+1127,knit legging,leggings,#N/A,,24525,,,1,FALSE,need to check,R1 2 R2
+1128,knitwear,knit wear,#N/A,32,,31926,K536,,FALSE,,W2R
+1129,korean,korean,#N/A,83,83,172782,K650,,TRUE,,R2R
+1130,kosha,kosa,#N/A,1,48,,,,FALSE,,W2R
+1131,kossa,kosa,#N/A,,48,,,,FALSE,,W2R
+1132,kotha,kota,#N/A,,868,,,,FALSE,,R1 2 R2
+1133,kotta,kota,#N/A,,868,,,,FALSE,,W2R
+1134,kruits,kurtis,#N/A,,56222,13555,K632,,FALSE,,W2R
+1135,krurta,kurta,#N/A,,123207,12634,K663,,FALSE,,W2R
+1136,krurti,kurtis,#N/A,,56222,13956,K663,,FALSE,,W2R
+1137,krutha,kurtas,#N/A,,70622,25256,K630,,FALSE,,W2R
+1138,kruthi,kurtis,#N/A,,56222,19819,K630,,FALSE,,W2R
+1139,kudthas,kurtas,#N/A,,70622,46803,K320,,FALSE,,W2R
+1140,kul u,kullu,#N/A,,16,,,1,FALSE,Not Sure,W2R
+1141,kulu,kullu,#N/A,,16,,,,FALSE,,W2R
+1142,kun dan,kundan,#N/A,,9774,,,,FALSE,Not Sure,W2R
+1143,kuppadam,kuppadam,#N/A,2,2,29799,K135,,TRUE,,R2R
+1144,kurei,kurti,#N/A,,7598,854,K600,,FALSE,,W2R
+1145,kuries,kurtis,#N/A,,56222,44856,K620,,FALSE,,W2R
+1146,kurrha,kurtas,#N/A,,70622,30781,K600,,FALSE,,W2R
+1147,kurrhas,kurtas,#N/A,,70622,34620,K620,,FALSE,,W2R
+1148,kurrhi,kurtis,#N/A,,56222,17480,K600,,FALSE,,W2R
+1149,kurrhis,kurtis,#N/A,,56222,30614,K620,,FALSE,,W2R
+1150,kurries,kurtis,#N/A,,56222,14611,K620,,FALSE,,W2R
+1151,kurrthies,kurtis,#N/A,,56222,128,K632,,FALSE,,W2R
+1152,kurt,kurtis,#N/A,,56222,,,,FALSE,,W2R
+1153,kurta,kurtas,kurta,123207,70622,,,,FALSE,,R1 2 R2
+1154,kurta,kurtas,kurta,123207,70622,,,1,FALSE,,R1 2 R2
+1155,kurta,kurtas,#N/A,123207,70622,,,1,FALSE,,R1 2 R2
+1156,kurta pyjama,kurta pyjama,#N/A,,,,,,TRUE,"changed from ""kurta pyjama sets""",R1 2 R2
+1157,kurta pyjama set,kurta pyjama,#N/A,,,,,,FALSE,,R1 2 R2
+1158,kurta set,kurta suit sets,#N/A,,,,,,FALSE,,R1 2 R2
+1159,kurta sets,kurta suit sets,kurta sets,,,,,,FALSE,,R1 2 R2
+1160,kurta suit,kurta suit sets,#N/A,,,,,,FALSE,,R1 2 R2
+1161,kurtafor,kurtas,#N/A,,70622,22760,K631,,FALSE,,W2R
+1162,kurtas,kurtas,#N/A,70622,70622,,,,TRUE,,R2R
+1163,kurtaset,kurta suit sets,#N/A,3,,,,1,FALSE,Not Sure,R1 2 R2
+1164,kurtasets,kurta suit sets,#N/A,,,,,1,FALSE,Not Sure,R1 2 R2
+1165,kurtasfor,kurtas,#N/A,,70622,19064,K632,,FALSE,,W2R
+1166,kurtasuits,kurta suit sets,#N/A,,,,,,FALSE,,R1 2 R2
+1167,kurtavset,kurta set,#N/A,,,12844,K631,,FALSE,,W2R
+1168,kurtha,kurtas,#N/A,8,70622,,,,FALSE,,R1 2 R2
+1169,kurthad,kurtas,#N/A,,70622,133267,K633,,FALSE,,W2R
+1170,kurthas,kurtas,#N/A,,70622,,,,FALSE,,R1 2 R2
+1171,kurthaset,kurta suit sets,#N/A,,,49914,K632,,FALSE,,R1 2 R2
+1172,kurthasets,kurta suit sets,#N/A,,,52009,K632,,FALSE,,R1 2 R2
+1173,kurthee,kurtis,#N/A,,56222,12027,K630,,FALSE,,W2R
+1174,kurthees,kurtis,#N/A,,56222,154565,K632,,FALSE,,W2R
+1175,kurthi,kurtis,#N/A,,56222,,,,FALSE,,R1 2 R2
+1176,kurthid,kurtis,#N/A,,56222,59634,K633,,FALSE,,W2R
+1177,kurthied,kurtis,#N/A,,56222,200,K633,,FALSE,,W2R
+1178,kurthirs,kurtis,#N/A,,56222,14753,K636,,FALSE,,W2R
+1179,kurthis,kurtis,#N/A,,56222,,,,FALSE,,R1 2 R2
+1180,kurthiset,kurta suit sets,#N/A,,,11969,K632,,FALSE,,R1 2 R2
+1181,kurti,kurtis,#N/A,7598,56222,,,,FALSE,,R1 2 R2
+1182,kurtied,kurtis,#N/A,,56222,38211,K633,,FALSE,,W2R
+1183,kurtirs,kurtis,#N/A,,56222,58295,K636,,FALSE,,W2R
+1184,kurtis,kurtis,#N/A,56222,56222,,,,TRUE,,R2R
+1185,kurtisets,kurta suit sets,#N/A,,,23599,K632,,FALSE,,R1 2 R2
+1186,kuryha,kurtas,#N/A,,70622,35838,K600,,FALSE,,W2R
+1187,kuryhas,kurtas,#N/A,,70622,26699,K620,,FALSE,,W2R
+1188,kuryhi,kurtis,#N/A,,56222,20572,K600,,FALSE,,W2R
+1189,kuryhis,kurtis,#N/A,,56222,25917,K620,,FALSE,,W2R
+1190,kuryhs,kurtas,#N/A,,70622,430,K620,,FALSE,,W2R
+1191,kuryies,kurtis,#N/A,,56222,14361,K620,,FALSE,,W2R
+1192,kuryiz,kurtis,#N/A,,56222,228,K620,,FALSE,,W2R
+1193,kutch foot wear,kutch footwear,#N/A,,,,,1,FALSE,Not Sure,R2R
+1194,kutchi,kutch,#N/A,60,389,,,,FALSE,,W2R
+1195,kutchi slippers,kutch footwear,#N/A,,,,,1,FALSE,Not Sure,R1 2 R2
+1196,kutha,kurtas,#N/A,,70622,3875,K300,,FALSE,,W2R
+1197,kuthas,kurtas,#N/A,,70622,179554,K320,,FALSE,,W2R
+1198,kuthis,kurtis,#N/A,,56222,156766,K320,,FALSE,,W2R
+1199,kutries,kurtis,#N/A,,56222,16237,K362,,FALSE,,W2R
+1200,kutrta,kurtas,#N/A,,70622,20897,K363,,FALSE,,W2R
+1201,kutrti,kurtis,#N/A,,56222,15695,K363,,FALSE,,W2R
+,kudtha,kurtas,,,70622,,,,,,W2R
+,kudtha,kurtas,,,70622,,,,,,W2R
+1202,kutthas,kurtas,#N/A,,70622,15401,K320,,FALSE,,W2R
+1203,kutuis,kurtas,#N/A,,70622,11340,K320,,FALSE,,W2R
+1204,kylim,kilim,#N/A,,21,,,,FALSE,,W2R
+1205,kylum,kilim,#N/A,,21,,,,FALSE,,W2R
+1206,lac,kundan,#N/A,8,9774,,,?,FALSE,Not Sure,R1 2 R2
+1207,lacquer,meenakari,lacquer,285,1749,,,1,FALSE,Not Sure,R1 2 R2
+1208,lacquer,kundan,#N/A,285,9774,,,1,FALSE,Not Sure,R1 2 R2
+1209,ladies,women,#N/A,430,895690,,,,FALSE,,R1 2 R2
+1210,ladiestop,women tops,#N/A,,,768,L323,,FALSE,,R1 2 R2
+1211,ladki,girls,#N/A,,101217,52261,L320,,FALSE,,R1 2 R2
+1212,ladkiyon,girls,#N/A,,101217,25686,L325,,FALSE,,R1 2 R2
+1213,lady,women,#N/A,2003,895690,,,,FALSE,,R1 2 R2
+1214,lagenga,lehenga,#N/A,,7996,18181,L252,,FALSE,,W2R
+1215,laggiens,leggings,#N/A,,24525,11919,L252,,FALSE,,W2R
+1216,laggies,leggings,#N/A,,24525,48214,L220,,FALSE,,W2R
+1217,laggin,leggings,#N/A,,24525,918,L250,,FALSE,,W2R
+1218,laggis,leggings,#N/A,,24525,14828,L220,,FALSE,,W2R
+1219,lagines,laggings,#N/A,,1,22735,L252,,FALSE,,W2R
+1220,lagins,leggings,#N/A,,24525,4424,L252,,FALSE,,W2R
+1221,lahaga,lehenga,#N/A,,7996,47577,L200,,FALSE,,W2R
+1222,lahangas,lehenga,#N/A,,7996,30472,L522,,FALSE,,W2R
+1223,lahega,lehenga,#N/A,,7996,30649,L200,,FALSE,,W2R
+1224,lahengas,lehenga,#N/A,,7996,18800,L522,,FALSE,,W2R
+1225,lahga,lehenga,#N/A,,7996,3731,L200,,FALSE,,W2R
+1226,lakers,lakers,#N/A,5,5,18068,L262,,TRUE,,R2R
+1227,lakhani,lakhani,#N/A,117,117,71080,L250,,TRUE,,R2R
+1228,lakhnavi,lucknow,#N/A,3,59,84257,L251,,FALSE,,W2R
+1229,lalchi,lalchi,#N/A,,,14052,L420,,TRUE,,R2R
+1230,langa,lehenga,#N/A,,7996,,,,FALSE,telugu - langa voni (lehenga - choli),R1 2 R2
+1231,langha,lehenga,#N/A,,7996,119120,L520,,FALSE,,W2R
+1232,lanhga,lehenga,#N/A,,7996,25301,L520,,FALSE,,W2R
+1233,laptop,laptop bags,#N/A,3972,,,,1,FALSE,,R1 2 R2
+1234,laptop bag,laptop bags,#N/A,,,,,1,FALSE,,R1 2 R2
+1235,laptop bags,laptop bags,#N/A,,,,,,TRUE,,R2R
+1236,laptopba,laptop bags,#N/A,,,,,,FALSE,,W2R
+1237,laptopbags,laptop bags,#N/A,,,,,1,FALSE,,R1 2 R2
+1238,latches,brooches & pins,#N/A,,,,,1,FALSE,,R1 2 R2
+1239,lather,leather,#N/A,77,47905,,,,FALSE,,W2R
+1240,lauren,lauren,#N/A,30,30,13349,L650,,TRUE,,R2R
+1241,lavalier,pendants,#N/A,,29258,,,,FALSE,also microphone,R1 2 R2
+1242,laxmipati,laxmipati,#N/A,,,14385,L251,,TRUE,,R2R
+1243,layered necklace,necklaces,#N/A,,27058,,,1,FALSE,,R1 2 R2
+1244,ldress,dresses,#N/A,,79789,1005,L362,,FALSE,,W2R
+1245,leanth,length,#N/A,,480889,107939,L530,,FALSE,,W2R
+1246,leat her,leather,#N/A,,47905,,,,FALSE,,W2R
+1247,leather,leather,#N/A,47905,47905,,,,TRUE,,R2R
+1248,lebron,lebron,#N/A,11,11,53089,L165,,TRUE,,R2R
+1249,ledhar,leather,#N/A,,47905,56969,L360,,FALSE,,W2R
+1250,ledij,women,#N/A,,895690,22321,L320,,FALSE,,W2R
+1251,ledise,women,#N/A,,895690,21121,L320,,FALSE,,W2R
+1252,ledish,women,#N/A,,895690,35516,L320,,FALSE,,W2R
+1253,leecoper,leecooper,#N/A,,,33472,L216,,FALSE,,W2R
+1254,leecopper,leecooper,#N/A,,,26935,L216,,FALSE,,W2R
+1255,legeens,leggings,#N/A,,24525,13655,L252,,FALSE,,W2R
+1256,legengha,lehenga,#N/A,,7996,265,L252,,FALSE,,W2R
+1257,leggen,leggings,#N/A,,24525,28475,L250,,FALSE,,W2R
+1258,leggies,leggings,#N/A,,24525,127040,L220,,FALSE,,W2R
+1259,leggigngs,leggings,#N/A,,24525,12966,L225,,FALSE,,W2R
+1260,leggine,leggings,#N/A,,24525,24292,L250,,FALSE,,W2R
+1261,legging,leggings,#N/A,389,24525,,,,FALSE,,R1 2 R2
+1262,leggings,leggings,leggings,24525,24525,,,,TRUE,,R2R
+1263,leggings,leggings,#N/A,24525,24525,,,1,TRUE,repeated,R2R
+1264,leghanga,lehenga,#N/A,,7996,35920,L252,,FALSE,,W2R
+1265,leghenga,lehenga,#N/A,,7996,13909,L252,,FALSE,,W2R
+1266,legies,leggings,#N/A,,24525,23567,L220,,FALSE,,W2R
+1267,legince,leggings,#N/A,,24525,16990,L252,,FALSE,,W2R
+1268,legine,leggings,#N/A,,24525,11373,L250,,FALSE,,W2R
+1269,legther,leather,#N/A,,47905,11248,L236,,FALSE,,W2R
+1270,lehaga,lehenga,#N/A,,7996,5261,L200,,FALSE,,W2R
+1271,lehana,lehenga,#N/A,,7996,470,L500,,FALSE,,W2R
+1272,lehangad,lehenga,#N/A,,7996,166,L523,,FALSE,,W2R
+1273,lehangas,lehenga,#N/A,,7996,30472,L522,,FALSE,,W2R
+1274,lehanges,lehenga,#N/A,,7996,13194,L522,,FALSE,,W2R
+1275,lehegas,lehenga,#N/A,,7996,12636,L220,,FALSE,,W2R
+1276,lehegha,lehenga,#N/A,,7996,12910,L200,,FALSE,,W2R
+1277,lehenga,lehenga,#N/A,7996,7996,,,,TRUE,,R2R
+1278,lehenga choli,lehenga,#N/A,,7996,,,1,FALSE,,R1 2 R2
+1279,lehengacholi,lehenga,#N/A,,7996,,,1,FALSE,,R1 2 R2
+1280,lehengas,lehenga,#N/A,3,7996,,,1,FALSE,,R1 2 R2
+1281,lelin,lenin,#N/A,,4,30561,L450,,FALSE,,W2R
+1282,lenen,linen,#N/A,,16247,,,,FALSE,,W2R
+1283,lenggings,leggings,#N/A,4,24525,14564,L525,,FALSE,,W2R
+1284,lengha sari,sarees,#N/A,,119194,,,,FALSE,w1 r2,W2R
+1285,lenghas,lehenga,#N/A,,7996,11551,L522,,FALSE,,W2R
+1286,lengings,leggings,#N/A,,24525,13830,L525,,FALSE,,W2R
+1287,lengins,leggings,#N/A,,24525,12306,L525,,FALSE,,W2R
+1288,lenhanga,lehenga,#N/A,,7996,29096,L552,,FALSE,,W2R
+1289,lenhenga,lehenga,#N/A,,7996,34501,L552,,FALSE,,W2R
+1290,lenine,linen,#N/A,,16247,23945,L550,,FALSE,,W2R
+1291,leninen,linen,#N/A,,16247,15641,L555,,FALSE,,W2R
+1292,lenovo,lenovo,#N/A,,,17397,L510,,TRUE,,R2R
+1293,lethar,leather,#N/A,,47905,,,,FALSE,,W2R
+1294,lether,leather,#N/A,,47905,,,,FALSE,,W2R
+1295,libad,libas,#N/A,,28,1564,L130,,FALSE,,W2R
+1296,lilan,linen,#N/A,,16247,17188,L450,,FALSE,,W2R
+1297,lilen,linen,#N/A,2,16247,121155,L450,,FALSE,,W2R
+1298,lingerie,lingerie & innerwear,#N/A,52781,,,,1,FALSE,,R1 2 R2
+1299,lingerie set,lingerie & innerwear,#N/A,,,,,1,FALSE,,R1 2 R2
+1300,linin,linen,#N/A,1,16247,,,,FALSE,,W2R
+1301,lirta,light,#N/A,,300725,11682,L630,,FALSE,,W2R
+1302,liteforce,liteforce,#N/A,,,12804,L316,,TRUE,,R2R
+1303,loafer,slip-on,#N/A,307,42875,,,1,FALSE,need to check,R1 2 R2
+1304,loafers,slip-on,#N/A,5714,42875,,,1,FALSE,need to check,R1 2 R2
+1305,locket,pendants,locket,76,29258,,,,FALSE,,R1 2 R2
+1306,locket,necklaces & pendants,#N/A,76,,,,1,FALSE,,R1 2 R2
+1307,lockets,pendants,#N/A,,29258,,,,FALSE,,R1 2 R2
+1308,lofar,loafer,#N/A,,307,,,,FALSE,,W2R
+1309,lofares,loafers,#N/A,,5714,11525,L162,,FALSE,,W2R
+1310,loffer,loafers,loffer,,5714,11525,L162,,FALSE,,W2R
+1311,loffer,loafer,#N/A,,307,,,1,FALSE,,W2R
+1312,loffers,loafers,loffers,,5714,11525,L162,,FALSE,,W2R
+1313,loffers,loafer,loffers,,307,,,1,FALSE,,W2R
+1314,loffers,loafer,#N/A,,307,,,1,FALSE,,W2R
+1315,longfrocks,long frocks,#N/A,,,61126,L521,,FALSE,,W2R
+1316,longkurtis,long kurtis,#N/A,,,12179,L526,,FALSE,,W2R
+1317,longlength,longlength,#N/A,,,17136,L524,,TRUE,,W2R
+1318,longpant,long pants,#N/A,,,38764,L521,,FALSE,,W2R
+1319,longpants,long pants,#N/A,,,22306,L521,,FALSE,,W2R
+1320,longpen,longpen,#N/A,,,23087,L521,,TRUE,,W2R
+1321,longpent,long pants,#N/A,,,12246,L521,,FALSE,,W2R
+1322,longskirt,long skirts,#N/A,,,11598,L526,,FALSE,,W2R
+1323,longskirts,long skirts,#N/A,,,20300,L526,,FALSE,,W2R
+1324,longtop,long tops,#N/A,,,15793,L523,,FALSE,,W2R
+1325,longtops,long tops,#N/A,,,57460,L523,,FALSE,,W2R
+1326,loofer,loafers,#N/A,,5714,2125,L160,,FALSE,,W2R
+1327,lounge,lounge wear sets,#N/A,37086,,,,1,FALSE,,R1 2 R2
+1328,lounge pants,pyjamas,#N/A,,26800,,,1,FALSE,,R1 2 R2
+1329,lounge wear,night & lounge wear,lounge wear,,,,,1,FALSE,,R1 2 R2
+1330,lounge wear,lounge wear sets,#N/A,,,,,1,FALSE,,R1 2 R2
+1331,loungepant,pyjamas,#N/A,,26800,,,1,FALSE,,W2R
+1332,loungepants,pyjamas,#N/A,5,26800,,,1,FALSE,,W2R
+1333,loungewear,lounge wear sets,#N/A,11553,,,,1,FALSE,,R1 2 R2
+1334,lower,track pants,#N/A,249,,,,,FALSE,,R1 2 R2
+1335,lowers,track pants,#N/A,19,,,,,FALSE,,R1 2 R2
+,lower for,track pants,#N/A,,,,,,FALSE,,W2R
+,lowers for,track pants,#N/A,,,,,,FALSE,,W2R
+1336,lowprice,low price,#N/A,,,14501,L162,,FALSE,,W2R
+1337,lucent,lucent,#N/A,3,3,21548,L253,,TRUE,,W2R
+1338,lurtha,kurta,#N/A,,123207,14063,L630,,FALSE,,W2R
+1339,lwomen,women,#N/A,,895690,21876,L550,,FALSE,,W2R
+1340,machine,gadgets,machine,58547,320,,,,FALSE,,R1 2 R2
+1341,machine,appliances,#N/A,58547,59,,,1,FALSE,,R1 2 R2
+1342,machines,gadgets,machines,102,320,,,,FALSE,,R1 2 R2
+1343,machines,appliances,#N/A,102,59,,,1,FALSE,,R1 2 R2
+1344,madubani,madhubani,#N/A,,482,,,,FALSE,,W2R
+1345,madubhani,madhubani,#N/A,,482,,,,FALSE,,W2R
+1346,madubni,madhubani,#N/A,,482,,,,FALSE,,W2R
+1347,magalsurat,mangalsutra,#N/A,,4341,110,M242,,FALSE,,W2R
+1348,maggam,madame,#N/A,,1415,11786,M250,1,FALSE,need to check,W2R
+1349,magma,magma,#N/A,1,1,17768,M250,,TRUE,,R2R
+1350,maheshwar,maheshwari,#N/A,5,516,,,,FALSE,,W2R
+1351,maheswar,maheshwari,#N/A,,516,,,,FALSE,,W2R
+1352,maheswari,maheshwari,#N/A,5,516,,,,FALSE,,R2R
+1353,maisure,mysore,#N/A,,1641,,,,FALSE,,W2R
+1354,malwa,chanderi,#N/A,2,9667,,,,FALSE,need to be checked,W2R
+1355,man,men,#N/A,1518,460796,,,,FALSE,,W2R
+1356,man's,men,#N/A,24,460796,,,,FALSE,,W2R
+1357,manacle,bracelets & bangles,#N/A,,,,,,FALSE,need to check,R1 2 R2
+1358,mangal,mangalgiri,#N/A,,123,,,1,FALSE,,W2R
+1359,mangal giri,mangalgiri,#N/A,,123,,,,FALSE,,W2R
+1360,mangalagiri,mangalgiri,#N/A,38,123,,,,FALSE,,W2R
+1361,mangelsuter,mangalsutra,#N/A,,4341,442,M524,,FALSE,,W2R
+1362,manglagiri,mangalgiri,#N/A,,123,,,,FALSE,,W2R
+1363,manipuri,manipuri,#N/A,237,237,22225,M516,,TRUE,,R2R
+1364,mansweatshirt,men sweatshirts,#N/A,,40922,451,M523,,FALSE,,W2R
+1365,mantshirts,men tshirts,#N/A,,,180,M532,,FALSE,,W2R
+1366,mantua,gowns,#N/A,,8206,,,,FALSE,check,R1 2 R2
+1367,manyavar,manyavar,#N/A,978,978,40559,M516,,TRUE,,R2R
+1368,manyawar,manyavar,#N/A,,978,17248,M560,,FALSE,,W2R
+1369,marathon,marathon,#N/A,50,50,15886,M635,,TRUE,,R2R
+1370,married,married,#N/A,17,17,23158,M630,,TRUE,,R2R
+1371,masakali,masakali,#N/A,251,251,20174,M224,,TRUE,,R2R
+1372,mashroo,mashru,#N/A,,6,,,,FALSE,,W2R
+1373,mashruu,mashru,#N/A,,6,,,,FALSE,,W2R
+1374,masroo,mashru,#N/A,,6,,,,FALSE,,W2R
+1375,masru,mashru,#N/A,,6,,,,FALSE,,W2R
+1376,mastani,mastani,#N/A,2,2,18883,M235,,TRUE,,R2R
+1377,matenarniti,maternity,#N/A,,4922,148,M356,,FALSE,,W2R
+1378,material,dress materials,#N/A,24119,,,,,FALSE,,R1 2 R2
+1379,maxidresses,maxi dresses,#N/A,,,29391,M236,,FALSE,,W2R
+1380,maxima,maxima,#N/A,350,350,19144,M250,,TRUE,,R2R
+1381,maysor,mysore,#N/A,,1641,,,,FALSE,,W2R
+1382,meatril,material,#N/A,,24119,84274,M364,,FALSE,,W2R
+1383,meena,meenakari,#N/A,107,1749,,,,FALSE,,W2R
+1384,meena kari,meenakari,#N/A,,1749,,,,FALSE,,W2R
+1385,mehrun,maroon,#N/A,1,46672,11499,M650,,FALSE,,W2R
+1386,mekap,makeup,#N/A,,11279,13733,M210,,FALSE,,W2R
+1387,men's,men,#N/A,6455,460796,,,,FALSE,,W2R
+1388,menjacket,men jackets,#N/A,,,19224,M522,,FALSE,,W2R
+1389,menjeans,men jeans,#N/A,,,12106,M525,,FALSE,,W2R
+1390,mens wear,menswear,#N/A,,853,,,?,FALSE,,W2R
+1391,menshirt,men shirts,#N/A,1,,62841,M526,,FALSE,,W2R
+1392,menshirts,men shirts,#N/A,,,16898,M526,,FALSE,,W2R
+1393,menshoes,men shoes,#N/A,,,33466,M522,,FALSE,,W2R
+1394,mensjacket,men jacket,#N/A,,,23507,M522,,FALSE,,W2R
+1395,menstrousers,men trousers,#N/A,,49974,168,M523,,FALSE,,W2R
+1396,menstshirts,men tshirts,#N/A,,,14086,M523,,FALSE,,W2R
+1397,mentshirt,men tshirts,#N/A,,,509,M532,,FALSE,,W2R
+1398,mentshirts,men tshirts,#N/A,,,17238,M532,,FALSE,,W2R
+1399,mercurial,mercurial,#N/A,1,1,20463,M626,,TRUE,,R2R
+1400,metanity,maternity,#N/A,,4922,636,M353,,FALSE,,W2R
+1401,metarnitie,maternity,#N/A,,4922,224,M365,,FALSE,,W2R
+1402,meternity,maternity,#N/A,4,4922,,,,FALSE,,W2R
+1403,metiral,material,#N/A,,24119,26023,M364,,FALSE,,W2R
+1404,metireal,material,#N/A,,24119,42691,M364,,FALSE,,W2R
+1405,metireals,materials,#N/A,,1163,18420,M364,,FALSE,,W2R
+1406,metiriyal,material,#N/A,,24119,14196,M364,,FALSE,,W2R
+1407,metiriyals,materials,#N/A,,1163,17152,M364,,FALSE,,W2R
+1408,metronaut,metronaut,#N/A,,,62751,M365,,TRUE,,R2R
+1409,mettirial,material,#N/A,,24119,11396,M364,,FALSE,,W2R
+1410,mheshwar,maheshwari,#N/A,,516,,,,FALSE,,W2R
+1411,mheshwari,maheshwari,#N/A,,516,,,,FALSE,missing letter(corpus),W2R
+1412,middies,middies,#N/A,,,79560,M320,,TRUE,,R2R
+1413,middis,middies,#N/A,,,43101,M320,,FALSE,,W2R
+1414,middys,midi,#N/A,,8221,13699,M320,,FALSE,,R1 2 R2
+1415,middy,midi,#N/A,2,8221,,,,FALSE,,R1 2 R2
+1416,mina,meenakari,#N/A,31,1749,,,,FALSE,,W2R
+1417,minakari,meenakari,#N/A,18,1749,,,,FALSE,,W2R
+1418,miniadaure,clutches & wristlets,#N/A,,,,,,FALSE,check (minature),R1 2 R2
+1419,mixand,mix and,#N/A,,,15306,M253,,FALSE,,W2R
+1420,mixmatch,mixmatch,#N/A,2,2,33688,M253,,TRUE,check,R2R
+1421,mizuno,mizuno,#N/A,,,13266,M250,,TRUE,,R2R
+1422,mobile,smart phones,#N/A,1445,,,,,FALSE,,R1 2 R2
+1423,mobile phone,smart phones,#N/A,,,,,,FALSE,,R1 2 R2
+1424,mobiles,smart phones,#N/A,,,,,,FALSE,,R1 2 R2
+1425,mojaries,mojaris,#N/A,2,109,,,,FALSE,,R1 2 R2
+1426,mojaries kutch,kutch footwear,#N/A,,,,,1,FALSE,check,R1 2 R2
+1427,mojdi,mojaris,mojdi,,109,138719,M230,,FALSE,check,R1 2 R2
+1428,mojdi,juttis,#N/A,,1934,,,1,FALSE,,R1 2 R2
+1429,mojdis,mojaris,#N/A,,109,,,,FALSE,,R1 2 R2
+1430,moje,socks & stockings,#N/A,,,,,,FALSE,translation,W2R
+1431,mojri,mojaris,mojri,,109,3923,M260,,FALSE,,W2R
+1432,mojri,juttis,#N/A,,1934,,,1,FALSE,w1 r2,W2R
+1433,mojris,mojaris,mojris,11,109,734,M262,,FALSE,,W2R
+1434,mojris,juttis,#N/A,11,1934,,,1,FALSE,w1 r2,W2R
+1435,mojris kutch,kutch footwear,#N/A,,,,,1,FALSE,w1 r2,W2R
+1436,mojris rajashthan,mojari,#N/A,,35,,,1,FALSE,,W2R
+1437,molkalmurru,molkalmuru,#N/A,,,,,,FALSE,,W2R
+1438,maternal,maternity,,,4922,,,,,check,R1 2 R2
+1439,mom,maternity,#N/A,2131,4922,,,1,FALSE,,R1 2 R2
+1440,money bag,wallets,#N/A,,57347,,,,FALSE,check,R1 2 R2
+1441,money-bag,wallets,money-bag,1,57347,,,1,FALSE,,R1 2 R2
+1442,money-bag,clutches & wristlets,#N/A,1,,,,1,FALSE,,R1 2 R2
+1443,moneybag,clutches & wristlets,#N/A,,,,,1,FALSE,w1 r2,W2R
+1444,monkeycap,monkey cap,#N/A,,,12463,M522,,FALSE,,W2R
+1445,monticarlo,montecarlo,#N/A,,1,40936,M532,,FALSE,,W2R
+1446,morden,modern,#N/A,6,3414,70027,M635,,FALSE,,W2R
+1447,mordern,modern,#N/A,1,3414,42986,M636,,FALSE,,W2R
+1448,mother,maternity,#N/A,727,4922,,,,FALSE,,R1 2 R2
+1449,muffs,muffs,#N/A,16,16,17777,M120,,TRUE,,R2R
+1450,mukeish,mukaish,#N/A,2,43,,,,FALSE,,W2R
+1451,mukesh,mukaish,#N/A,4,43,,,,FALSE,,W2R
+1452,mukluk,boots,#N/A,,6237,,,,FALSE,check,R1 2 R2
+1453,mulakalamuru,molkalmuru,#N/A,,,,,,FALSE,,W2R
+1454,mulberi,mulberry,#N/A,,91,,,,FALSE,,W2R
+1455,mulbery,mulberry,#N/A,,91,,,,FALSE,,W2R
+1456,mulburry,mulberry,#N/A,,91,,,,FALSE,,W2R
+1457,mulkalmuru,molkalmuru,#N/A,,,,,,FALSE,,W2R
+1458,murta,kurta,#N/A,,123207,32529,M630,,FALSE,,W2R
+1459,musted,musted,#N/A,5,5,26459,M233,,TRUE,,R2R
+1460,mwomen,women,#N/A,,895690,14413,M550,,FALSE,,W2R
+1461,mysore,mysore,#N/A,1641,1641,,,,TRUE,,R2R
+1462,nackles,necklaces,#N/A,,27058,31763,N242,,FALSE,,W2R
+1463,nagara,nagras,#N/A,,,,,,FALSE,,W2R
+1464,nagaraj,nagras,#N/A,,,,,,FALSE,,W2R
+1465,nagaras,nagras,#N/A,,,,,,FALSE,,W2R
+1466,naghty,nighties,#N/A,,11329,7231,N230,,FALSE,,W2R
+1467,nagra,nagra,nagra,148,148,29763,N260,1,TRUE,,R2R
+1468,nagra,nagras,#N/A,148,,,,,FALSE,,W2R
+1469,nagraj,nagras,#N/A,,,,,,FALSE,,W2R
+1470,naighty,nighties,#N/A,,11329,3802,N230,,FALSE,,W2R
+1471,nailpolish,nailpolish,#N/A,,,12885,N414,,TRUE,,R2R
+1472,naklsh,nails,#N/A,,1281,11790,N242,1,FALSE,necklace?,W2R
+1473,naresh,naresh,#N/A,29,29,39604,N620,,TRUE,,R2R
+1474,nb,infants,#N/A,1001,16402,,,?,FALSE,,W2R
+1475,neck chain,necklaces,neck chain,,27058,,,,FALSE,check,R1 2 R2
+1476,neck chain,necklaces & pendants,#N/A,,,,,1,FALSE,,R1 2 R2
+1477,neck ornaments,necklaces & pendants,neck ornaments,,,,,,FALSE,,R1 2 R2
+1478,neck ornaments,necklaces,#N/A,,27058,,,1,FALSE,,R1 2 R2
+1479,necked,neck,#N/A,52,214519,175179,N230,,FALSE,,W2R
+1480,necklace,necklaces,#N/A,26700,27058,,,,FALSE,,R1 2 R2
+1481,necklesh,necklaces,#N/A,,27058,26064,N242,,FALSE,,W2R
+1482,neckless,neckless,#N/A,9,9,556469,N242,,TRUE,necklace?,R2R
+1483,neklas,necklace,#N/A,,26700,11549,N242,,FALSE,,W2R
+1484,nekles,necklaces,#N/A,,27058,37910,N242,,FALSE,,W2R
+1485,nekless,necklaces,#N/A,,27058,26921,N242,,FALSE,,R1 2 R2
+1486,nemeziz,nemeziz,#N/A,,,15806,N522,,TRUE,,R2R
+1487,neo,nagras,#N/A,236,,,,1,FALSE,check,R1 2 R2
+1488,netsplay,netsplay,#N/A,,,18289,N321,,TRUE,,R2R
+1489,new born,infants,#N/A,,16402,,,,FALSE,check,R1 2 R2
+1490,newborn,infants,#N/A,41,16402,,,,FALSE,,R1 2 R2
+1491,newsaree,sarees,#N/A,,119194,247,N260,,FALSE,,W2R
+1492,newspaper,newspaper,#N/A,32,32,55973,N211,,TRUE,,R2R
+1493,nicker,underwear,#N/A,,645,17246,N260,,FALSE,knicker - rw,W2R
+1494,nickers,shorts,#N/A,,45307,11987,N262,,FALSE,,W2R
+1495,night,night & lounge wear,night,43050,,,,1,FALSE,,R1 2 R2
+1496,night,nightshirts & nighties,#N/A,43050,,,,1,FALSE,,R1 2 R2
+1497,night shirt,tops & tshirts,night shirt,,,,,1,FALSE,check,R1 2 R2
+1498,night shirt,nightshirts & nighties,#N/A,,,,,1,FALSE,,R1 2 R2
+1499,night wear,nightshirts & nighties,#N/A,,,,,1,FALSE,check,R1 2 R2
+1500,nightclub,evening,#N/A,,35581,,,,FALSE,check,R1 2 R2
+1501,nighte,nighties,#N/A,,11329,3492,N230,,FALSE,,W2R
+1502,nightees,nighties,#N/A,,11329,1666,N232,,FALSE,,W2R
+1503,nighti,nighties,#N/A,1424,11329,,,,FALSE,,W2R
+1504,nightie,nightshirts & nighties,#N/A,2723,,,,1,FALSE,,W2R
+1505,nighties,nightshirts & nighties,nighties,11329,,,,1,FALSE,,R1 2 R2
+1506,nighties,night & lounge wear,#N/A,11329,,,,1,FALSE,,R1 2 R2
+1507,nightpant,nightpant,#N/A,,,46042,N231,,TRUE,,R2R
+1508,nightpants,night pants,#N/A,,,78496,N231,,FALSE,,R1 2 R2
+1509,nightshirt,nightshirts & nighties,nightshirt,1042,,,,1,FALSE,,R1 2 R2
+1510,nightshirt,night & lounge wear,#N/A,1042,,,,1,FALSE,,R1 2 R2
+1511,nightshirts & nighties,night & lounge sets,#N/A,,,,,1,FALSE,,R1 2 R2
+1512,nightsuit sets,night & lounge sets,#N/A,,,,,,FALSE,,R1 2 R2
+1513,nightwares,nightwear,#N/A,,5840,12357,N236,,FALSE,,W2R
+1514,nightwear,night & lounge wear,nightwear,5840,,,,1,FALSE,,R1 2 R2
+1515,nightwear,nightshirts & nighties,#N/A,5840,,,,1,FALSE,,R1 2 R2
+1516,nigjty,nighties,#N/A,,11329,442,N230,,FALSE,,W2R
+1517,nigty,nighties,#N/A,,11329,1658,N230,,FALSE,,W2R
+1518,nikkar,shorts,#N/A,,45307,24159,N260,,FALSE,,W2R
+1519,nikker,underwear,#N/A,,645,20895,N260,,FALSE,,W2R
+1520,ninety,ninety,#N/A,,,14086,N530,,TRUE,,R2R
+1521,numpsits,jumpsuits,#N/A,,8201,488,N512,,FALSE,,W2R
+1522,nursing,maternity,nursing,994,4922,,,1,FALSE,check,R1 2 R2
+1523,nykaa,nykaa,#N/A,,,18722,N200,,TRUE,,R2R
+1524,nyties,nighties,#N/A,,11329,476,N320,,FALSE,,W2R
+1525,nyt,night,#N/A,,43050,,,,FALSE,,W2R
+1526,occation,occasion,#N/A,1,200397,27162,O235,,FALSE,,W2R
+1527,odhani,dupattas,#N/A,,5530,,,,FALSE,rightword?,R1 2 R2
+1528,odhisha,sambalpuri,#N/A,,213,,,,FALSE,,W2R
+1529,odhni,dupattas,#N/A,,5530,,,,FALSE,,W2R
+1530,odisha,ikat,#N/A,,4018,,,,FALSE,,W2R
+1531,odiya,ikat,odiya,,213,,,1,FALSE,,W2R
+1532,odiya,ikat,#N/A,,4018,,,,FALSE,,W2R
+1533,of limit,off limits,#N/A,,,,,,FALSE,,W2R
+1534,off limit,off limits,#N/A,,,,,,FALSE,,W2R
+1535,off limits,off limits,#N/A,,,,,,TRUE,,R2R
+1536,off shoulder,offshoulder,#N/A,,29,,,,FALSE,,W2R
+1537,off-limits,off limits,#N/A,,,,,,FALSE,,W2R
+1538,office,work,#N/A,1553,45097,,,,FALSE,r1 r2?,R1 2 R2
+1539,office wear,work,#N/A,,45097,,,,FALSE,r1 r2?,R1 2 R2
+1540,officewear,work,#N/A,1451,45097,,,,FALSE,"changed from ""work wear""",R1 2 R2
+1541,offsaree,sarees,#N/A,,119194,12649,O126,,FALSE,half saree?,W2R
+1542,oketo,oketo,#N/A,,,13173,O230,,TRUE,,R2R
+1543,oliver,oliver,#N/A,21,21,18192,O416,,TRUE,,R2R
+1544,onepeace,dresses,#N/A,,79789,13506,O512,,FALSE,,W2R
+1545,onepeice,dresses,#N/A,,79789,23961,O512,,FALSE,,W2R
+1546,onepic,dresses,#N/A,,79789,16275,O512,,FALSE,,W2R
+1547,onepiece,dresses,#N/A,,79789,,,,FALSE,,R1 2 R2
+1548,onepieces,dresses,#N/A,,79789,,,,FALSE,,R1 2 R2
+1549,1piece,dresses,#N/A,,79789,,,,FALSE,,R1 2 R2
+1550,1pieces,dresses,#N/A,,79789,,,,FALSE,,R1 2 R2
+1551,onepiece,dresses,#N/A,1,79789,,,,FALSE,repeated,W2R
+1552,onepieces,dresses,#N/A,1,79789,,,,FALSE,repeated,W2R
+1553,1piece,dresses,#N/A,1,79789,,,,FALSE,repeated,W2R
+1554,1pieces,dresses,#N/A,1,79789,,,,FALSE,repeated,W2R
+1555,oneplus,oneplus,#N/A,7,7,26016,O514,,TRUE,,R2R
+1556,onitsuka,onitsuka,#N/A,146,146,12632,O532,,TRUE,,R2R
+1557,organde,organdy,#N/A,,,,,,FALSE,,W2R
+1558,organdi,organdy,#N/A,,,,,,FALSE,,W2R
+1559,organdie,organdy,#N/A,4,,,,,FALSE,,W2R
+1560,orissa,sambalpuri,#N/A,22,213,,,,FALSE,,R1 2 R2
+1561,orissa ikat,ikat,#N/A,,4018,,,1,FALSE,,R1 2 R2
+1562,orissa ikkat,orissa ikat,#N/A,,,,,1,FALSE,,W2R
+1563,oriya,sambalpuri,#N/A,,213,,,,FALSE,,W2R
+1564,oriya ikat,orissa ikat,#N/A,,,,,1,FALSE,,W2R
+1565,ornament,jewellery,ornament,94,165164,,,,FALSE,,W2R
+1566,ornament,necklaces & pendants,#N/A,94,,,,1,FALSE,check,R1 2 R2
+1567,ornament set,jewellery,#N/A,,165164,,,,FALSE,,R1 2 R2
+1568,ornaments,jewellery,ornaments,20,165164,,,,FALSE,,R1 2 R2
+1569,ornaments,jewellery,#N/A,20,165164,,,1,FALSE,,R1 2 R2
+1570,orrisa,ikat,#N/A,,4018,,,1,FALSE,,R1 2 R2
+1571,ortho,ortho,#N/A,124,124,50787,O630,,TRUE,,R2R
+1572,ouches,pouches,#N/A,,,,,1,FALSE,,W2R
+1573,overcoat,coats,#N/A,59,22609,,,,FALSE,,R1 2 R2
+1574,ownthegame,ownthegame,#N/A,1,1,11376,O532,,TRUE,,R2R
+1575,oxide,oxide,#N/A,5,5,76338,O230,,TRUE,,R2R
+1576,oxyfit,oxyfit,#N/A,4,4,14476,O213,,TRUE,,R2R
+1577,packpack,backpack,#N/A,,3387,1288,P212,,FALSE,,W2R
+1578,painty,panties,#N/A,,16138,1161,P530,,FALSE,,W2R
+1579,pajama,pyjamas,#N/A,453,26800,,,,FALSE,,W2R
+1580,pajamas,pyjamas,#N/A,193,26800,,,,FALSE,,W2R
+1581,pakistani,pakistani,#N/A,7,7,60589,P223,,TRUE,,R2R
+1582,pakisthani,pakistani,#N/A,,7,11732,P223,,FALSE,,W2R
+1583,palazoset,palazzos,#N/A,,8595,20854,P422,,FALSE,palazzo sets (kurta palazzo sets),W2R
+1584,palloza,palazzo,#N/A,,7802,15911,P420,,FALSE,,W2R
+1585,pamshoes,puma shoes,#N/A,,,13385,P522,,FALSE,,W2R
+1586,pancelled,panelled,#N/A,,5575,11271,P524,,FALSE,,W2R
+1587,panjama,pyjama,#N/A,,20578,16305,P525,,FALSE,,W2R
+1588,pant,pants,#N/A,5727,103686,,,,FALSE,,W2R
+1589,pantfor,pants,#N/A,,103686,21663,P531,,FALSE,,W2R
+1590,panties,panties,#N/A,16138,,,,1,FALSE,,W2R
+1591,pantplazoo,palazzos,#N/A,,8595,312,P531,,FALSE,,W2R
+1592,pants,pants,#N/A,103686,103686,,,,TRUE,,R2R
+1593,pantsfor,pants,#N/A,,103686,37464,P532,,FALSE,,W2R
+1594,panty,panties,#N/A,10348,,,,1,FALSE,,W2R
+1595,paragan,paragon,#N/A,,2,13060,P625,,FALSE,,W2R
+1596,paragon,paragon,#N/A,2,2,94218,P625,,TRUE,,R2R
+1597,parashoot,parachute,#N/A,,244,11523,P623,,FALSE,,W2R
+1598,parfomax,performax,#N/A,,2664,20972,P615,,FALSE,,W2R
+1599,parfomex,performax,#N/A,,2664,19553,P615,,FALSE,,W2R
+1600,parpal,purple,#N/A,,35259,12874,P614,,FALSE,,W2R
+1601,partiver,partywear,#N/A,,,12821,P631,,FALSE,,W2R
+1602,partiware,partywear,#N/A,,207,11266,P636,,FALSE,,W2R
+1603,party,evening,#N/A,28711,35581,,,,FALSE,,R1 2 R2
+1604,party dress,dresses,#N/A,,79789,,,1,FALSE,,R1 2 R2
+1605,partybwear,partywear,#N/A,,35581,17051,P631,,FALSE,,W2R
+1606,partydress,dresses,#N/A,,79789,,,1,FALSE,,W2R
+1607,partyvwear,partywear,#N/A,,35581,18217,P631,,FALSE,,W2R
+1608,partywear,partywear,#N/A,207,35581,,,,FALSE,,R1 2 R2
+1609,pashmina,pashmina,#N/A,247,2231,,,1,FALSE,,R2R
+1610,pataudi,pataudi,#N/A,,,36715,P330,,TRUE,,R2R
+1611,patiala salwar,salwars,#N/A,,14403,,,1,FALSE,patiala is a styletype,R1 2 R2
+1612,patoda,patola,#N/A,,1620,11463,P330,,FALSE,,W2R
+1613,patolla,patola,#N/A,,1620,,,,FALSE,,W2R
+1614,pavada,pavada,#N/A,,,17500,P130,,TRUE,,R2R
+1615,pavadai,pavadai,#N/A,1,1,21992,P130,,TRUE,,R2R
+1616,pemplum,peplum,#N/A,1,1727,21487,P514,,FALSE,,W2R
+1617,pendal,pendants,#N/A,2,29258,13981,P534,,FALSE,,W2R
+1618,pendant,pendants,pendant,20369,29258,,,,FALSE,,R1 2 R2
+1619,pendant,necklaces & pendants,#N/A,20369,,,,1,FALSE,,R1 2 R2
+1620,pendant chain,necklaces,#N/A,,27058,,,,FALSE,,R1 2 R2
+1621,pendants,pendants,pendants,29258,29258,,,,TRUE,,R2R
+1622,pendants,necklaces & pendants,#N/A,29258,,,,1,FALSE,,R1 2 R2
+1623,perfomex,performax,#N/A,,2664,1041,P615,,FALSE,,W2R
+1624,perfotmex,performax,#N/A,,2664,559,P613,,FALSE,,W2R
+1625,perkins,perkins,#N/A,,,27321,P625,,TRUE,,R2R
+1626,peticoat,petticoat,#N/A,,,20536,P323,,FALSE,,W2R
+1627,petticoat,petticoat,#N/A,125,125,30837,P323,,TRUE,,R2R
+1628,petticoats,petticoat,#N/A,15,15,17469,P323,,TRUE,,R1 2 R2
+1629,philips,philips,#N/A,1,1,117112,P412,,TRUE,,R2R
+1630,phillip,phillips,#N/A,,,102479,P410,,TRUE,,R1 2 R2
+1631,phillipi,philippe,#N/A,,4544,12998,P410,,FALSE,,W2R
+1632,phillips,phillips,#N/A,46,46,61490,P412,,TRUE,,R2R
+1633,phone,smart phones,#N/A,372,,,,1,FALSE,,R1 2 R2
+1634,phoolkari,phulkari,#N/A,,69,,,,FALSE,,W2R
+1635,photoshoot,photoshoot,#N/A,95,95,35381,P323,,TRUE,,R2R
+1636,phul karee,phulkari,#N/A,,69,,,,FALSE,,W2R
+1637,pin,brooches & pins,pin,3349,,,,1,FALSE,repeated,R1 2 R2
+1638,pin,brooches & pins,pin,3349,,,,1,FALSE,repeated,R1 2 R2
+1639,pin,brooches & pins,#N/A,3349,,,,1,FALSE,repeated,R1 2 R2
+1640,pithu,backpacks,#N/A,,3901,,,,FALSE,trekking bags?,R1 2 R2
+1641,pithu bag,backpacks,#N/A,,3901,,,,FALSE,,R1 2 R2
+1642,pivots,brooches & pins,#N/A,,,,,1,FALSE,"currently getting converted to pivot, a brand for men - boxers",R1 2 R2
+1643,playsuit,playsuits,#N/A,1228,6657,,,,FALSE,,R1 2 R2
+1644,playsuits,playsuits,#N/A,6657,6657,,,,TRUE,,R2R
+1645,plazoo,palazzos,#N/A,,8595,25971,P420,,FALSE,,W2R
+1646,plazoset,palazzo set,#N/A,1,7802,41408,P422,,FALSE,,W2R
+1647,plazzoset,palazzo set,#N/A,,,38167,P422,,FALSE,,W2R
+1648,plolo,polo,#N/A,,41989,14808,P440,,FALSE,,W2R
+1649,pocham,pocham,#N/A,,,38120,P250,,TRUE,,R2R
+1650,pochampali,pochampally,#N/A,,,,,,FALSE,,W2R
+1651,pochampalli,pochampally,#N/A,,1133,,,,FALSE,popular different spelling,R1 2 R2
+1652,pochampally,pochampally,pochampally,1133,1133,,,,TRUE,,R2R
+1653,pochampally,pochampally,#N/A,1133,,,,1,FALSE,,R2R
+1654,pockect,pocket,#N/A,,53980,11636,P223,,FALSE,,W2R
+1655,pockejt,pocket,#N/A,,53980,18710,P223,,FALSE,,W2R
+1656,pokect,pocket,#N/A,,53980,12490,P223,,FALSE,,W2R
+1657,polki,polki,#N/A,265,9774,,,,FALSE,,R2R
+1658,pom,pom pom,#N/A,687,,,,1,FALSE,,R1 2 R2
+1659,pom poms,pom pom,#N/A,,,,,,FALSE,,R1 2 R2
+1660,pomon,pom pom,#N/A,,,,,1,FALSE,,W2R
+1661,poolkari,phulkari,#N/A,,69,,,,FALSE,,W2R
+1662,potola,patola,#N/A,,1620,,,,FALSE,,W2R
+1663,pouch,clutches & wristlets,#N/A,24365,,,,,FALSE,,R1 2 R2
+1664,pragnent,pregnant,#N/A,,16,16982,P625,,FALSE,,W2R
+1665,predator,predator,#N/A,36,36,28039,P633,,TRUE,,R2R
+1666,prefomax,performax,#N/A,,2664,27901,P615,,FALSE,,W2R
+1667,prisma,prisma,#N/A,6,6,35223,P625,,TRUE,,R2R
+1668,projective,projecteve,#N/A,,,4120,P622,,FALSE,,W2R
+1669,prom,evening,#N/A,18,35581,,,,FALSE,,R1 2 R2
+1670,promwear,evening,#N/A,,35581,,,,FALSE,,R1 2 R2
+1671,pslazo,palazzos,#N/A,,8595,392,P242,,FALSE,,W2R
+1672,pslazoo,palazzos,#N/A,,8595,736,P242,,FALSE,,W2R
+1673,pu,pu,#N/A,35080,47905,,,1,FALSE,,R2R
+1674,puffered,puffer,#N/A,,2900,15253,P163,,FALSE,,R1 2 R2
+1675,pulavar,pullover,#N/A,,13987,15477,P416,,FALSE,,W2R
+1676,pull over,pullover,#N/A,,43282,,,,FALSE,Pullover is a styletype in ajio,W2R
+1677,pull overs,pullover,#N/A,,43282,,,,FALSE,Pullover is a styletype in ajio,R1 2 R2
+1678,pullover,pullover,pullover,13987,40922,,,,FALSE,Pullover is a styletype in ajio,R2R
+1679,pullover,pullover,#N/A,13987,43282,,,,FALSE,Pullover is a styletype in ajio,R2R
+1680,pullovers,pullover,pullovers,10492,40922,,,,FALSE,Pullover is a styletype in ajio,R1 2 R2
+1681,pullovers,pullover,#N/A,10492,43282,,,,FALSE,Pullover is a styletype in ajio,R1 2 R2
+1682,pumpshoe,pump shoes,#N/A,,,22802,P512,,FALSE,,W2R
+1683,pumshoes,puma shoes,#N/A,,,14676,P522,1,FALSE,not clear if its puma vs pump shoes,W2R
+1684,purse,handbags,purse,142,22502,,,,FALSE,,R1 2 R2
+1685,purse,handbags,#N/A,142,57347,,,1,FALSE,,R1 2 R2
+1686,purses,handbags,#N/A,48,22502,,,,FALSE,,R1 2 R2
+1687,pyjama,pyjamas,#N/A,20578,26800,,,,FALSE,,R1 2 R2
+1688,pyjamas,pyjamas,#N/A,26800,26800,,,,TRUE,,R2R
+1689,pyjamee,churidars,#N/A,,17160,,,,FALSE,,R1 2 R2
+1690,pyjami,churidars,#N/A,,17160,,,,FALSE,,R1 2 R2
+1691,qalamkari,kalamkari,#N/A,,2540,,,,FALSE,,W2R
+1692,qomwn,women,#N/A,,895690,22013,Q500,,FALSE,,W2R
+1693,quechua,quechua,#N/A,,,19745,Q200,,TRUE,,R2R
+1694,qurta,kurtas,#N/A,,70622,15413,Q630,,FALSE,,W2R
+1695,raabta,raabta,#N/A,,,19904,R130,,TRUE,,R2R
+1696,raaj wada,rajwada,#N/A,,1,,,,FALSE,,W2R
+1697,radtape,red tape,#N/A,,,13304,R310,,FALSE,,W2R
+1698,ragwada,rajwada,#N/A,,1,,,,FALSE,,W2R
+1699,rain coat,raincoat,#N/A,,314,,,,FALSE,,R1 2 R2
+1700,rajasthan jooti,mojari,#N/A,,35,,,,FALSE,,W2R
+1701,rajasthani jhutties,mojari,#N/A,,35,,,,FALSE,,W2R
+1702,rajputi,rajputi,#N/A,15,15,13891,R213,,TRUE,,R2R
+1703,rajwadi,rajwada,#N/A,40,1,,,,FALSE,,W2R
+1704,rangitri,rangriti,#N/A,,201,31501,R523,,FALSE,,W2R
+1705,rcb,rcb,#N/A,8,8,34030,R210,,TRUE,,R2R
+1706,reception,reception,#N/A,8,8,37052,R213,,TRUE,,R2R
+1707,redbull,redbull,#N/A,,,53093,R314,,TRUE,,R2R
+1708,redcolour,red,#N/A,,89134,12376,R324,,FALSE,,W2R
+1709,redimate,readymade,#N/A,,141,11253,R353,,FALSE,,W2R
+1710,redkurti,red kurtis,#N/A,,,14673,R326,,FALSE,,W2R
+1711,redloop,redloop,#N/A,41,41,64132,R341,,TRUE,,R2R
+1712,redmi,redmi,#N/A,10,10,179885,R350,,TRUE,,R2R
+1713,redtap,redtape,#N/A,,,52894,R310,,FALSE,,W2R
+1714,redtop,red tops,#N/A,,,68,R310,,FALSE,,W2R
+1715,regural,regular,#N/A,,1007303,15281,R264,,FALSE,,W2R
+1716,retaliation,retaliation,#N/A,4,4,16663,R343,,TRUE,,R2R
+1717,riding,rider,#N/A,20,175,,,,,,R1 2 R2
+1718,ring,rings,#N/A,24917,20811,,,,FALSE,,R1 2 R2
+1719,ringle,rings,#N/A,,20811,,,,FALSE,,R1 2 R2
+1720,ringlet,rings,#N/A,1,20811,,,,FALSE,,R1 2 R2
+1721,rings,rings,#N/A,20811,20811,,,,TRUE,,R2R
+1722,ripped,distressed,#N/A,255,2671,,,,FALSE,,R1 2 R2
+1723,rts,dress materials,#N/A,1,,,,1,FALSE,,W2R
+1724,rucksack,backpacks,#N/A,60,3901,,,,FALSE,,W2R
+1725,rugged,distressed,#N/A,140,2671,,,,FALSE,,R1 2 R2
+1726,runallday,runallday,#N/A,,,19482,R543,,TRUE,,R2R
+1727,runfalcon,runfalcon,#N/A,28,28,35963,R514,,TRUE,,R2R
+1728,saadi,sarees,#N/A,,119194,,,,FALSE,,W2R
+1729,saari,sarees,,,119194,,,,,,W2R
+1730,saaris,sarees,,,119194,,,,,,W2R
+1731,saare,sarees,saare,1,119194,12649,O126,,FALSE,,W2R
+1732,saare,sarees,saare,1,119194,,,1,FALSE,,W2R
+1733,saaree,sarees,saaree,,119194,12649,O126,,FALSE,,W2R
+1734,saaree,sarees,#N/A,,119194,,,1,FALSE,,W2R
+1735,sadi,sarees,#N/A,35,119194,,,,FALSE,,W2R
+1736,sadri,sadri,#N/A,,,45893,S360,,TRUE,,R2R
+1737,sahree,sarees,#N/A,,119194,855,S600,,FALSE,,W2R
+1738,salbar,salwars,#N/A,,14403,18171,S416,,FALSE,,W2R
+1739,salvar,salwars,#N/A,,14403,,,,FALSE,,W2R
+1740,salvar suits,kurta suit sets,#N/A,,,,,,FALSE,,W2R
+1741,salvars,salwars,#N/A,,14403,,,,FALSE,,W2R
+1742,salvarsuits,kurta suit sets,#N/A,,,,,,FALSE,,W2R
+1743,salwar,salwars,#N/A,2841,14403,,,,FALSE,,R1 2 R2
+1744,salwar kameez,kurta suit sets,#N/A,,,,,,FALSE,,W2R
+1745,salwar suit,kurta suit sets,#N/A,,,,,,FALSE,,R1 2 R2
+1746,salwar suits,kurta suit sets,#N/A,,,,,,FALSE,,R1 2 R2
+1747,salwars,salwars,#N/A,14403,14403,,,,TRUE,,R2R
+1748,salwarsuit,salwar suit,salwarsuit,,,35900,S462,1,FALSE,,W2R
+1749,salwarsuit,kurta suit sets,#N/A,,,,,,FALSE,,W2R
+1750,salwarsuits,salwar suits,salwarsuits,,,16533,S462,1,FALSE,,R2R
+1751,salwarsuits,kurta suit sets,#N/A,,,,,,FALSE,,R1 2 R2
+1752,sambalpur,sambalpuri,#N/A,,213,,,,FALSE,,W2R
+1753,sambhalpur ikat,orissa ikat,#N/A,,,,,1,FALSE,,R1 2 R2
+1754,sambhalpuri ikat,orissa ikat,#N/A,,,,,1,FALSE,,R1 2 R2
+1755,sambrey,chambray,#N/A,,162,,,,FALSE,,W2R
+1756,samsung,samsung,#N/A,6,6,127241,S525,,TRUE,,R2R
+1757,sandal,flat sandals,#N/A,1386,,,,1,FALSE,,R2R
+1758,sandals,flat sandals,#N/A,38568,,,,1,FALSE,,R2R
+1759,sandeks,sandles,#N/A,,1,17223,S532,,FALSE,,W2R
+1760,sandkes,sandles,#N/A,,1,33396,S532,,FALSE,,W2R
+1761,sando,vests,#N/A,3,4164,,,,FALSE,,R1 2 R2
+1762,sandos,sandos,#N/A,,,13471,S532,,TRUE,check,R2R
+1763,sandoz,vests,#N/A,,4164,,,,FALSE,,W2R
+1764,sanganer,jaipur,sanganer,67,2941,,,1,FALSE,becoming sanganeri and going to open tokens,R2R
+1765,sanganer,bagru,#N/A,67,1669,,,1,FALSE,becoming sanganeri and going to open tokens,R1 2 R2
+1766,sanganeri,jaipur,sanganeri,1768,2941,,,1,FALSE,going to open tokens,R1 2 R2
+1767,sanganeri,bagru,#N/A,1768,1669,,,1,FALSE,going to open tokens,R1 2 R2
+1768,sangaria,sangaria,#N/A,,,42652,S526,,TRUE,,R2R
+1769,sankers,sneakers,#N/A,,22495,14332,S526,,FALSE,,W2R
+1770,sarbani,sherwani,#N/A,,5656,11242,S615,,FALSE,conflicting candidate for Armani and sherwani,W2R
+1771,saree,sarees,#N/A,116880,119194,,,,FALSE,,R1 2 R2
+1772,saare,sarees,,1,119194,,,,FALSE,,W2R
+1773,saares,sarees,,,119194,,,,FALSE,,W2R
+1774,sareer,sarees,#N/A,,119194,24511,S660,,FALSE,,W2R
+1775,sareers,sarees,#N/A,,119194,23515,S662,,FALSE,,W2R
+1776,sarees,sarees,#N/A,119194,119194,,,,TRUE,,W2R
+1777,sari,sarees,#N/A,,119194,,,,FALSE,,W2R
+1778,saris,sarees,#N/A,,119194,,,,FALSE,,W2R
+1779,sarries,sarees,#N/A,,119194,3648,S620,,FALSE,,W2R
+1780,sarry,sarees,#N/A,,119194,5091,S600,,FALSE,,W2R
+1781,sart,shirt,#N/A,,273833,8249,S630,,FALSE,,W2R
+1782,sarvani,sherwani,#N/A,,1891,23215,S615,,FALSE,,W2R
+1783,sasta,cheap,#N/A,,6,15544,S230,,FALSE,,W2R
+1784,sateen,satin,#N/A,89,17456,,,,FALSE,,W2R
+1785,saten,satin,#N/A,,17456,,,,FALSE,,W2R
+1786,satoon,satin,#N/A,,17456,,,,FALSE,,W2R
+1787,saturn,saturn,saturn,11,11,25789,S365,,TRUE,,W2R
+1788,saturn,satin,#N/A,11,17456,,,1,FALSE,,R1 2 R2
+1789,sauth coton,south cotton,#N/A,,,,,,FALSE,,W2R
+1790,scacher,skechers,#N/A,,995,13214,S260,,FALSE,,W2R
+1791,scandles,sandles,#N/A,,1,43142,S534,,FALSE,,W2R
+1792,scarf,scarves,scarf,1862,5470,,,,FALSE,,R1 2 R2
+1793,scarf,scarves,#N/A,1862,5470,,,1,FALSE,,R1 2 R2
+1794,scarve,scarves,#N/A,2,5470,,,,FALSE,,W2R
+1795,scarves,scarves,#N/A,5470,5470,,,,TRUE,,W2R
+1796,scatchers,skechers,#N/A,,995,1747,S326,,FALSE,,W2R
+1797,schecher,skechers,#N/A,,995,15575,S260,,FALSE,,W2R
+1798,schechersh,skechers,#N/A,,995,193,S262,,FALSE,,W2R
+1799,sckecher,skechers,#N/A,,995,15470,S260,,FALSE,,W2R
+1800,scorpius,scorpius,#N/A,445,445,15486,S612,,TRUE,,R2R
+1801,scrached,scrached,#N/A,,,11413,S623,,TRUE,,R2R
+1802,screchers,skechers,#N/A,,995,1006,S626,,FALSE,,W2R
+1803,seawalk,seawalk,#N/A,1,1,13208,S420,,TRUE,,R2R
+1804,seequen,sequin,#N/A,,1178,,,,FALSE,,W2R
+1805,selevees,sleeves,#N/A,,41997,12335,S412,,FALSE,,W2R
+1806,selevs,sleeves,#N/A,,41997,52422,S412,,FALSE,,W2R
+1807,semi-formal,casual,#N/A,124,1177030,,,1,FALSE,,R1 2 R2
+1808,semi-stitched,dress materials,#N/A,1504,,,,1,FALSE,,R1 2 R2
+1809,semiformal,casual,#N/A,2,1177030,,,,FALSE,,W2R
+1810,sendle,sandals,#N/A,,38568,15594,S534,,FALSE,,W2R
+1811,senior,senior,#N/A,10,10,73575,S560,,TRUE,,R2R
+1812,seppals,slippers,#N/A,,12169,20061,S142,,FALSE,,W2R
+1813,sequen,sequin,#N/A,,1178,,,,FALSE,,W2R
+1814,sequinn,sequin,#N/A,2,1178,,,,FALSE,,W2R
+1815,serbani,sherwani,#N/A,,1891,15954,S615,,FALSE,,W2R
+1816,servani,sherwani,#N/A,6,1891,1175,S615,,FALSE,,W2R
+1817,setfor,set,#N/A,,172140,29657,S316,,FALSE,,W2R
+1818,setsfor,sets,#N/A,,148159,33636,S321,,FALSE,,W2R
+1819,sexy,evening,#N/A,518,35581,,,,FALSE,,R1 2 R2
+1820,shaadi,wedding,#N/A,5,3610,,,,FALSE,,W2R
+1821,shaal,shawls,#N/A,,2231,,,,FALSE,,W2R
+1822,shaals,shawls,#N/A,,2231,,,,FALSE,,W2R
+1823,shade,sunglasses,#N/A,3185,15252,,,1,FALSE,shade can be related to beauty categories. can have synonyms as sunglasses,multiple combinations possible
+1824,shades,sunglasses,#N/A,760,15252,,,,FALSE,,R1 2 R2
+1825,shadi,wedding,#N/A,16,3610,,,,FALSE,,W2R
+1826,shal,shawls,#N/A,,2231,,,,FALSE,,W2R
+1827,shall,stoles,#N/A,119,3659,,,,FALSE,"is a stopword now, but is shawl a better match?",W2R
+1828,shambray,chambray,#N/A,,162,,,,FALSE,,W2R
+1829,shambre,chambray,#N/A,,162,,,,FALSE,,W2R
+1830,shambrey,chambray,#N/A,,162,,,,FALSE,,W2R
+1831,shapers,shapewear,#N/A,67,1778,,,,FALSE,,W2R
+1832,shapewear,shapewear,#N/A,1778,1778,,,,TRUE,,R2R
+1833,shapewears,shapewear,#N/A,64,1778,,,,FALSE,,R1 2 R2
+1834,shart,shorts,shart,,45307,,,1,FALSE,,multiple combinations possible
+1835,shart,shirts,#N/A,,220084,,,1,FALSE,,multiple combinations possible
+1836,sharts,shorts,sharts,,45307,,,1,FALSE,,multiple combinations possible
+1837,sharts,shirts,#N/A,,220084,,,1,FALSE,,multiple combinations possible
+1838,sharvani,sherwani,#N/A,,1891,41357,S615,,FALSE,,W2R
+1839,shawl,shawls,#N/A,1821,2231,,,,FALSE,,W2R
+1840,shawls,shawls,#N/A,2231,2231,,,,TRUE,,R2R
+1841,shearling,shearling,#N/A,11,11,15931,S645,,TRUE,,R2R
+1842,sheebori,shibori,#N/A,,230,,,,FALSE,changed value,W2R
+1843,shiborie,shibori,#N/A,,230,,,,FALSE,,W2R
+1844,shifan,chiffon,#N/A,,13689,11332,S150,,FALSE,,W2R
+1845,shiffan,chiffon,#N/A,,13689,22336,S150,,FALSE,,W2R
+1846,shifon,chiffon,#N/A,3,13689,51012,S150,,FALSE,,W2R
+1847,shinchan,shinchan,#N/A,45,45,12463,S525,,TRUE,,R2R
+1848,shipers,slippers,#N/A,,12169,499,S162,,FALSE,,W2R
+1849,shirsts,shirts,#N/A,,220084,137250,S623,,FALSE,,W2R
+1850,shirt,shirts,#N/A,273833,220084,,,,FALSE,,W2R
+1851,shirten,shirts,#N/A,,220084,11802,S635,,FALSE,,W2R
+1852,shirtfor,shirts,#N/A,2,273833,102268,S631,,FALSE,,W2R
+1853,shirtmen,men shirts,#N/A,,,26580,S635,,FALSE,,W2R
+1854,shirts,shirts,#N/A,220084,220084,,,,TRUE,,R2R
+1855,shirtsbfor,shirts,#N/A,,220084,13126,S632,,FALSE,,W2R
+1856,shirtsfor,shirts,#N/A,,220084,123391,S632,1,FALSE,,W2R
+1857,shirtsmen,men shirts,#N/A,,,28609,S632,,FALSE,,W2R
+1858,shist,shirts,#N/A,,220084,25352,S230,,FALSE,,W2R
+1859,shists,shirts,#N/A,,220084,12477,S232,,FALSE,,W2R
+1860,shitrt,shirts,#N/A,,220084,25217,S363,,FALSE,,W2R
+1861,shitrts,shirts,#N/A,,220084,38802,S363,,FALSE,,W2R
+1862,shivnaresh,shivnaresh,#N/A,,,11454,S156,,TRUE,,R2R
+1863,shoeless,shoe lace,#N/A,,,15930,S420,,FALSE,,W2R
+1864,shoesen,shoes,#N/A,,62160,12265,S250,,FALSE,,W2R
+1865,shoesfor,shoes,#N/A,,62160,55218,S216,,FALSE,,W2R
+1866,shoesmen,men shoes,#N/A,,,30948,S255,,FALSE,,W2R
+1867,shorsts,shorts,#N/A,,45307,302,S623,,FALSE,,W2R
+1868,shortkurti,short kurtis,#N/A,,,162,S632,,FALSE,,W2R
+1869,shorts,shorts,shorts,45307,45307,,,,TRUE,,R2R
+1870,shorts,shorts,shorts,45307,45307,,,1,TRUE,,R2R
+1871,shorts,shorts,#N/A,45307,45307,,,1,TRUE,,R2R
+1872,shortsfor,shorts,#N/A,,45307,26927,S632,,FALSE,,W2R
+1873,shortsuit,playsuits,#N/A,,6657,,,,FALSE,,W2R
+1874,shorty,shorts,#N/A,,45307,,,,FALSE,,W2R
+1875,shosr,shoes,#N/A,,62160,19744,S260,,FALSE,,W2R
+1876,shoulderbags,shoulder bags,#N/A,,,13609,S436,,FALSE,,W2R
+1877,shoulderless,cold shoulders,#N/A,,,15230,S436,1,FALSE,,R1 2 R2
+1878,shous,shoes,#N/A,,62160,17360,S200,,FALSE,,W2R
+1879,shredded,distressed,#N/A,4,2671,,,,FALSE,,W2R
+1880,shrirt,shirts,#N/A,,220084,21679,S663,,FALSE,,W2R
+1881,shrirts,shirts,#N/A,,220084,14726,S663,,FALSE,,W2R
+1882,shrite,shirts,#N/A,,220084,27188,S630,,FALSE,,W2R
+1883,shrites,shirts,#N/A,,220084,14112,S632,,FALSE,,W2R
+1884,shrug,shrugs,#N/A,3023,13758,,,,FALSE,,R1 2 R2
+1885,shrugs,shrugs,#N/A,13758,13758,,,,TRUE,,R2R
+1886,shrvani,sherwani,#N/A,,1891,130,S615,,FALSE,,W2R
+1887,sidebag,sidebag,#N/A,2,2,18789,S312,,TRUE,,R2R
+1888,siffon,chiffon,#N/A,2,13689,216516,S150,,FALSE,,W2R
+1889,silipar,slippers,#N/A,,12169,14987,S416,,FALSE,,W2R
+1890,silksarees,silk sarees,#N/A,,,48541,S426,,FALSE,,W2R
+1891,silliper,slippers,#N/A,,12169,24044,S416,,FALSE,,W2R
+1892,sillipers,slippers,#N/A,,12169,13441,S416,,FALSE,,W2R
+1893,sillpers,slippers,#N/A,,12169,36034,S416,,FALSE,,W2R
+1894,sippars,slippers,#N/A,,12169,388,S162,,FALSE,,W2R
+1895,sisindri,sisindri,#N/A,,,20846,S253,,TRUE,,R2R
+1896,sivless,sleeveless,#N/A,,22460,19310,S142,,FALSE,,W2R
+1897,skacher,skechers,#N/A,,995,17093,S260,,FALSE,,W2R
+1898,skart,skirts,#N/A,1,7437,,,,FALSE,,W2R
+1899,skarts,skirts,#N/A,,7437,,,,FALSE,,W2R
+1900,skeacher,skechers,#N/A,,995,24527,S260,,FALSE,,W2R
+1901,skechar,skechers,#N/A,,995,23790,S260,,FALSE,,W2R
+1902,skecthers,skechers,#N/A,,995,13555,S236,,FALSE,,W2R
+1903,skercher,skechers,#N/A,,995,347,S626,,FALSE,,W2R
+1904,skerchers,skechers,#N/A,,995,29983,S626,,FALSE,,W2R
+1905,sketchera,skechers,#N/A,,995,15571,S326,,FALSE,,W2R
+1906,sketvhers,skechers,#N/A,,995,301,S316,,FALSE,,W2R
+1907,skinfit,skin fit,#N/A,2,,54765,S513,,FALSE,,W2R
+1908,skinny belts,belts,#N/A,,57385,,,,FALSE,,W2R
+1909,skirt,skirts,#N/A,8741,7437,,,,FALSE,,R1 2 R2
+1910,skirts,skirts,#N/A,7437,7437,,,,TRUE,,R2R
+1911,skrechers,skechers,#N/A,,995,14526,S626,,FALSE,,W2R
+1912,skurt,skirts,skurt,,7437,2017,S630,,FALSE,,W2R
+1913,skurt,skirts,#N/A,,7437,,,1,FALSE,,W2R
+1914,skurts,skirts,#N/A,,7437,,,,FALSE,,W2R
+1915,slashed,slashed,#N/A,7,7,27604,S423,,TRUE,,R2R
+1916,slax,leggings,#N/A,,24525,,,,FALSE,,W2R
+1917,sleep shirt,nightshirts & nighties,#N/A,,,,,1,FALSE,,W2R
+1918,sleep tees,nightshirts & nighties,#N/A,,,,,,FALSE,,W2R
+1919,sleep top,nightshirts & nighties,#N/A,,,,,1,FALSE,,W2R
+1920,sleep tops,nightshirts & nighties,#N/A,,,,,1,FALSE,,W2R
+1921,sleepars,slippers,#N/A,,12169,14926,S416,,FALSE,,W2R
+,sleepar,slippers,#N/A,,12169,,,,,,W2R
+,sleeper,slippers,#N/A,,12169,,,,,,W2R
+,sleepers,slippers,#N/A,,12169,,,,,,W2R
+1922,sleepr,slippers,#N/A,,12169,13831,S416,,FALSE,,W2R
+1923,sleeprs,slippers,#N/A,,12169,13848,S416,,FALSE,,W2R
+1924,sleepshirt,nightshirts & nighties,sleepshirt,39,,,,,FALSE,,W2R
+1925,sleepshirt,nightshirts & nighties,sleepshirt,39,,,,1,FALSE,,W2R
+1926,sleepshirt,nightshirts & nighties,#N/A,39,,,,1,FALSE,,W2R
+1927,sleepsuits&nightsuit,night & lounge sets,#N/A,129,,,,,FALSE,,W2R
+1928,sleeptop,nightshirts & nighties,sleeptop,,,,,,FALSE,,W2R
+1929,sleeptop,nightshirts & nighties,sleeptop,,,,,1,FALSE,,R1 2 R2
+1930,sleeptop,nightshirts & nighties,#N/A,,,,,1,FALSE,,R1 2 R2
+1931,sleepwear,nightshirts & nighties,sleepwear,194,,,,1,FALSE,,R1 2 R2
+1932,sleepwear,night & lounge wear,sleepwear,194,,,,,FALSE,,W2R
+1933,sleepwear,night & lounge wear,#N/A,194,,,,1,FALSE,,R1 2 R2
+1934,sleevesless,sleeveless,#N/A,5,22460,71370,S412,,FALSE,,W2R
+1935,slepar,slipper,#N/A,,1039,16654,S416,,FALSE,,W2R
+1936,slevesless,sleeveless,#N/A,,22460,14261,S412,,FALSE,,W2R
+1937,sling bag,sling bag,#N/A,,,,,1,FALSE,"sling is a styletype in bags, currently slingbag is becoming a phrase and going to open tokens, category results are wrong",W2R
+1938,slioers,slippers,#N/A,,12169,15772,S462,,FALSE,,W2R
+1939,sliooers,slippers,#N/A,,12169,17273,S462,,FALSE,,W2R
+1940,slip on,slip-on,slip on,,42875,,,,FALSE,,W2R
+1941,slip on,slip-on,#N/A,,42875,,,1,FALSE,,W2R
+1942,slip ons,slip-on,#N/A,,42875,,,,FALSE,,W2R
+1943,slip-on,slip-on,#N/A,42875,42875,,,1,TRUE,,W2R
+1944,slip-ons,slip-on,#N/A,13867,42875,,,1,FALSE,,W2R
+1945,sliper,slippers,#N/A,,12169,,,,FALSE,,W2R
+1946,slipless,sleeveless,#N/A,,22460,16772,S414,,FALSE,,W2R
+1947,slipon,slip-on,#N/A,73,42875,,,1,FALSE,,W2R
+1948,slipper,slippers,slipper,1039,12169,,,,FALSE,,R1 2 R2
+1949,slipper,flip flops,#N/A,1039,,,,1,FALSE,,W2R
+1950,slippers,slippers,slippers,12169,12169,,,,TRUE,,R2R
+1951,slippers,slippers,#N/A,12169,12169,,,1,TRUE,,R2R
+1952,slitted,slitted,#N/A,2,2,18061,S433,,TRUE,,R2R
+1953,slivees,sleeves,#N/A,,41997,13475,S412,,FALSE,,W2R
+1954,sllipars,slippers,#N/A,,12169,474,S416,,FALSE,,W2R
+1955,smart,smartwatch,#N/A,33437,113,,,1,FALSE,,W2R
+1956,smart phone,smart phones,#N/A,,,,,,FALSE,,W2R
+1957,smart phones,smart phones,#N/A,,,,,,TRUE,,W2R
+1958,smart watc,smartwatch,#N/A,,113,,,,FALSE,,W2R
+1959,smart watch,smartwatch,#N/A,,13589,,,,FALSE,,W2R
+1960,smart watches,smartwatch,#N/A,,13589,,,,FALSE,,W2R
+1961,smartphone,smart phones,#N/A,32,,,,,FALSE,,W2R
+1962,smartphones,smart phones,#N/A,1,,,,,FALSE,,W2R
+1963,smartwatches,smartwatch,smartwatches,,113,,,,FALSE,,W2R
+1964,smartwatches,smartwatch,#N/A,,13589,,,1,FALSE,,W2R
+1965,sneakerhood,sneakerhood,#N/A,,,14807,S526,,TRUE,,R2R
+1966,snearkers,sneakers,#N/A,,22495,15989,S562,,FALSE,,W2R
+1967,sneckers,sneakers,#N/A,,22495,1280,S526,,FALSE,,W2R
+1968,snekares,sneakers,#N/A,,22495,20072,S526,,FALSE,,W2R
+1969,soa,soap,#N/A,,,,,1,FALSE,,W2R
+1970,socks,socks,#N/A,12019,,,,,FALSE,,W2R
+1971,solapur,solapur,#N/A,,,12195,S416,,TRUE,,R2R
+1972,soleplay,roleplay,#N/A,,2,12537,S414,,FALSE,,W2R
+1973,sooties,boots,#N/A,,6237,,,1,FALSE,,W2R
+1974,souf,soof,#N/A,,,,,1,FALSE,,W2R
+1975,soyetar,sweaters,#N/A,,43282,14601,S360,,FALSE,,W2R
+1976,soyeter,sweater,#N/A,,4365,22136,S360,,FALSE,,W2R
+1977,special,special occasion,#N/A,2494,,,,,FALSE,,W2R
+1978,specialwear,special occasion,#N/A,,,,,,FALSE,,W2R
+1979,spectacles,spectacles,#N/A,522,522,13649,S123,,TRUE,,R2R
+1980,speters,speters,#N/A,,,21431,S136,,TRUE,,R2R
+1981,sport sandal,sports sandals,#N/A,,,,,,FALSE,,W2R
+1982,sport sandals,sports sandals,#N/A,,,,,,FALSE,,W2R
+1983,sports shoe,sports shoes,#N/A,,,,,,FALSE,,W2R
+1984,sports shoes,sports shoes,#N/A,,,,,,TRUE,,R2R
+1985,sportshoe,sports shoes,#N/A,,,16606,S163,,FALSE,,W2R
+1986,sportwear,sports sandals,sports wear,,,,,1,FALSE,,W2R
+1987,sportwears,sports sandals,sports wear,,,,,1,FALSE,,W2R
+1988,srishti,srishti,#N/A,271,271,17229,S623,,TRUE,,R2R
+1989,stakeble rings,rings,#N/A,,20811,,,1,FALSE,,W2R
+1990,stansmith,stansmith,#N/A,,,18697,S352,,TRUE,,R2R
+1991,starcat,starcat,#N/A,,,21403,S362,,TRUE,,R2R
+1992,statement,necklaces,statement,1840,27058,,,1,FALSE,,R1 2 R2
+1993,statement,earrings,#N/A,1840,67238,,,1,FALSE,,R1 2 R2
+1994,statement earrings,earrings,#N/A,,67238,,,,FALSE,,W2R
+1995,statement necklace,necklaces,#N/A,,27058,,,,FALSE,,W2R
+1996,stelitoes,stilettos,#N/A,,2057,21924,S343,,FALSE,,W2R
+1997,stelitos,stilettos,#N/A,,2057,12401,S343,,FALSE,,W2R
+1998,stileto,stilettos,#N/A,,2057,,,,FALSE,,W2R
+1999,stilletto,stilettos,#N/A,1,2057,,,,FALSE,,W2R
+2000,stockings,socks & stockings,#N/A,3756,,,,1,FALSE,,R1 2 R2
+2001,stole,dupattas,#N/A,2339,5530,,,1,FALSE,,R1 2 R2
+2002,straightcut,straightcut,#N/A,,,18029,S362,,TRUE,,R2R
+2003,straightener,straightener,#N/A,19,19,16254,S362,,TRUE,,R2R
+2004,straightner,straightener,#N/A,,,39159,S362,,TRUE,,W2R
+2005,strainght,straight,#N/A,1,98132,34811,S365,,FALSE,,W2R
+2006,strands and layers,necklaces,#N/A,,27058,,,,FALSE,?,R1 2 R2
+2007,streetball,streetball,#N/A,5,5,17923,S363,,TRUE,,R2R
+2008,striched,streched,#N/A,2,,26980,S362,,FALSE,,W2R
+2009,string,necklaces & pendants,string,604,,,,1,FALSE,,R1 2 R2
+2010,string,necklaces,#N/A,604,27058,,,1,FALSE,,R1 2 R2
+2011,stshirt,tshirts,#N/A,,162163,186,S326,,FALSE,,W2R
+2012,sttiletto,stilettos,#N/A,,2057,,,,FALSE,,W2R
+2013,studs,earrings,#N/A,10030,67238,,,1,FALSE,,R1 2 R2
+2014,styger,styger,#N/A,,,18389,S326,,TRUE,,R2R
+2015,style,evening,#N/A,22802,35581,,,1,FALSE,,R1 2 R2
+2016,stylelish,stylish,#N/A,,7700,14857,S344,,FALSE,,W2R
+2017,stylish,evening,#N/A,7700,35581,,,1,FALSE,,R1 2 R2
+2018,sudidhar,chudidar,#N/A,,246,14146,S336,,FALSE,,W2R
+2019,sudithar,chudidars,#N/A,,1,62011,S336,,FALSE,,W2R
+2020,suff,soof,#N/A,,,,,1,FALSE,,W2R
+2021,suggested,suggested,#N/A,14,14,146935,S223,,TRUE,,R2R
+2022,suit,kurta suit sets,#N/A,67621,,,,1,FALSE,,R1 2 R2
+2023,suitfor,suit,#N/A,,67621,16410,S316,,FALSE,,W2R
+2024,suits,kurta suit sets,suits,550,,,,1,FALSE,,R1 2 R2
+2025,suits,suit sets,#N/A,550,,,,1,FALSE,,R1 2 R2
+2026,suitset,kurta suit sets,suitset,1,,59063,S323,,FALSE,,W2R
+2027,suitset,suit sets,#N/A,1,,,,1,FALSE,already handled,R1 2 R2
+2028,suitsets,kurta suit sets,#N/A,1,,,,,FALSE,already handled,R1 2 R2
+2029,suitsfor,suits,#N/A,,550,15239,S321,,FALSE,,W2R
+2030,suitshirt,suit shirts,#N/A,,,14324,S326,,FALSE,,W2R
+2031,sunglass,sunglasses,#N/A,410,15252,,,,FALSE,,R1 2 R2
+2032,sunglasses,sunglasses,#N/A,15252,15252,,,,TRUE,,R2R
+2033,sungudi,sungudi,#N/A,92,92,21336,S523,,TRUE,,R2R
+2034,sunward,sunward,#N/A,,,40059,S563,,TRUE,,R2R
+2035,supercourt,supercourt,#N/A,,,16519,S162,,TRUE,,R2R
+2036,sweart,sweatshirts,#N/A,,40922,113071,S630,,FALSE,,W2R
+2037,swearter,sweater,#N/A,1,4365,67005,S636,,FALSE,,W2R
+2038,swearters,sweaters,#N/A,,43282,30506,S636,,FALSE,,W2R
+2039,swearts,sweatshirts,#N/A,,40922,19326,S632,,FALSE,,W2R
+2040,sweartshirt,sweatshirts,#N/A,5,40922,196080,S632,,FALSE,,W2R
+2041,sweartshirts,sweatshirts,#N/A,1,40922,65991,S632,,FALSE,,W2R
+2042,sweatdress,sweatshirts,#N/A,2,2,12158,S362,,FALSE,,R1 2 R2
+2043,sweater,sweaters,#N/A,4365,43282,,,,FALSE,,R1 2 R2
+2044,sweaterfor,sweater,#N/A,,4365,35168,S361,,FALSE,,W2R
+2045,sweaters,sweaters,#N/A,43282,43282,,,,TRUE,,R2R
+2046,sweatersfor,sweaters,#N/A,,43282,18798,S362,,FALSE,,W2R
+2047,sweatershirt,sweatshirts,#N/A,2,40922,135453,S362,,FALSE,,W2R
+2048,sweatershirts,sweatshirts,#N/A,2,40922,70497,S362,,FALSE,,W2R
+2049,sweats,sweat,sweats,18,18687,,,,,,W2R
+2050,sweats,sweat,#N/A,18,18687,,,1,,,W2R
+2051,sweatshirtfor,sweatshirts,#N/A,,40922,20417,S326,,FALSE,,W2R
+2052,sweatshirts,sweatshirts,sweatshirts,40922,40922,,,,TRUE,,R2R
+2053,sweatshirts,sweatshirts,#N/A,40922,40922,,,1,TRUE,,R2R
+2054,sweatshirtsfor,sweatshirts,#N/A,,40922,12690,S326,1,FALSE,,W2R
+2055,sweattop,sweatshirts,#N/A,,,11962,S310,,FALSE,,R1 2 R2
+2056,sweetshrit,sweatshirts,#N/A,,40922,16857,S326,,FALSE,,W2R
+2057,swershirt,sweatshirts,#N/A,,40922,18355,S626,,FALSE,,W2R
+2058,swerters,sweaters,#N/A,,43282,15225,S636,,FALSE,,W2R
+2059,swertshirt,sweatshirts,#N/A,,40922,108503,S632,,FALSE,,W2R
+2060,swertshirts,sweatshirts,#N/A,,40922,12883,S632,,FALSE,,W2R
+2061,swetershirt,sweatshirts,#N/A,,40922,24116,S362,,FALSE,,W2R
+2062,swetershirts,sweatshirts,#N/A,,40922,31445,S362,,FALSE,,W2R
+2063,swetet,sweaters,#N/A,,4365,22122,S330,,FALSE,,W2R
+2064,swetre,sweaters,#N/A,,4365,20209,S360,,FALSE,,W2R
+2065,swetres,sweaters,#N/A,,43282,18781,S362,,FALSE,,W2R
+2066,swetsart,sweatshirts,#N/A,,40922,19837,S326,,FALSE,,W2R
+2067,swetshrit,sweatshirts,#N/A,,40922,22962,S326,,FALSE,,W2R
+2068,swimsuit,swimwear,#N/A,847,3498,,,,FALSE,,R1 2 R2
+2069,swimsuuits,swimwear,#N/A,,3498,,,,FALSE,,W2R
+2070,swimwear,swimwear,#N/A,3498,3498,,,,TRUE,,R2R
+2071,swimming gear,swimwear,,,3498,,,,,,R1 2 R2
+2072,swirtshirt,sweatshirts,#N/A,,40922,25251,S632,,FALSE,,W2R
+2073,switeshirt,sweatshirts,#N/A,,40922,12184,S326,,FALSE,,W2R
+2074,swomen,women,#N/A,1,895690,11396,S550,,FALSE,,W2R
+2075,t-shirt,tshirts,t-shirt,168860,162163,,,,FALSE,,R1 2 R2
+2076,t-shirt,tshirts,#N/A,168860,162163,,,1,FALSE,,R1 2 R2
+2077,t-shirts,tshirts,t-shirts,18191,162163,,,,FALSE,,R1 2 R2
+2078,t-shirts,tshirts,#N/A,18191,162163,,,1,FALSE,,R1 2 R2
+2079,taavi,taavi,#N/A,,,69869,T100,,TRUE,,R2R
+2080,tahirta,tshirts,#N/A,,162163,12495,T630,,FALSE,,W2R
+2081,tamil,tamil,#N/A,12,12,19660,T540,,TRUE,,R2R
+2082,tampered,tampered,#N/A,,,18898,T516,,TRUE,,R2R
+2083,tankini,swimwear,#N/A,46,3498,,,,FALSE,Handled in external synonyms,R1 2 R2
+2084,tankinis,swimwear,#N/A,51,3498,,,,FALSE,Handled in external synonyms,R1 2 R2
+2085,tanksuit,swimwear,tanksuit,,3498,,,,FALSE,Handled in external synonyms,R1 2 R2
+2086,tanksuit,jumpsuits,#N/A,,8201,,,1,FALSE,,R1 2 R2
+2087,tanksuits,swimwear,#N/A,,3498,,,,FALSE,Handled in external synonyms,R1 2 R2
+2088,tannt,tant,#N/A,,1638,,,,FALSE,,W2R
+2089,tanth,tant,#N/A,,1638,,,,FALSE,,W2R
+2090,tasar,tussar,#N/A,3,1370,,,,FALSE,,W2R
+2091,tattered,distressed,#N/A,2,2671,,,,FALSE,,W2R
+2092,taujer,trouser,#N/A,,1107,12083,T260,,FALSE,,W2R
+2093,tauser,trousers,#N/A,,49974,55229,T260,,FALSE,,W2R
+2094,tbshirt,tshirts,#N/A,,162163,24229,T126,,FALSE,,W2R
+2095,tbshirts,tshirts,#N/A,,162163,26612,T126,,FALSE,,W2R
+2096,team india new jersey,indian jersey,#N/A,,,,,1,FALSE,,R1 2 R2
+2097,tear,distressed,#N/A,122,2671,,,,FALSE,,W2R
+2098,teared,distressed,#N/A,,2671,,,,FALSE,,W2R
+2099,teashart,tshirts,#N/A,,162163,16759,T263,,FALSE,,W2R
+2100,teasharts,tshirts,#N/A,,162163,11408,T263,,FALSE,,W2R
+2101,tebet,tibetan,#N/A,,22,,,,FALSE,,W2R
+2102,tee su,tissue,#N/A,,10917,,,,FALSE,,W2R
+2104,tee,tshirts,tees,1227,162163,,,,FALSE,,R1 2 R2
+2105,tees,tshirts,tees,3796,162163,,,,FALSE,,R1 2 R2
+2106,tees,tshirts,#N/A,3796,162163,,,1,FALSE,,R1 2 R2
+2107,telangana,pochampally,#N/A,48,1133,,,,FALSE,,R1 2 R2
+2108,telegana ikat,andhra ikat,#N/A,,,,,1,FALSE,,R1 2 R2
+2109,telangana,pochampally,#N/A,48,1133,,,,FALSE,,R1 2 R2
+2110,telengana,pochampally,#N/A,,1133,,,,FALSE,,W2R
+2111,telangana ikat,andhra ikat,#N/A,,,,,1,FALSE,,R1 2 R2
+2112,telengana ikat,andhra ikat,#N/A,,,,,1,FALSE,,W2R
+2113,tenaz,tenaz,#N/A,,,19414,T520,,TRUE,,R2R
+2114,tera cotta,terracotta,#N/A,,219,,,,FALSE,,W2R
+2115,teracota,terracotta,#N/A,,219,,,,FALSE,,W2R
+2116,teracotta,terracotta,#N/A,13,219,,,,FALSE,,R1 2 R2
+2117,terracotta,terracotta,#N/A,219,219,,,,TRUE,,R2R
+2118,tesart,tshirts,#N/A,,162163,26693,T263,,FALSE,,W2R
+2119,tesert,tshirts,#N/A,,162163,13435,T263,,FALSE,,W2R
+2120,tesrt,tshirts,#N/A,,162163,20934,T263,,FALSE,,W2R
+2121,thermal wear,thermal wear,#N/A,,,,,,TRUE,,R2R
+2122,thermals,thermal wear,thermals,35,,,,,FALSE,,R2R
+2123,thermals,shawls,#N/A,35,2231,,,1,FALSE,,W2R
+2124,thermaltop,thermal wear,#N/A,,,,,,FALSE,,W2R
+2125,thermalvest,thermal wear,#N/A,,,,,,FALSE,,W2R
+2126,thermocoat,thermocoat,#N/A,,,20127,T652,,TRUE,Doubt: thermocoat not present in catalogue,R2R
+2127,thermocot,thermocoat,#N/A,,,18329,T652,,FALSE,,W2R
+2128,thin bangle,bangles,#N/A,,13470,,,,FALSE,,W2R
+2129,thupatta,dupattas,#N/A,,5530,28364,T130,,FALSE,,W2R
+2130,thuppatta,dupattas,#N/A,,5530,29596,T130,,FALSE,,W2R
+2131,tiara,tiara,#N/A,63,63,,,,FALSE,,R2R
+2132,tiaras,tiara,#N/A,1,63,,,,FALSE,,R2R
+2133,tiben,tibetan,#N/A,,22,,,,FALSE,,W2R
+2134,tibet,tibetan,#N/A,2,22,,,,FALSE,,W2R
+2135,tie -die,tie dye,#N/A,,,,,1,FALSE,"""tie die"" will make same mapping",W2R
+2136,tie & dye,tie dye,#N/A,,,,,1,FALSE,,W2R
+2137,tie die,tie dye,#N/A,,,,,,FALSE,changed value,W2R
+2138,tie dye,tie dye,#N/A,,,,,,TRUE,,R2R
+2139,tie n die,tie dye,#N/A,,,,,,FALSE,,W2R
+2140,tie n dye,tie dye,#N/A,,,,,,FALSE,,W2R
+2141,tie-dye,tie dye,#N/A,153,,,,1,FALSE,"""tie dye"" will make same mapping",W2R
+2142,tie-up,belts,#N/A,16544,57385,,,1,FALSE,,R1 2 R2
+2143,tight,leggings,#N/A,22368,24525,,,,FALSE,,W2R
+2144,tights,leggings,#N/A,554,24525,,,,FALSE,,W2R
+2145,tikka,tikka,#N/A,945,945,,,,FALSE,,R2R
+2146,timberland,timberland,#N/A,673,673,47064,T516,,TRUE,"brand ""timberland""",R2R
+2147,timer,watches,timer,12,13589,,,,FALSE,,W2R
+2148,timer,watches,#N/A,12,113,,,,FALSE,,R1 2 R2
+2149,timsprit,teamspirit,#N/A,,2362,11464,T521,,FALSE,,W2R
+2150,tis ue,tissue,#N/A,,10917,,,,FALSE,,W2R
+2151,tisart,tshirts,#N/A,,162163,70324,T263,,FALSE,,W2R
+2152,tisert,tshirts,#N/A,,162163,22638,T263,,FALSE,,W2R
+2153,tishrit,tshirts,#N/A,,162163,13550,T263,,FALSE,,W2R
+2154,tisrt,tshirts,#N/A,,162163,31983,T263,,FALSE,,W2R
+2155,tissu,tissue,#N/A,166,10917,,,1,FALSE,,W2R
+2156,tisue,tissue,#N/A,,10917,,,,FALSE,,W2R
+2157,tisurt,tshirts,#N/A,,162163,11955,T263,,FALSE,,W2R
+2158,tonjeans,torn jeans,#N/A,,,12157,T525,,FALSE,,W2R
+2159,tool,gadgets,tool,96,320,,,1,FALSE,Doubt: Change it to Personal Care tools,R1 2 R2
+2160,tool,appliances,#N/A,96,59,,,1,FALSE,,R1 2 R2
+2161,tools,gadgets,tools,2060,320,,,1,FALSE,Doubt: Change it to Personal Care tools,R1 2 R2
+2162,tools,appliances,#N/A,2060,59,,,1,FALSE,,R1 2 R2
+2163,toos,tops,#N/A,,115498,3723,T200,,FALSE,,W2R
+2164,top,tops,#N/A,96171,115498,,,,FALSE,,W2R
+2165,top wear,tops,#N/A,,115498,,,,FALSE,,R1 2 R2
+2166,topers,tops,#N/A,,115498,12121,T162,,FALSE,,W2R
+2167,topfor,tops,#N/A,,115498,54216,T160,,FALSE,,W2R
+2168,topi,caps & hats,topi,35,,,,,FALSE,,W2R
+2169,topi,caps & hats,#N/A,35,,,,1,FALSE,,W2R
+2170,toppers,toppers,#N/A,2,2,27154,T162,,TRUE,,R2R
+2171,tops,tops,tops,115498,115498,,,,TRUE,,R2R
+2172,tops,tops,tops,115498,115498,,,1,TRUE,,R2R
+2173,tops,"shirts, tops & tunics",#N/A,115498,,,,1,FALSE,,W2R
+2174,topsfor,tops,#N/A,,115498,34267,T121,,FALSE,,W2R
+2175,topsin,tops,#N/A,5,115498,14770,T125,,FALSE,,W2R
+2176,topwear,topwear,topwear,148528,115498,,,,TRUE,,R2R
+2177,topwear,kurtas,#N/A,148528,70622,,,1,FALSE,,R1 2 R2
+2178,topwears,topwear,#N/A,,115498,,,,FALSE,,W2R
+2179,topwomen,women tops,#N/A,,,12557,T155,,FALSE,,R1 2 R2
+2180,torn,distressed,#N/A,4,2671,,,,FALSE,,W2R
+2181,towser,trousers,#N/A,,49974,33524,T260,,FALSE,,W2R
+2182,track pant,track pants,#N/A,,,,,,FALSE,,W2R
+2183,track pants,track pants,#N/A,,,,,,TRUE,,R2R
+2184,track suit,tracksuits,#N/A,,3466,,,,FALSE,,W2R
+2185,track-suit,tracksuits,#N/A,,3466,,,,FALSE,,W2R
+2186,trackpant,track pants,#N/A,248,,,,,FALSE,,W2R
+2187,trackpants,track pants,#N/A,848,,,,,FALSE,,W2R
+2188,trackshoot,tracksuits,#N/A,,3466,27607,T623,,FALSE,,W2R
+2189,tracksuit,tracksuits,#N/A,2829,3466,,,,FALSE,,W2R
+2190,tracksuits,tracksuits,#N/A,3466,3466,,,,TRUE,Tracksuit added to synonyms.,R2R
+2191,tradishnal,traditional,#N/A,,80192,14004,T632,,FALSE,,W2R
+2192,tradisnal,traditional,#N/A,,80192,20407,T632,,FALSE,,W2R
+2193,tradistional,traditional,#N/A,,80192,12489,T632,,FALSE,,W2R
+2194,tradition,ethnic,#N/A,241,326887,,,,FALSE,,W2R
+2195,traditional,ethnic,#N/A,80192,326887,,,1,FALSE,,R1 2 R2
+2196,traujar,trousers,#N/A,,49974,13583,T626,,FALSE,,W2R
+2197,trausee,trousers,#N/A,,49974,960,T620,,FALSE,,W2R
+2198,travel bags,travel bags,#N/A,,,,,,TRUE,,R2R
+2199,travel wallet,wallets,#N/A,,57347,,,,FALSE,,R1 2 R2
+2200,travelwallet,wallets,#N/A,,57347,,,,FALSE,,R1 2 R2
+2201,treamspirit,teamspirit,#N/A,,2362,11253,T652,,FALSE,,W2R
+2202,treamsprit,teamspirit,#N/A,,2362,17314,T652,,FALSE,,W2R
+2203,tredishnal,traditional,#N/A,,80192,14938,T632,,FALSE,,W2R
+2204,tredisnal,traditional,#N/A,,80192,19541,T632,,FALSE,,W2R
+2205,tredistional,traditional,#N/A,,80192,15302,T632,,FALSE,,W2R
+2206,treggigs,treggings,#N/A,,192,690,T622,,FALSE,,W2R
+2207,trenchcoats,trenchcoats,#N/A,,,12447,T652,,TRUE,,R2R
+2208,trendy,evening,#N/A,3457,35581,,,,FALSE,,R1 2 R2
+2209,trendyto,"shirts, tops & tunics",#N/A,,,,,1,FALSE,,W2R
+2210,tri-fold,wallets,#N/A,806,57347,,,1,FALSE,,R1 2 R2
+2211,trimmers,trimmers,#N/A,11,11,13733,T656,,TRUE,,R2R
+2212,trinket,bracelets & bangles,#N/A,19,,,,1,FALSE,,W2R
+2213,trosures,trousers,#N/A,2,49974,34357,T626,,FALSE,,W2R
+2214,troures,trousers,#N/A,,49974,23456,T662,,FALSE,,W2R
+2215,trouser,trousers,trouser,1107,49974,,,,FALSE,,W2R
+2216,trouser,trousers,#N/A,1107,49974,,,1,FALSE,,W2R
+2217,trousers,trousers,trousers,49974,49974,,,,TRUE,,R2R
+2218,trousers,trousers,#N/A,49974,49974,,,1,TRUE,,R2R
+2219,trshirt,tshirts,#N/A,,162163,13596,T626,,FALSE,,W2R
+2220,tshart,tshirts,tshart,,162163,,,,FALSE,,W2R
+2221,tshart,tshirts,#N/A,,162163,,,1,FALSE,,W2R
+2222,tsharts,tshirts,tsharts,,162163,,,,FALSE,,W2R
+2223,tsharts,tshirts,#N/A,,162163,,,1,FALSE,,W2R
+2224,tshats,tshirts,#N/A,,162163,32915,T232,,FALSE,,W2R
+2225,tshirsts,tshirts,#N/A,,162163,68209,T262,,FALSE,,W2R
+2226,tshirt,tshirts,tshirt,3863,162163,,,,FALSE,,W2R
+2227,tshirt,tshirts,#N/A,3863,162163,,,1,FALSE,,W2R
+2228,tshirtfor,tshirts,#N/A,,162163,40914,T263,,FALSE,,W2R
+2229,tshirtmen,men tshirts,#N/A,,,22047,T263,,FALSE,,W2R
+2230,tshirts,tshirts,tshirts,162163,162163,,,,TRUE,,R2R
+2231,tshirts,tshirts,#N/A,162163,162163,,,1,TRUE,,R2R
+2232,tshirtsfor,tshirts,#N/A,,162163,30904,T263,1,FALSE,,W2R
+2233,tshist,tshirts,#N/A,,162163,28931,T223,,FALSE,,W2R
+2234,tshists,tshirts,#N/A,,162163,12689,T223,,FALSE,,W2R
+2235,tshort,tshirts,tshort,,162163,,,,FALSE,,W2R
+2236,tshort,tshirts,#N/A,,162163,,,1,FALSE,,W2R
+2237,ttrousure,trousers,#N/A,,49974,366,T626,,FALSE,,W2R
+2238,tunic,"shirts, tops & tunics",#N/A,10284,,,,1,FALSE,,R1 2 R2
+2239,tunics,"shirts, tops & tunics",#N/A,83055,,,,1,FALSE,,R1 2 R2
+2240,tusar,tussar,#N/A,,1370,,,,FALSE,,W2R
+2241,tusshar,tussar,#N/A,,1370,,,,FALSE,,W2R
+2242,tvshirt,tshirts,#N/A,,162163,39439,T126,,FALSE,,W2R
+2243,tvshirts,tshirts,#N/A,,162163,40350,T126,,FALSE,,W2R
+2244,tween,teen,#N/A,8,36,,,,FALSE,,W2R
+2245,twinning,twinning,#N/A,3,3,13573,T552,,TRUE,,R2R
+2246,typrographic,typographic,#N/A,,68601,13034,T162,,FALSE,,W2R
+2247,ucb,benetton,#N/A,3,2488,,,1,FALSE,"Doubt: phrase acronyms will handle. But ""ucb"" shouldn't change",W2R
+2248,ulen,wool,#N/A,,14014,49710,U450,,FALSE,,W2R
+2249,ullan,wool,#N/A,,14014,11536,U450,,FALSE,,W2R
+2250,uncle,uncle,#N/A,31,31,20903,U524,,TRUE,,R2R
+2251,undergarment,vests,undergarment,15,4164,,,1,FALSE,,R1 2 R2
+2252,undergarment,briefs,undergarment,15,15681,,,1,FALSE,,R1 2 R2
+2253,undergarment,briefs,undergarment,15,15681,,,1,FALSE,,R1 2 R2
+2254,undergarment,boxers,#N/A,15,12174,,,1,FALSE,,R1 2 R2
+2255,undergarments,briefs,#N/A,138,15681,,,1,FALSE,,R1 2 R2
+2256,underpant,underpant,underpant,,,27803,U536,,TRUE,,R2R
+2257,underpant,briefs,underpant,,15681,,,1,FALSE,,R1 2 R2
+2258,underpant,boxers,#N/A,,12174,,,1,FALSE,,R1 2 R2
+2259,underwear,lingerie & innerwear,underwear,645,,,,1,FALSE,,R1 2 R2
+2260,underwear,lingerie,underwear,645,52781,,,1,FALSE,,R1 2 R2
+2261,underwear,bras,#N/A,645,26980,,,1,FALSE,,R1 2 R2
+2262,undies,underwear,#N/A,9,645,,,,FALSE,,W2R
+2263,universalwear,universal,#N/A,,216015,,,,FALSE,,W2R
+2264,unltd,unlimited,#N/A,729,16,24120,U543,1,FALSE,,W2R
+2265,uppe,tops,#N/A,1,115498,,,1,FALSE,,W2R
+2266,upper wear,topwear,#N/A,,115498,,,,FALSE,,R1 2 R2
+2267,upperwear,topwear,#N/A,,115498,,,,FALSE,,R1 2 R2
+2268,uptempo,up tempo,#N/A,3,,14702,U135,1,FALSE,Currently has 0 products,W2R
+2269,uspolo,us polo,#N/A,,,442271,U214,,FALSE,,W2R
+2270,utsa,utsa,#N/A,,,17552,U320,,TRUE,,R2R
+2271,vanheusan,van heusen,#N/A,,,12599,V525,,FALSE,,W2R
+2272,vanhuesen,van heusen,#N/A,,,19266,V525,,TRUE,,W2R
+2273,vanhusen,van heusen,#N/A,,,42107,V525,,FALSE,,W2R
+2274,vapormax,vapormax,#N/A,,,14406,V165,,TRUE,"""vapormax"" nike shoes",R2R
+2275,varanasi,banarasi,#N/A,2,35075,,,,FALSE,,W2R
+2276,varanga,varanga,#N/A,1,1,273208,V652,,TRUE,"""varanga"" brand",R2R
+2277,varlee,warli,#N/A,,132,,,,FALSE,,W2R
+2278,varli,warli,#N/A,2,132,,,,FALSE,,W2R
+2279,varly,warli,#N/A,,132,,,,FALSE,,W2R
+2280,vascoat,waistcoat,#N/A,,2001,11491,V230,,FALSE,,W2R
+2281,vbuys,vbuyz,#N/A,,740,12932,V200,,FALSE,,W2R
+2282,vbuyz,vbuyz,#N/A,740,740,154900,V200,,TRUE,,R2R
+2283,venhusen,van heusen,#N/A,,,25183,V525,,FALSE,,W2R
+2284,venkat giri,venkatagiri,#N/A,,245,,,,FALSE,,W2R
+2285,venkatagiri,venkatagiri,#N/A,245,245,,,,FALSE,,R2R
+2286,veramoda,veromoda,#N/A,,1,92310,V653,,FALSE,,W2R
+2287,vermoda,veromoda,#N/A,,1,18874,V653,,FALSE,,W2R
+2288,vest,vests,#N/A,3014,4164,,,,FALSE,,W2R
+2289,vests,vests,#N/A,4164,4164,,,,TRUE,,R2R
+2290,vichitra,vichitra,#N/A,721,721,15045,V236,,TRUE,,R2R
+2291,vintar,winter,#N/A,,2304,15589,V536,,FALSE,,W2R
+2292,virls,girls,#N/A,,101217,20896,V642,,FALSE,,W2R
+2293,vishud,vishudh,#N/A,,,18478,V230,,TRUE,,W2R
+2294,vishudh,vishudh,#N/A,,,201985,V230,,TRUE,,R2R
+2295,volleyball,volleyball,#N/A,9,9,20075,V414,,TRUE,,R2R
+2296,vomero,vomero,#N/A,16,16,24075,V560,,TRUE,,R2R
+2297,vuitton,vuitton,#N/A,,,18927,V350,,TRUE,,R2R
+2298,w9men,women,#N/A,,895690,,,,FALSE,,W2R
+2299,w0men,women,#N/A,,895690,,,,FALSE,,W2R
+2300,walkaroo,walkaroo,#N/A,,,19497,W426,,TRUE,,R2R
+2301,walkmate,walkmate,#N/A,,,12589,W425,,TRUE,,R2R
+2302,wallent,wallets,#N/A,,8071,12317,W453,,FALSE,,W2R
+2303,wallet,wallets,#N/A,8071,57347,,,,FALSE,Added to synonyms,W2R
+2304,wallets,wallets,#N/A,57347,57347,,,,TRUE,,R2R
+2305,warlee,warli,#N/A,,132,,,,FALSE,,W2R
+2306,warly,warli,#N/A,,132,,,,FALSE,,W2R
+2307,warmer,warmer,warmer,107,107,,,,TRUE,,R2R
+2308,warmer,warmer,#N/A,107,107,,,1,TRUE,,R2R
+2309,warmers,warmer,#N/A,3,107,,,,,,W2R
+2310,washcoat,washcoat,#N/A,,,18523,W230,,TRUE,,R2R
+2311,wasten,western,#N/A,,738632,13632,W235,,FALSE,,W2R
+2312,watch,watches,#N/A,13153,13589,,,,FALSE,Added to synonyms,W2R
+2313,watches,watches,#N/A,13589,13589,,,,TRUE,,R2R
+2314,wbite,white,#N/A,,172817,13981,W130,,FALSE,,W2R
+2315,wearfor,wear for,#N/A,,,39202,W616,,FALSE,,W2R
+2316,weastren,western,#N/A,,738632,17918,W236,,FALSE,,W2R
+2317,weave,hair accessories,#N/A,1256,,,,1,FALSE,"entity token, getting dropped",R1 2 R2
+2318,wedding,wedding,#N/A,3610,3610,,,,TRUE,,R2R
+2319,wedge,heels,#N/A,309,20517,,,1,FALSE,,W2R
+2320,wedges,heels,#N/A,4429,20517,,,1,FALSE,,W2R
+2321,werstern,western,#N/A,,738632,13854,W623,,FALSE,,W2R
+2322,wesren,western,#N/A,,738632,11276,W265,,FALSE,,W2R
+2323,westan,western,#N/A,,738632,90032,W235,,FALSE,,W2R
+2324,westerntops,western tops,#N/A,,,14312,W236,,FALSE,,W2R
+2325,weston,weston,#N/A,5,5,23670,W235,,TRUE,,R2R
+2326,westside,westside,#N/A,15,15,100763,W232,,TRUE,,R2R
+2327,whilte,white,#N/A,6,172817,11424,W430,,FALSE,Added to synonyms,W2R
+2328,whiteshirt,white shirts,#N/A,,,11915,W326,,FALSE,,W2R
+2329,wholesale,wholesale,#N/A,,,13785,W424,,TRUE,,R2R
+2330,wide belt,belts,#N/A,,57385,,,,FALSE,,W2R
+2331,winchiter,windcheater,#N/A,,53,20515,W523,,FALSE,,W2R
+2332,windcheater,windcheater,windcheater,53,53,,,,TRUE,,R2R
+2333,windcheater,jackets,#N/A,53,31735,,,1,FALSE,,W2R
+2334,winflo,winflo,#N/A,36,36,85373,W514,,TRUE,"""nike winflo""",R2R
+2335,winflow,winflo,#N/A,,36,40893,W514,,FALSE,,W2R
+2336,winterdress,winter dresses,#N/A,,,11899,W536,,FALSE,,W2R
+2337,wkurta,w kurtas,#N/A,,,292,W263,,FALSE,,W2R
+2338,woddies,hoodies,#N/A,,41538,12267,W320,,FALSE,,W2R
+2339,woll,wool,#N/A,,14014,,,,FALSE,,W2R
+2340,woman,women,#N/A,3190,895690,,,,FALSE,Added to synonyms,R1 2 R2
+2341,woman's,women,#N/A,102,895690,,,,FALSE,Added to synonyms,R1 2 R2
+2342,women wallets,clutches & wristlets,#N/A,,,,,1,FALSE,,W2R
+2343,women's,women,#N/A,3946,895690,,,,FALSE,Added to synonyms,R1 2 R2
+2344,women's ear ring,earrings,#N/A,,67238,,,1,FALSE,,W2R
+2345,women's ear rings,earrings,#N/A,,67238,,,1,FALSE,,W2R
+2346,women's ear-ring,earrings,#N/A,,67238,,,1,FALSE,,W2R
+2347,women's ear-rings,earrings,#N/A,,67238,,,1,FALSE,,W2R
+2348,women's earring,earrings,#N/A,,67238,,,1,FALSE,,W2R
+2349,women's earrings,earrings,#N/A,,67238,,,1,FALSE,,W2R
+2350,womendress,women dresses,#N/A,,,32470,W553,,FALSE,,W2R
+2351,womenfootwear,women footwear,#N/A,,,33725,W551,,FALSE,,W2R
+2352,womenjeans,women jeans,#N/A,,,13405,W552,,FALSE,,W2R
+2353,womenl,women,#N/A,,895690,15237,W554,,FALSE,,W2R
+2354,womenshoes,women shoes,#N/A,,,17618,W552,,FALSE,,W2R
+2355,woment,women,#N/A,,895690,104298,W553,,FALSE,,W2R
+2356,woments,women,#N/A,,895690,29470,W553,,FALSE,,W2R
+2357,womer,women,#N/A,,895690,19550,W560,,FALSE,,W2R
+2358,womesns,women,#N/A,,846,20776,W525,,FALSE,,W2R
+2359,womren,women,#N/A,,895690,24369,W565,,FALSE,,W2R
+2360,womrm,women,#N/A,,,19781,W565,,FALSE,,W2R
+2361,wonrn,women,#N/A,,895690,16940,W565,,FALSE,,W2R
+2362,woolen,wool,#N/A,991,14014,,,,FALSE,Added to synonyms,W2R
+2363,woollen,wool,#N/A,276,14014,,,,FALSE,,W2R
+2364,worksarees,work sarees,#N/A,,,14336,W626,,FALSE,,W2R
+2365,workwear,work,#N/A,283,45097,,,,FALSE,Added to synonyms,W2R
+2366,world cup tshirt,indian jersey,#N/A,,,,,?,FALSE,,W2R
+2367,worlee,warli,#N/A,,132,,,,FALSE,,W2R
+2368,worli,warli,#N/A,7,132,,,,FALSE,Added to synonyms,W2R
+2369,worly,warli,#N/A,,132,,,,FALSE,,W2R
+2370,worn,distressed,#N/A,960,2671,,,,FALSE,Added to synonyms,W2R
+2371,wornout,distressed,#N/A,,2671,,,,FALSE,,W2R
+2372,wpomen,women,#N/A,1,895690,12391,W155,,FALSE,,W2R
+2373,wraps,shawls,#N/A,5981,2231,,,,FALSE,Added to synonyms,W2R
+2374,wristband,bracelets,wristband,246,17480,,,1,FALSE,"Can be smartband or smartwatches also. But explicitly, it is sweat absorbing wristband (hence treating as open tokens is better).",R1 2 R2
+2375,wristband,bracelets & bangles,#N/A,246,,,,1,FALSE,,W2R
+2376,wristlet,clutches & wristlets,#N/A,467,,,,1,FALSE,,W2R
+2377,wristlets,wristlets,wristlets,3625,3625,,,,TRUE,,R2R
+2378,wristlets,clutches & wristlets,#N/A,3625,,,,1,FALSE,,W2R
+2379,wristwatch,wristwatch,wristwatch,21,21,22107,W623,1,TRUE,,R2R
+2380,wristwatch,watches,wristwatch,21,13589,,,,FALSE,,W2R
+2381,wristwatch,smartwatch,#N/A,21,113,,,1,FALSE,,W2R
+2382,wristwear,bracelets & bangles,wristwear,,,,,,FALSE,Doubt: What about watches?,W2R
+2383,wristwear,bracelets,wristwear,,17480,,,1,FALSE,,W2R
+2384,wristwear,bangles,#N/A,,13470,,,1,FALSE,,W2R
+2385,wrogan,wrogn,#N/A,,,15553,W625,,FALSE,,W2R
+2386,wrogen,wrogn,#N/A,,,13088,W625,,FALSE,,W2R
+2387,yearboy,years boys,#N/A,,,11939,Y610,,FALSE,,W2R
+2388,yeargirl,years girls,#N/A,,,17193,Y626,,FALSE,,W2R
+2389,yeargirls,years girls,#N/A,,,12341,Y626,,FALSE,,W2R
+2390,yearold,year old,#N/A,,,13838,Y643,,FALSE,,W2R
+2391,yearsboys,years boys,#N/A,,,19879,Y621,,FALSE,,W2R
+2392,yearsgirl,years girls,#N/A,,,15457,Y626,,FALSE,,W2R
+2393,yearsgirls,years girls,#N/A,,,21509,Y626,,FALSE,,W2R
+2394,yearsold,years old,#N/A,,,13236,Y624,,FALSE,,W2R
+2395,yeezy,yezzy,#N/A,,,62010,Y200,,TRUE,,W2R
+2396,yerars,years,#N/A,,1200,12841,Y662,,FALSE,,W2R
+2397,yezzy,yezzy,#N/A,,,20734,Y200,,TRUE,"""Adidas yezzy""",R2R
+2398,zaket,jackets,#N/A,,31735,21425,Z230,,FALSE,,W2R
+2399,zapatoz,zapatoz,#N/A,,,29247,Z132,,TRUE,,R2R
+2400,zare,zari,#N/A,,30415,,,,FALSE,,W2R
+2401,zarie,zari,#N/A,,30415,,,,FALSE,,W2R
+2402,zary,zari,#N/A,,30415,,,,FALSE,,W2R
+2403,zeans,jeans,#N/A,,48476,,,,FALSE,,W2R
+2404,zeens,jeans,#N/A,,48476,62836,Z520,,FALSE,,W2R
+2405,zelt,belt,#N/A,,14518,21250,Z430,1,FALSE,1,W2R
+2406,zoomx,zoomx,#N/A,,,11773,Z520,,TRUE,"""nike zoomx""",R2R
+2407,zumka,jhumkas,#N/A,,6197,37981,Z520,,FALSE,,W2R
+2408,zumkas,jhumkas,#N/A,,6197,12297,Z522,,FALSE,,W2R
+2409,ons,on,,14185,61677,,,,FALSE,,W2R
+2410,striped,stripes,,61066,67369,29719,,,FALSE,Added to synonyms,W2R
+2411,bandi,nehru,,37,5452,10000,,,,,W2R
+2412,chudi set,bangles,,,13470,10000,,,,,W2R
+2413,go colours,go colors,,,,10000,,,,,W2R
+2414,jens,jeans,,1,48476,,,,,,W2R
+2415,jhon,john,,,5296,,,,,,W2R
+2416,geans,jeans,,,48476,,,,,,W2R
+2417,toyes,toys,,,7134,,,,,,W2R
+2418,earpod,earpods,,,71,,,,,,W2R
+2419,earbud,earpods,,,71,,,,,,W2R
+2420,earbuds,earpods,,55,71,,,,,,W2R
+2421,ear pod,earpods,,,71,,,,,,W2R
+2422,ear bud,earpods,,,71,,,,,,W2R
+2423,ear buds,earpods,,,71,,,,,,W2R
+2424,jewelry,jewellery,,,165164,,,,,,W2R
+2425,jewels,jewellery,,8817,165164,,,,,,R1 2 R2
+2426,buds,buds,,62,62,,,,,,R2R
+2427,crocks,crocs,,,608,,,,,,W2R
+2428,garments,wear,,136,1066683,,,,,,W2R
+2429,garment,wear,,1181,1066683,,,,,,W2R
+2430,clothes,wear,,1119,1066683,,,,,,W2R
+2431,clothing,wear,,1131648,1066683,,,,,Doubt: Keep it clothing itself,W2R
+2432,apparel,wear,,801,1066683,,,,,,W2R
+2433,apparels,wear,,259,1066683,,,,,,W2R
+2434,nighty,nighties,,397,11329,,,,,Has 11K products,W2R
+2435,sidebag,slings,,2,9019,,,,,,R1 2 R2
+2436,side bag,slings,,,9019,,,,,,R1 2 R2
+2437,sidebags,slings,,,9019,,,,,,R1 2 R2
+2438,side bags,slings,,,9019,,,,,,R1 2 R2
+2439,party wear,evening,,,35581,,,,,,R1 2 R2
+2440,camomille,chamomile,,2,64,,,,,Added to synonyms,W2R
+2441,metalic,metallic,,30,3945,,,,,Added to synonyms,W2R
+2442,panchas,dhoti,,,4289,,,,,,R1 2 R2
+2442,pancha,dhoti,,,4289,,,,,,R1 2 R2
+2443,fat,plus,,22,12461,,,,,Added to synonyms,R1 2 R2
+,brow,brow,,,,,,,,,R2R
+2444,eye brow,brow pencil,,,109,,,,,,W2R
+2445,kidswear,kids,,5,9193,,,,,,R1 2 R2
+2446,kids wear,kids,,,9193,,,,,,R1 2 R2
+2447,kudtha,kurtas,,,70622,,,,,,W2R
+,short,short,,,,,,,,,R2R
+,sleeve,sleeve,,,,,,,,,R2R
+,suit,suit,,,,,,,,,R2R
+,chiter,cheater,,,,,,,,,W2R
+,fashionable,fashionable,,,,,,,,,R2R
+,jone,john,,,,,,,,,W2R
+,jhone,john,,,,,,,,,W2R
+,ledar,leather,,,,,,,,,W2R
+,payjama,pyjamas,,,,,,,,,W2R
+,pattu,pattu,,,,,,,,,R1 2 R2
+,langa,lehengas,,,,,,,,,R1 2 R2
+2448,cheppulu,chappal,,,125,,,,,Translation,R1 2 R2
+,veshti,dhoti,,,,,,,,,R1 2 R2
+,tie,tie,,,,,,,,,R2R
+,eyebrow,brow pencil,,,,,,,,,R1 2 R2
+,eyeshadow,shadow & dust,,,,,,1,,,R1 2 R2
+,eye shadow,shadow & dust,,,,,,,,,R1 2 R2
+,eye colour,shadow & dust,,,,,,,,,R1 2 R2
+,eye color,shadow & dust,,,,,,,,,R1 2 R2
+,fake,fake,,,,,,,,,R2R
+,fake lashes,false lashes,,,,,,,,,R1 2 R2
+,fake eye lash,false lashes,,,,,,,,,R1 2 R2
+,false eye lash,false lashes,,,,,,,,,R1 2 R2
+,false eye lashes,false lashes,,,,,,,,,R1 2 R2
+,artificial eye lash,false lashes,,,,,,,,,R1 2 R2
+,artificial eye lashes,false lashes,,,,,,,,,R1 2 R2
+,liner,liner,,,,,,,,,R2R
+,kajal,liners & kajal,,,,,,,,,R1 2 R2
+,eye liner,liners & kajal,,,,,,,,,R1 2 R2
+,eyeliner,liners & kajal,,,,,,1,,,R1 2 R2
+,kohl,liners & kajal,,,,,,,,,R1 2 R2
+,eye pencil,liners & kajal,,,,,,,,,R1 2 R2
+,lip colour,lip stick,,,,,,,,,R1 2 R2
+,liquid lip colour,liquid lipstick,,,,,,,,,R1 2 R2
+,crayon lipstick,lip crayon,,,,,,,,,R1 2 R2
+,bb cream,bb & cc cream,,,,,,,,,R1 2 R2
+,cc cream,bb & cc cream,,,,,,,,,R1 2 R2
+,cleanser,cleansers,,,,,,,,,R1 2 R2
+,face cleanser,cleansers,,,,,,,,,R1 2 R2
+,face cleaner,cleansers,,,,,,,,,R1 2 R2
+,makeup remover,cleansers,,,,,,,,,R1 2 R2
+,makeup cleaner,cleansers,,,,,,,,,R1 2 R2
+,face cream,creams and moisturisers,,,,,,,,,R1 2 R2
+,face creams,creams and moisturisers,,,,,,,,,R1 2 R2
+,creams for face,creams and moisturisers,,,,,,,,,R1 2 R2
+,face scrub,exfoliators & scrubs,,,,,,,,,R1 2 R2
+,scrub,exfoliators & scrubs,,,,,,,,,R1 2 R2
+,scrubs,exfoliators & scrubs,,,,,,,,,R1 2 R2
+,exfoliator,exfoliators & scrubs,,,,,,,,,R1 2 R2
+,exfoliators,exfoliators & scrubs,,,,,,,,,R1 2 R2
+,under eye cream,eye care,,,,,,,,,R1 2 R2
+,dark circle cream,eye care,,,,,,,,,R1 2 R2
+,eye cream,eye care,,,,,,,,,R1 2 R2
+,undereye cream,eye care,,,,,,,,,R1 2 R2
+,oil for face,face oil,,,,,,,,,R1 2 R2
+,oils for face,face oil,,,,,,,,,R1 2 R2
+,essential oil,face oil,,,,,,,,,R1 2 R2
+,essential oils,face oil,,,,,,,,,R1 2 R2
+,face wipes,facial wipes & tissues,,,,,,,,,R1 2 R2
+,face tissues,facial wipes & tissues,,,,,,,,,R1 2 R2
+,facial tissues,facial wipes & tissues,,,,,,,,,R1 2 R2
+,facial tissue,facial wipes & tissues,,,,,,,,,R1 2 R2
+,face mask,masks & peels,,,,,,,,,R1 2 R2
+,facemask,masks & peels,,,,,,1,,,R1 2 R2
+,facial mask,masks & peels,,,,,,,,,R1 2 R2
+,face serum,serums & essence,,,,,,,,,R1 2 R2
+,facial serum,serums & essence,,,,,,,,,R1 2 R2
+,tone,tone,,,,,,,,,R2R
+,toners,toners & mist,,,,,,,,,R1 2 R2
+,mists,toners & mist,,,,,,,,,R1 2 R2
+,face toner,toners & mist,,,,,,,,,R1 2 R2
+,face mists,toners & mist,,,,,,,,,R1 2 R2
+,face mist,toners & mist,,,,,,,,,R1 2 R2
+,toner,toners & mist,,,,,,,,,R1 2 R2
+,blush,face palettes,,,,,,,,,R1 2 R2
+,face colour,face palettes,,,,,,,,,R1 2 R2
+,face color,face palettes,,,,,,,,,R1 2 R2
+,blusher,face palettes,,,,,,,,,R1 2 R2
+,bronze,bronze,,,,,,,,,R2R
+,bronzer,bronzer & highlighter,,,,,,,,,R1 2 R2
+,bronzers,bronzer & highlighter,,,,,,,,,R1 2 R2
+,highlighter,bronzer & highlighter,,,,,,,,,R1 2 R2
+,face powder,compact & loose powder,,,,,,,,,R1 2 R2
+,makeup powder,compact & loose powder,,,,,,,,,R1 2 R2
+,compact,compact & loose powder,,,,,,,,,R1 2 R2
+,primer,primer & concealer,,,,,,,,,R1 2 R2
+,concealer,primer & concealer,,,,,,,,,R1 2 R2
+,makeup spray,setting spray,,,,,,1,,,R1 2 R2
+,make up spray,setting spray,,,,,,,,,R1 2 R2
+,nail art,nail accessories,,,,,,,,,R1 2 R2
+,nailart,nail accessories,,,,,,1,,,R1 2 R2
+,fake nails,nail accessories,,,,,,,,,R1 2 R2
+,artificial nail,nail accessories,,,,,,,,,R1 2 R2
+,artificial nails,nail accessories,,,,,,,,,R1 2 R2
+,remover,remover,,,,,,,,,R2R
+,removers,remover,,,,,,,,,W2R
+,nail polish remover,nail paint remover,,,,,,,,,R1 2 R2
+,remover,nail paint remover,,,,,,,,,R1 2 R2
+,nail remover,nail paint remover,,,,,,,,,R1 2 R2
+,nail paint,nail polish,,,,,,,,,R1 2 R2
+,nail color,nail polish,,,,,,,,,R1 2 R2
+,nail colour,nail polish,,,,,,,,,R1 2 R2
+,makeup brushes,brushes,,,,,,1,,removed because of generalization to hair brushes,R1 2 R2
+,makeup brush,brushes,,,,,,1,,removed because of generalization to hair brushes,R1 2 R2
+,brush,brushes,,,,,,,,,R1 2 R2
+,makup sponge,sponges & applicators,,,,,,,,,R1 2 R2
+,makeup applicator,sponges & applicators,,,,,,,,,R1 2 R2
+,makeup applicators,sponges & applicators,,,,,,,,,R1 2 R2
+,shampu,shampoo,,,,,,,,,R1 2 R2
+,conditioner,conditioner,,,,,,,,,R1 2 R2
+,conditioners,conditioner,,,,,,,,,R1 2 R2
+,soaps,soaps,,,,,,,,,R2R
+,bath soaps,soaps,,,,,,,,,R1 2 R2
+,bath soap,soaps,,,,,,,,,R1 2 R2
+,body soap,soaps,,,,,,,,,R1 2 R2
+,bathing soap,soaps,,,,,,,,,R1 2 R2
+,body scrub,bath scrubs,,,,,,,,,R1 2 R2
+,bath scrub,bath scrubs,,,,,,,,,R1 2 R2
+,body scrubs,bath scrubs,,,,,,,,,R1 2 R2
+,body warmer,thermal wear,,,,,,,,,R1 2 R2
+,bath salt,bath fizzies & salts,,,,,,,,,R1 2 R2
+,bath salts,bath fizzies & salts,,,,,,,,,R1 2 R2
+,bathing salts,bath fizzies & salts,,,,,,,,,R1 2 R2
+,body lotion,moisturisers & lotions,,,,,,,,,R1 2 R2
+,lotion,moisturisers & lotions,,,,,,,,,R1 2 R2
+,body cream,moisturisers & lotions,,,,,,,,,R1 2 R2
+,body creams,moisturisers & lotions,,,,,,,,,R1 2 R2
+,moisturizer,moisturisers & lotions,,,,,,,,,R1 2 R2
+,moisturizers,moisturisers & lotions,,,,,,,,,R1 2 R2
+,moisturiser,moisturisers & lotions,,,,,,,,,R1 2 R2
+,moisturisers,moisturisers & lotions,,,,,,,,,R1 2 R2
+,creams,moisturisers & lotions,,,,,,1,,,R1 2 R2
+,cream,moisturisers & lotions,,,,,,1,,,R1 2 R2
+,sun screem,sunscreen,,,,,,,,,W2R
+,sun cream,sunscreen,,,,,,,,,W2R
+,sunscream,sunscreen,,,,,,,,,W2R
+,foot cream,foot care,,,,,,,,,R1 2 R2
+,heel cream,foot care,,,,,,,,,R1 2 R2
+,crack cream,foot care,,,,,,,,,R1 2 R2
+,hand cream,hand care,,,,,,,,,R1 2 R2
+,handcream,hand care,,,,,,1,,,R1 2 R2
+,hand moituriser,hand care,,,,,,,,,R1 2 R2
+,talcum,talcum powder,,,,,,,,,R1 2 R2
+,powder,talcum powder,,,,,,1,,,R1 2 R2
+,hair serum,serums & creams,,,,,,,,,R1 2 R2
+,serum,serums & essence,,,,,,,,,R1 2 R2
+,hair mask,hair masks,,,,,,,,,R1 2 R2
+,hair spa,hair masks,,,,,,,,,R1 2 R2
+,hair spa cream,hair masks,,,,,,,,,R1 2 R2
+,setting spray,hair spray,,,,,,1,,removed because it means makeup setting spray,R1 2 R2
+,hair setteng spray,hair spray,,,,,,,,,R1 2 R2
+,hair setteng spray,hair spray,,,,,,,,,R1 2 R2
+,hair styling spray,hair spray,,,,,,,,,R1 2 R2
+,perfume,perfumes,,,,,,,,,R1 2 R2
+,scent,perfumes,,,,,,,,,R1 2 R2
+,sent,perfumes,,,,,,,,,R1 2 R2
+,fragrance,perfumes,,,,,,,,,R1 2 R2
+,fragrances,perfumes,,,,,,,,,R1 2 R2
+,attar,perfumes,,,,,,,,,R1 2 R2
+,bodeyspray,spray,,,,,,,,,R1 2 R2
+,body spray,spray,,,,,,,,,R1 2 R2
+,deodorant,splash,,,,,,1,,,R1 2 R2
+,deodorants,splash,,,,,,1,,,R1 2 R2
+,body mist,mist,,,,,,,,,R1 2 R2
+,bodymist,mist,,,,,,1,,,R1 2 R2
+,roll on,roll-on,,,,,,,,,R1 2 R2
+,rollon,roll-on,,,,,,1,,,R1 2 R2
+,rollon deodorant,roll-on,,,,,,,,,R1 2 R2
+,cologne,cologne,,,,,,,,,R1 2 R2
+,colone,cologne,,,,,,,,,R1 2 R2
+,colon,cologne,,,,,,,,,R1 2 R2
+,shave,shave,,,,,,,,,R2R
+,after shave,cologne,,,,,,,,,R1 2 R2
+,aftershave,cologne,,,,,,1,,,R1 2 R2
+,shaving cream,"creams, foams & gels",,,,,,,,,R1 2 R2
+,shaving gel,"creams, foams & gels",,,,,,,,,R1 2 R2
+,shaving foam,"creams, foams & gels",,,,,,,,,R1 2 R2
+,beard cream,beard oil & butter,,,,,,,,,R1 2 R2
+,beard oil,beard oil & butter,,,,,,,,,R1 2 R2
+,beard butter,beard oil & butter,,,,,,,,,R1 2 R2
+,beard grooming,beard oil & butter,,,,,,,,,R1 2 R2
+,beard soap,beard wash,,,,,,,,,R1 2 R2
+,beard setting wax,beard wax,,,,,,,,,R1 2 R2
+,hair setting gel,hair gel,,,,,,,,,R1 2 R2
+,hair set wax,hair wax,,,,,,,,,R1 2 R2
+,hair setting wax,hair wax,,,,,,,,,R1 2 R2
+,hair set clay,hair clay,,,,,,,,,R1 2 R2
+,hair setting clay,hair clay,,,,,,,,,R1 2 R2
+,hair styling,hair styling,,,,,,1,,,R1 2 R2
+,hair cream,hair styling,,,,,,,,,R1 2 R2
+,hair setting cream,hair styling,,,,,,,,,R1 2 R2
+,hair color,hair colour,,,,,,,,,R1 2 R2
+,hair colour,hair colour,,,,,,,,,R2R
+,gargle,mouth wash,,,,,,,,,R1 2 R2
+,tongue cleaner,tongue cleaners,,,,,,,,,R1 2 R2
+,jeebi,tongue cleaners,,,,,,,,,R1 2 R2
+,jeebhi,tongue cleaners,,,,,,,,,R1 2 R2
+,tooth brush,tooth brush,,,,,,,,,R2R
+,paste,tooth paste,,,,,,,,,R1 2 R2
+,tooth paste,tooth paste,,,,,,,,,R2R
+,to faced,too faced,,,,,,,,,W2R
+,faced,too faced,,,,,,,,,W2R
+,two faced,too faced,,,,,,,,,W2R
+,gloss,gloss,,,,,,,,,R2R
+,necklace set,jewellery sets,,,,,,,,,R1 2 R2
+,ghadi,clock,,,,,,,,,R1 2 R2
+,croptop,crop,,,,,,,,,W2R
+,croptops,crop,,,,,,,,,W2R
+,slingbag,slings,,,,,,,,,W2R
+,slingbags,slings,,,,,,,,,W2R

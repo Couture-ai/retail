@@ -1,0 +1,7 @@
+,attributevalue,count,normalized_attributevalue,synonyms
+0,Mini,4437,mini length,"[('Short', 0.582), ('Cropped', 0.565), ('Petite', 0.561)]"
+1,Midi,2626,midi length,"[('Tea-length', 0.462), ('Calf-length', 0.379)]"
+2,Knee,2101,knee length,"[('Mid-calf', 0.607), ('Capri', 0.527), ('Three-quarter', 0.477), ('Tea-length', 0.458)]"
+3,Maxi,1324,maxi length,"[('Long', 0.548), ('Extended', 0.538), ('Floor-length', 0.494), ('Ankle-length', 0.481)]"
+4,Asymmetrical,117,asymmetrical length,"[('Unequal lengths', 0.813), ('Irregular lengths', 0.803), ('Crooked lengths', 0.767), ('Uneven hemlines', 0.669)]"
+5,High Low,63,high low length,"[('High-Low-Length', 0.917), ('Long-Short-Length', 0.833), ('Tall-Short-Length', 0.735), ('Maxi-Mini-Length', 0.536)]"
