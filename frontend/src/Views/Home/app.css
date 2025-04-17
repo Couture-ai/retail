@@ -1,0 +1,55 @@
+.get-started-button {
+    background-color: #fafafa;
+    color: #aaa;
+    text-decoration: none;
+    border-radius: 60px;
+    border: 1px solid #aaa;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    font-size: '12px';
+    width: auto;
+    max-width: 32px;
+    /** I'm animating max-width because width needs to be auto, and auto can't be animated **/
+    -webkit-transition: max-width 0.8s;
+    transition: max-width 0.8s;
+    padding-right: 40px;
+    /* padding-left: 20px; */
+}
+
+/* .get-started-button:hover {
+    background-color: #4CAF50;
+    width: '100%';
+    color: white;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+} */
+.parent:hover .get-started-button {
+    max-width: 300px;
+}
+
+.text {
+    white-space: nowrap;
+    font-weight: bold;
+    /* padding-right: 15px; */
+    font-size: 12px;
+}
+
+.icon {
+    font-family: "Font Awesome 5 Free";
+    font-size: 16px;
+    margin-right: 5px;
+    padding: 0px 8px;
+    display: flex;
+    align-items: center;
+}
+
+.curate-rules-box {
+    border-radius: 10px;
+    width: 100%;
+    border: 1px solid #c5c5c5;
+    position: absolute;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+}

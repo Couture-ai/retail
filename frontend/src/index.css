@@ -1,0 +1,100 @@
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 'regular';
+    src: local('Poppins'), url(./fonts/Poppins/Poppins-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 'medium';
+    src: local('Poppins'), url(./fonts/Poppins/Poppins-Medium.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 'bold';
+    src: local('Poppins'), url(./fonts/Poppins/Poppins-Bold.ttf) format('truetype');
+}
+
+
+@font-face {
+    font-family: 'Jost';
+    src: url(./fonts/Jost/Jost-VariableFont_wght.ttf);
+}
+
+@font-face {
+    font-family: 'Hanken Grotesk';
+    src: url(./fonts/Hanken_Grotesk/HankenGrotesk-VariableFont_wght.ttf);
+}
+
+/* on folder ./fonts/Lato
+Lato-Black.ttf Lato-Italic.ttf Lato-Thin.ttf Lato-BlackItalic.ttf Lato-Light.ttf Lato-ThinItalic.ttf Lato-Bold.ttf Lato-LightItalic.ttf OFL.txt Lato-BoldItalic.ttf Lato-Regular.ttf
+*/
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'black';
+    src: local('Lato'), url(./fonts/Lato/Lato-Black.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'black-italic';
+    src: local('Lato'), url(./fonts/Lato/Lato-BlackItalic.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'bold';
+    src: local('Lato'), url(./fonts/Lato/Lato-Bold.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'bold-italic';
+    src: local('Lato'), url(./fonts/Lato/Lato-BoldItalic.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'italic';
+    src: local('Lato'), url(./fonts/Lato/Lato-Italic.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'light';
+    src: local('Lato'), url(./fonts/Lato/Lato-Light.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'light-italic';
+    src: local('Lato'), url(./fonts/Lato/Lato-LightItalic.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'regular';
+    src: local('Lato'), url(./fonts/Lato/Lato-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'thin';
+    src: local('Lato'), url(./fonts/Lato/Lato-Thin.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 'thin-italic';
+    src: local('Lato'), url(./fonts/Lato/Lato-ThinItalic.ttf) format('truetype');
+}
+
+/* on folder ./fonts/Inter src/fonts/Inter/Inter-VariableFont_slnt,
+wght.ttf*/
+
+@font-face {
+    font-family: 'Inter';
+    src: url(./fonts/Inter/Inter-VariableFont_slnt,wght.ttf);
+}

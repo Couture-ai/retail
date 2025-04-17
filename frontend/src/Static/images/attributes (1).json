@@ -1,0 +1,402 @@
+[
+  {
+    "id": 89,
+    "name": "color",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 90,
+    "name": "attributes",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 91,
+    "name": "mart_availability",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 92,
+    "name": "vertical_code",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 93,
+    "name": "inventory_stores",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 94,
+    "name": "inventory_stores_3p",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 95,
+    "name": "variants",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 96,
+    "name": "average_rating",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 66,
+    "name": "point_id",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 67,
+    "name": "sku_id_internal",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "integer",
+    "configuration_id": 2
+  },
+  {
+    "id": 68,
+    "name": "sku_id",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 69,
+    "name": "product_option_id",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 70,
+    "name": "product_name",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 71,
+    "name": "product_description",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 72,
+    "name": "medias",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "map",
+    "configuration_id": 2
+  },
+  {
+    "id": 73,
+    "name": "url_slug",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 74,
+    "name": "popularity_score",
+    "searchable": true,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 75,
+    "name": "discount",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 76,
+    "name": "price_range",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 77,
+    "name": "price",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 78,
+    "name": "avg_mrp",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 79,
+    "name": "promotions",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 80,
+    "name": "tags",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 81,
+    "name": "l0",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 82,
+    "name": "l1",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 83,
+    "name": "l2",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 84,
+    "name": "l3",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 85,
+    "name": "l4",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 86,
+    "name": "l1l2l4_category",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 87,
+    "name": "l1l2l3_category",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 88,
+    "name": "brand_name",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 97,
+    "name": "avg_selling_price",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 98,
+    "name": "avg_discount_pct",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 99,
+    "name": "avg_discount_rate",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 100,
+    "name": "avg_discount",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 2
+  },
+  {
+    "id": 101,
+    "name": "number_of_user_ratings",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "integer",
+    "configuration_id": 2
+  },
+  {
+    "id": 102,
+    "name": "payment_tags",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  },
+  {
+    "id": 103,
+    "name": "is_available",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "integer",
+    "configuration_id": 2
+  },
+  {
+    "id": 104,
+    "name": "product_theme",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 2
+  },
+  {
+    "id": 105,
+    "name": "applicable_stores",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "array",
+    "configuration_id": 2
+  }
+]

@@ -1,0 +1,622 @@
+[
+  {
+    "id": 5,
+    "name": "allPromotions_string_mv",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 7,
+    "name": "brandName_text_en_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "text_en_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 8,
+    "name": "brandtype_en_string_mv",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 11,
+    "name": "brickstyletype_en_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 12,
+    "name": "catalogCommercialType_string",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 13,
+    "name": "catalogId",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 14,
+    "name": "category_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 15,
+    "name": "code_string",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 17,
+    "name": "commercialType_string",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 18,
+    "name": "creationtime_date",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "date",
+    "configuration_id": 1
+  },
+  {
+    "id": 19,
+    "name": "discountType_string",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 20,
+    "name": "dod_enabled_int",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "int",
+    "configuration_id": 1
+  },
+  {
+    "id": 21,
+    "name": "dod_price_inr_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 22,
+    "name": "dohL30_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 23,
+    "name": "earlyAccessPrice_float",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "float",
+    "configuration_id": 1
+  },
+  {
+    "id": 24,
+    "name": "exactdiscount_int",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "int",
+    "configuration_id": 1
+  },
+  {
+    "id": 25,
+    "name": "exclusiveTill_date",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "date",
+    "configuration_id": 1
+  },
+  {
+    "id": 26,
+    "name": "extraImages_string_mv",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 27,
+    "name": "futureDiscountPercentage_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 28,
+    "name": "futureListPrice_inr_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 29,
+    "name": "golivedays_int",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "int",
+    "configuration_id": 1
+  },
+  {
+    "id": 33,
+    "name": "img-288Wx360H_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 34,
+    "name": "img-473Wx593H_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 36,
+    "name": "inStockCount_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 37,
+    "name": "inStockFlag_boolean",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "boolean",
+    "configuration_id": 1
+  },
+  {
+    "id": 38,
+    "name": "inTakeMarginPerc_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 39,
+    "name": "isCodDisabled_boolean",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "boolean",
+    "configuration_id": 1
+  },
+  {
+    "id": 40,
+    "name": "l1category_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 41,
+    "name": "l1l2category_en_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 42,
+    "name": "l1l3category_en_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 44,
+    "name": "l3category_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 45,
+    "name": "mrp_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 46,
+    "name": "name_text_en",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "text_en",
+    "configuration_id": 1
+  },
+  {
+    "id": 47,
+    "name": "netDohL30_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 48,
+    "name": "netRosL30_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 49,
+    "name": "numUserRatings_int",
+    "searchable": false,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "int",
+    "configuration_id": 1
+  },
+  {
+    "id": 50,
+    "name": "outfitPicture_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 51,
+    "name": "planningCategory_text_en",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "text_en",
+    "configuration_id": 1
+  },
+  {
+    "id": 52,
+    "name": "priceValue_inr_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 53,
+    "name": "price_inr_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 55,
+    "name": "productToggleOn_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 56,
+    "name": "rosL30_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 57,
+    "name": "seasonCodeYear_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 58,
+    "name": "segmentProductTagValidity_date",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "date",
+    "configuration_id": 1
+  },
+  {
+    "id": 59,
+    "name": "segmentProductTag_string",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 60,
+    "name": "sizeData_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 61,
+    "name": "size_en_string",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 62,
+    "name": "tradeDiscountedValue_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 63,
+    "name": "url_en_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "string",
+    "configuration_id": 1
+  },
+  {
+    "id": 64,
+    "name": "wasPrice_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "double",
+    "configuration_id": 1
+  },
+  {
+    "id": 65,
+    "name": "webcategory_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "string_mv",
+    "configuration_id": 1
+  },
+  {
+    "id": 4,
+    "name": "ageing_double",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 6,
+    "name": "averageRating_double",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 35,
+    "name": "img-thumbNail_string",
+    "searchable": false,
+    "facetable": true,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 30,
+    "name": "id",
+    "searchable": true,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 16,
+    "name": "colorGroup_string",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 54,
+    "name": "primaryPromotionCode_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 31,
+    "name": "img-174Wx218H_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 10,
+    "name": "brickprimarycolor_en_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": false,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 43,
+    "name": "l2category_string_mv",
+    "searchable": true,
+    "facetable": true,
+    "filterable": false,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 32,
+    "name": "img-286Wx359H_string",
+    "searchable": false,
+    "facetable": false,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  },
+  {
+    "id": 9,
+    "name": "brandtype_string_mv",
+    "searchable": false,
+    "facetable": true,
+    "filterable": true,
+    "fetchable": true,
+    "data_type": "undefined",
+    "configuration_id": 1
+  }
+]
