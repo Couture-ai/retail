@@ -106,6 +106,10 @@ export default function Home({ initialModule }: HomeProps) {
   const [lowStockAlerts, setLowStockAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Get the app prefix from environment variables
+  const APP_PREFIX = import.meta.env.VITE_APP_PREFIX || '';
+  const prefixedPath = (path: string) => APP_PREFIX ? `/${APP_PREFIX}${path}` : path;
+
   const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
   
   // Set the active module from the URL when the component mounts
@@ -337,31 +341,31 @@ export default function Home({ initialModule }: HomeProps) {
       id: 'goto-home', 
       name: 'Go to Home', 
       shortcut: '⌘H', 
-      action: () => navigate('/') 
+      action: () => navigate(prefixedPath('/')) 
     },
     { 
       id: 'goto-store', 
       name: 'Go to Store Master', 
       shortcut: '⌘1', 
-      action: () => navigate('/store') 
+      action: () => navigate(prefixedPath('/store')) 
     },
     { 
       id: 'goto-product', 
       name: 'Go to Product Master', 
       shortcut: '⌘2', 
-      action: () => navigate('/product') 
+      action: () => navigate(prefixedPath('/product')) 
     },
     { 
       id: 'goto-forecast', 
       name: 'Go to Forecast', 
       shortcut: '⌘3', 
-      action: () => navigate('/forecast') 
+      action: () => navigate(prefixedPath('/forecast')) 
     },
     { 
       id: 'goto-analytics', 
       name: 'Go to Analytics', 
       shortcut: '⌘4', 
-      action: () => navigate('/analytics') 
+      action: () => navigate(prefixedPath('/analytics')) 
     },
     
     // Action commands
@@ -369,7 +373,7 @@ export default function Home({ initialModule }: HomeProps) {
       id: 'settings', 
       name: 'Open Settings', 
       shortcut: '⌘,', 
-      action: () => navigate('/settings') 
+      action: () => navigate(prefixedPath('/settings')) 
     }
   ];
 
@@ -601,7 +605,7 @@ export default function Home({ initialModule }: HomeProps) {
                   <button
                     onClick={() => {
                       setActiveModule('store');
-                      navigate('/store');
+                      navigate(prefixedPath('/store'));
                     }}
                     className="bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-xl p-4 text-left transition-all duration-200 group"
                   >
@@ -622,7 +626,7 @@ export default function Home({ initialModule }: HomeProps) {
                   <button
                     onClick={() => {
                       setActiveModule('product');
-                      navigate('/product');
+                      navigate(prefixedPath('/product'));
                     }}
                     className="bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-xl p-4 text-left transition-all duration-200 group"
                   >
@@ -643,7 +647,7 @@ export default function Home({ initialModule }: HomeProps) {
                   <button
                     onClick={() => {
                       setActiveModule('forecast');
-                      navigate('/forecast');
+                      navigate(prefixedPath('/forecast'));
                     }}
                     className="bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-xl p-4 text-left transition-all duration-200 group"
                   >
@@ -664,7 +668,7 @@ export default function Home({ initialModule }: HomeProps) {
                   <button
                     onClick={() => {
                       setActiveModule('analytics');
-                      navigate('/analytics');
+                      navigate(prefixedPath('/analytics'));
                     }}
                     className="bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-xl p-4 text-left transition-all duration-200 group"
                   >
@@ -688,7 +692,7 @@ export default function Home({ initialModule }: HomeProps) {
                   <button
                     onClick={() => {
                       setActiveModule('store');
-                      navigate('/store');
+                      navigate(prefixedPath('/store'));
                     }}
                     className="bg-[#3a3a3a] hover:bg-blue-500/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-blue-500/30"
                   >
@@ -698,7 +702,7 @@ export default function Home({ initialModule }: HomeProps) {
                   <button
                     onClick={() => {
                       setActiveModule('product');
-                      navigate('/product');
+                      navigate(prefixedPath('/product'));
                     }}
                     className="bg-[#3a3a3a] hover:bg-green-500/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-green-500/30"
                   >
@@ -708,7 +712,7 @@ export default function Home({ initialModule }: HomeProps) {
                   <button
                     onClick={() => {
                       setActiveModule('analytics');
-                      navigate('/analytics');
+                      navigate(prefixedPath('/analytics'));
                     }}
                     className="bg-[#3a3a3a] hover:bg-purple-500/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-purple-500/30"
                   >

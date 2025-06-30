@@ -38,10 +38,15 @@ const Sidebar = () => {
   const { activeModule, setActiveModule } = useWorkspace();
   const { theme, toggleTheme } = useTheme();
 
+  // Get the app prefix from environment variables
+  const APP_PREFIX = import.meta.env.VITE_APP_PREFIX || '';
+  const prefixedPath = (path: string) => APP_PREFIX ? `/${APP_PREFIX}${path}` : path;
+
   const handleModuleClick = (module: Module) => {
     setActiveModule(module);
-    // Update the URL to reflect the active module
-    window.history.pushState({}, "", `/${module === "home" ? "" : module}`);
+    // Update the URL to reflect the active module with prefix
+    const modulePath = module === "home" ? "" : module;
+    window.history.pushState({}, "", prefixedPath(`/${modulePath}`));
   };
 
   // Creator's Studio icon with beta indicator
