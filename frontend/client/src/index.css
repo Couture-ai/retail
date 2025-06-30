@@ -1,0 +1,245 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 252 80% 67%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 270 70% 64%;
+    --secondary-foreground: 240 5.9% 10%;
+  }
+
+  .dark {
+    --background: 220 18% 7%;
+    --foreground: 220 16% 90%;
+
+    --card: 220 18% 7%;
+    --card-foreground: 220 16% 90%;
+
+    --popover: 220 18% 7%;
+    --popover-foreground: 220 16% 90%;
+
+    --primary: 252 80% 67%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 270 70% 64%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 215 10% 23%;
+    --muted-foreground: 215 14% 72%;
+
+    --accent: 215 10% 23%;
+    --accent-foreground: 220 16% 90%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 215 10% 23%;
+    --input: 215 10% 23%;
+    --ring: 215 14% 72%;
+
+    --sidebar-background: 240 17% 5%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 252 80% 67%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 5% 25%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 5% 17%;
+    --sidebar-ring: 240 5% 83.9%;
+
+    /* Dark theme shades */
+    --dark-1: 220 16% 90%;
+    --dark-2: 220 14% 75%;
+    --dark-3: 220 12% 60%;
+    --dark-4: 220 10% 45%;
+    --dark-5: 220 10% 35%;
+    --dark-6: 220 10% 25%;
+    --dark-7: 220 10% 20%;
+    --dark-8: 220 10% 15%;
+    --dark-9: 220 10% 10%;
+    
+    /* Discord-inspired theme colors */
+    --discord-6: 235 10% 18%;
+    --discord-7: 235 10% 22%;
+    --discord-8: 235 10% 26%;
+    --discord-9: 235 12% 14%;
+    --discord-10: 235 14% 10%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+  }
+  
+  /* Make all text elements smaller to match Replit style */
+  p, span, div, button, input, textarea, select, li {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--dark-6));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--dark-4));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--dark-3));
+}
+
+.code-editor {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+/* Syntax highlighting for code editor */
+.code-editor .keyword { color: #c586c0; }
+.code-editor .string { color: #ce9178; }
+.code-editor .number { color: #b5cea8; }
+.code-editor .comment { color: #6a9955; font-style: italic; }
+.code-editor .function { color: #dcdcaa; }
+.code-editor .type { color: #4ec9b0; }
+.code-editor .variable { color: #9cdcfe; }
+
+/* Code editor with line numbers */
+.line-numbers {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  user-select: none;
+}
+
+.line-numbers div {
+  padding: 0 0.5em;
+}
+
+/* Pulse and ping animations for organization nodes */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulsateBorder {
+  0% {
+    border-color: rgba(107, 114, 128, 0.2);
+  }
+  50% {
+    border-color: rgba(107, 114, 128, 0.8);
+  }
+  100% {
+    border-color: rgba(107, 114, 128, 0.2);
+  }
+}
+
+.animate-ping {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.pulsate-border {
+  animation: pulsateBorder 2s ease-in-out infinite;
+}
+
+.planet {
+  transition: transform 0.3s ease;
+}
+
+.planet:hover {
+  transform: scale(1.05);
+}
+
+/* Notion-like editor styles */
+.notion-editor p {
+  margin-bottom: 0.75rem;
+}
+
+.notion-editor h1, .notion-editor h2, .notion-editor h3 {
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.notion-editor h1 {
+  font-size: 1.5rem;
+}
+
+.notion-editor h2 {
+  font-size: 1.25rem;
+}
+
+.notion-editor h3 {
+  font-size: 1.125rem;
+}
+
+.notion-editor ul, .notion-editor ol {
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.notion-editor ul {
+  list-style-type: disc;
+}
+
+.notion-editor ol {
+  list-style-type: decimal;
+}
+
+.file-tree-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}

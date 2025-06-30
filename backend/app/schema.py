@@ -123,3 +123,12 @@ class Forecast(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+
+# analytics page configuration table
+class AnalyticsPageConfiguration(Base):
+    __tablename__ = "analytics_page_configuration"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    page_name = Column(String)
+    attributes = Column(JSON)
+    page_config = Column(JSON)

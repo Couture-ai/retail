@@ -2,7 +2,7 @@ import databases
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from auth.schema import Token, UserRole, User, AppToken
-from schema import Forecast
+from schema import Forecast, AnalyticsPageConfiguration
 
 
 class PostgresDatabase:
@@ -53,5 +53,5 @@ class PostgresDatabase:
         User.__table__.create(bind=self.postgres_engine, checkfirst=True)
         AppToken.__table__.create(bind=self.postgres_engine, checkfirst=True)
         Forecast.__table__.create(bind=self.postgres_engine, checkfirst=True)
-
+        AnalyticsPageConfiguration.__table__.create(bind=self.postgres_engine, checkfirst=True)
         print("Postgres table created")

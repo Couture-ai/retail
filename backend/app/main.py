@@ -108,7 +108,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
 
 
 
-app.add_middleware(AuthenticationMiddleware)
+# app.add_middleware(AuthenticationMiddleware)
 # ensure that all origins are allowed
 app.add_middleware(
     CORSMiddleware,

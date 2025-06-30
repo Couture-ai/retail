@@ -19,39 +19,47 @@ router = APIRouter(prefix="/core", tags=["core"])
 
 class ForecastResponse(BaseModel):
     id: Optional[int] = None
+
+    # store data
     p1_dc: Optional[str] = None
     format: Optional[str] = None
     city: Optional[str] = None
     state: Optional[str] = None
-    segment_code: Optional[str] = None
-    consensus_qty: Optional[float] = None
-    brick_description: Optional[str] = None
-    forecast_qty: Optional[float] = None
-    brand: Optional[str] = None
-    segment: Optional[str] = None
-    division: Optional[str] = None
-    brick_code: Optional[str] = None
-    class_code: Optional[str] = None
-    division_code: Optional[str] = None
-    vertical: Optional[str] = None
     store_no: Optional[str] = None
-    batchno: Optional[str] = None
-    status: Optional[str] = None
-    article_id: Optional[str] = None
-    month_year: Optional[str] = None
     pin_code: Optional[str] = None
     region: Optional[str] = None
-    wom: Optional[int] = None
+    store_type: Optional[str] = None
+    
+    # product data
+    segment_code: Optional[str] = None
+    brick_description: Optional[str] = None
+    brand: Optional[str] = None
+    segment: Optional[str] = None
+    brick_code: Optional[str] = None
+    division: Optional[str] = None
+    class_code: Optional[str] = None
+    article_id: Optional[str] = None
+    division_code: Optional[str] = None
+    vertical: Optional[str] = None
+    batchno: Optional[str] = None
     family_code: Optional[str] = None
+    super_category: Optional[str] = None
     class_description: Optional[str] = None
-    sd: Optional[str] = None
     article_description: Optional[str] = None
+    
+    # forecast data
+    status: Optional[str] = None
+    consensus_qty: Optional[float] = None
+    forecast_qty: Optional[float] = None
+    month_year: Optional[str] = None
+    wom: Optional[int] = None
+    sd: Optional[str] = None
     kvi: Optional[str] = None
     npi: Optional[str] = None
     sold_qty: Optional[float] = None
     week_start_date: Optional[str] = None
-    super_category: Optional[str] = None
-    store_type: Optional[str] = None
+    
+    # metadata
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
     
@@ -650,3 +658,419 @@ async def get_forecast_metrics(
             metrics[key] = 0.0
     
     return metrics
+
+@router.get("/forecast-table-sql")
+async def execute_forecast_sql_query(
+    request: Request,
+    sql_query: str = Query(..., description="Raw SQL query to execute against forecast table"),
+    postgres_db=Depends(get_postgres_db),
+):
+    """
+    Execute a raw SQL query against the forecast table
+    
+    Parameters:
+    - sql_query: Raw SQL query string (e.g., 'SELECT * FROM forecast LIMIT 20')
+    
+    Note: For security, only SELECT queries are allowed and the query must reference the 'forecast' table
+    """
+    try:
+        # Basic security validation - only allow SELECT queries
+        query_lower = sql_query.strip().lower()
+        if not query_lower.startswith('select'):
+            raise HTTPException(
+                status_code=400, 
+                detail="Only SELECT queries are allowed"
+            )
+        
+        # Check if query references the forecast table
+        if 'forecast' not in query_lower:
+            raise HTTPException(
+                status_code=400, 
+                detail="Query must reference the 'forecast' table"
+            )
+        
+        # Prevent potentially dangerous operations
+        dangerous_keywords = ['drop', 'delete', 'insert', 'update', 'truncate', 'alter', 'create']
+        if any(keyword in query_lower for keyword in dangerous_keywords):
+            raise HTTPException(
+                status_code=400, 
+                detail="Query contains forbidden operations. Only SELECT queries are allowed."
+            )
+        
+        # Execute the SQL query
+        query_obj = text(sql_query)
+        results = await postgres_db.fetch_all(query_obj)
+        
+        # Convert results to list of dictionaries with proper date handling
+        items = [row_to_dict(row) for row in results]
+        
+        return {
+            "query": sql_query,
+            "result_count": len(items),
+            "data": items
+        }
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        # Handle SQL execution errors
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Error executing SQL query: {str(e)}"
+        )
+
+class ForecastMetadataResponse(BaseModel):
+    essential_columns: List[str]
+    essential_columns_datatypes: Dict[str, str]
+    essential_columns_filtertypes: Dict[str, str]
+    store_location_hierarchy: List[str]
+    product_category_hierarchy: List[str]
+    store_attributes: List[str]
+    product_attributes: List[str]
+    store_card_attributes: List[str]
+    product_card_attributes: List[str]
+
+@router.get("/forecast-metadata", response_model=ForecastMetadataResponse)
+async def get_forecast_metadata(
+    request: Request,
+):
+    """
+    Get metadata about the forecast data structure including:
+    1. Essential column names (excluding id, created_at, updated_at)
+    2. Essential column datatypes mapping
+    3. Store location hierarchy (most top level first, excluding codes)
+    4. Product category hierarchy (most top level first, excluding codes)
+    5. Store attributes (all store-related fields)
+    6. Product attributes (all product-related fields)
+    """
+    
+    # Essential columns (excluding id, created_at, updated_at)
+    essential_columns = [
+        # Store data
+        "p1_dc", "format", "city", "state", "store_no", "pin_code", "region", "store_type",
+        # Product data
+        "segment_code", "brick_description", "brand", "segment", "brick_code", "division",
+        "class_code", "article_id", "division_code", "vertical", "batchno", "family_code",
+        "super_category", "article_description",
+        # Forecast data
+        "status", "consensus_qty", "forecast_qty", "month_year", "wom", "sd", "kvi", "npi",
+        "sold_qty"
+    ]
+    
+    # Essential column datatypes mapping
+    essential_columns_datatypes = {
+        # Store data - all strings
+        "p1_dc": "string",
+        "format": "string", 
+        "city": "string",
+        "state": "string",
+        "store_no": "string",
+        "pin_code": "string",
+        "region": "string",
+        "store_type": "string",
+        
+        # Product data - all strings
+        "segment_code": "string",
+        "brick_description": "string",
+        "brand": "string",
+        "segment": "string",
+        "brick_code": "string",
+        "division": "string",
+        "class_code": "string",
+        "article_id": "string",
+        "division_code": "string",
+        "vertical": "string",
+        "batchno": "string",
+        "family_code": "string",
+        "super_category": "string",
+        "article_description": "string",
+        
+        # Forecast data - mixed types
+        "status": "string",
+        "consensus_qty": "float",
+        "forecast_qty": "float",
+        "month_year": "string",
+        "wom": "integer",
+        "sd": "string",
+        "kvi": "string",
+        "npi": "string",
+        "sold_qty": "float",
+    }
+    
+    # Store location hierarchy (top level to bottom level, excluding codes)
+    store_location_hierarchy = [
+        "region",        # Top level - geographical region
+        "state",         # State level
+        "city",
+        "pin_code", 
+        "store_no"
+                        # City level
+        # "store_type",    # Store type (online/offline etc.)
+        # "format",        # Store format
+        # "p1_dc"          # Distribution center/store identifier
+    ]
+    
+    # Product category hierarchy (top level to bottom level, excluding codes)
+    product_category_hierarchy = [
+        "vertical",            # Vertical/business unit
+        "super_category",      # Top level - super category
+        # "division",            # Division level
+        "segment", 
+        "article_description",
+        "article_id",
+                                # Segment level
+        # "brick_description",   # Brick/sub-category
+        # "class_description",   # Class level
+        # "brand",               # Brand level
+        # "article_description"  # Individual product/article
+    ]
+    
+    # Store attributes (all store-related fields including location and other attributes)
+    store_attributes = [
+        # Location attributes
+        "region", "state", "city", "pin_code",
+        # Store identifiers and characteristics
+        "p1_dc", "store_no", "store_type", "format"
+    ]
+    
+    # Product attributes (all product-related fields including category and other attributes)
+    product_attributes = [
+        # Category hierarchy attributes
+        "super_category", "vertical", "division", "segment", "brick_description", 
+        "class_description", "brand", "article_description",
+        # Product identifiers and codes
+        "article_id", "segment_code", "brick_code", "class_code", "division_code", 
+        "family_code", "batchno",
+        # Product characteristics
+        "kvi", "npi", "sd"
+    ]
+    
+    # Essential column filtertypes mapping
+    # Categories: discrete, search, range
+    # - Category and location attributes: discrete
+    # - Float types: range  
+    # - String types: search (except codes and location/category attributes)
+    # - p1_dc and any location or product codes: discrete
+    essential_columns_filtertypes = {}
+    
+    # Define category attributes (should be discrete)
+    category_attributes = [
+        "super_category", "vertical", "division", "segment", "brick_description",
+        "brand", "class_description", "article_description"
+    ]
+    
+    # Define location attributes (should be discrete)  
+    location_attributes = [
+        "region", "state", "city", "pin_code", "store_no", "store_type", "format"
+    ]
+    
+    # Define code attributes (should be discrete)
+    code_attributes = [
+        "p1_dc", "segment_code", "brick_code", "class_code", "division_code", 
+        "family_code", "article_id", "batchno"
+    ]
+    
+    # Define status/categorical attributes (should be discrete)
+    status_attributes = [
+        "status", "month_year", "sd", "kvi", "npi"
+    ]
+    
+    for column in essential_columns:
+        datatype = essential_columns_datatypes.get(column, "string")
+        
+        if datatype in ["float", "integer"] and column not in ["wom"]:
+            # Float/integer types are range filters (except wom which might be discrete)
+            essential_columns_filtertypes[column] = "range"
+        elif (column in category_attributes or 
+              column in location_attributes or 
+              column in code_attributes or 
+              column in status_attributes or
+              column == "wom"):  # wom is discrete as it represents week of month
+            # Category, location, codes, and status attributes are discrete
+            essential_columns_filtertypes[column] = "discrete"
+        else:
+            # Default string types are search filters
+            essential_columns_filtertypes[column] = "search"
+    
+    return {
+        "essential_columns": essential_columns,
+        "essential_columns_datatypes": essential_columns_datatypes,
+        "essential_columns_filtertypes": essential_columns_filtertypes,
+        "store_location_hierarchy": store_location_hierarchy,
+        "product_category_hierarchy": product_category_hierarchy,
+        "store_attributes": store_attributes,
+        "product_attributes": product_attributes,
+        "store_card_attributes": ["store_no", "city","p1_dc"],
+        "product_card_attributes": ["article_description","article_id", "brand"]
+    }
+
+# Analytics Page Configuration CRUD Routes
+
+class AnalyticsPageConfigurationResponse(BaseModel):
+    id: int
+    page_name: str
+    attributes: Dict[str, Any] = {}
+    page_config: Dict[str, Any] = {}
+
+class AnalyticsPageConfigurationCreate(BaseModel):
+    page_name: str
+    attributes: Dict[str, Any] = {}
+    page_config: Dict[str, Any] = {}
+
+class AnalyticsPageConfigurationUpdate(BaseModel):
+    page_name: Optional[str] = None
+    attributes: Optional[Dict[str, Any]] = None
+    page_config: Optional[Dict[str, Any]] = None
+
+@router.get("/analytics-pages", response_model=List[AnalyticsPageConfigurationResponse])
+async def get_all_analytics_pages(
+    request: Request,
+    postgres_db=Depends(get_postgres_db),
+):
+    """
+    Get all analytics page configurations
+    """
+    from schema import AnalyticsPageConfiguration
+    
+    query = select(AnalyticsPageConfiguration)
+    results = await postgres_db.fetch_all(query)
+    
+    # Convert database rows to dictionaries with proper handling
+    items = [row_to_dict(row) for row in results]
+    
+    return items
+
+@router.post("/analytics-pages", response_model=AnalyticsPageConfigurationResponse)
+async def create_analytics_page(
+    request: Request,
+    page_data: AnalyticsPageConfigurationCreate,
+    postgres_db=Depends(get_postgres_db),
+):
+    """
+    Create a new analytics page configuration
+    """
+    from schema import AnalyticsPageConfiguration
+    
+    # Prepare data for insertion
+    insert_data = {
+        "page_name": page_data.page_name,
+        "attributes": page_data.attributes,
+        "page_config": page_data.page_config
+    }
+    
+    # Insert into database
+    insert_stmt = AnalyticsPageConfiguration.__table__.insert().values(**insert_data)
+    result = await postgres_db.execute(insert_stmt)
+    
+    # Get the inserted record
+    query = select(AnalyticsPageConfiguration).where(AnalyticsPageConfiguration.id == result)
+    created_record = await postgres_db.fetch_one(query)
+    
+    return row_to_dict(created_record)
+
+@router.put("/analytics-pages/{page_id}", response_model=AnalyticsPageConfigurationResponse)
+async def update_analytics_page(
+    request: Request,
+    page_id: int,
+    page_data: AnalyticsPageConfigurationUpdate,
+    postgres_db=Depends(get_postgres_db),
+):
+    """
+    Update an existing analytics page configuration
+    """
+    from schema import AnalyticsPageConfiguration
+    
+    # Check if page exists
+    query = select(AnalyticsPageConfiguration).where(AnalyticsPageConfiguration.id == page_id)
+    existing_page = await postgres_db.fetch_one(query)
+    
+    if not existing_page:
+        raise HTTPException(status_code=404, detail="Analytics page not found")
+    
+    # Prepare update data (only include non-None values)
+    update_data = {}
+    if page_data.page_name is not None:
+        update_data["page_name"] = page_data.page_name
+    if page_data.attributes is not None:
+        update_data["attributes"] = page_data.attributes
+    if page_data.page_config is not None:
+        update_data["page_config"] = page_data.page_config
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No update data provided")
+    
+    # Update in database
+    update_stmt = (
+        AnalyticsPageConfiguration.__table__.update()
+        .where(AnalyticsPageConfiguration.id == page_id)
+        .values(**update_data)
+    )
+    await postgres_db.execute(update_stmt)
+    
+    # Get the updated record
+    updated_record = await postgres_db.fetch_one(query)
+    
+    return row_to_dict(updated_record)
+
+@router.delete("/analytics-pages/{page_id}")
+async def delete_analytics_page(
+    request: Request,
+    page_id: int,
+    postgres_db=Depends(get_postgres_db),
+):
+    """
+    Delete an analytics page configuration
+    """
+    from schema import AnalyticsPageConfiguration
+    
+    # Check if page exists
+    query = select(AnalyticsPageConfiguration).where(AnalyticsPageConfiguration.id == page_id)
+    existing_page = await postgres_db.fetch_one(query)
+    
+    if not existing_page:
+        raise HTTPException(status_code=404, detail="Analytics page not found")
+    
+    # Delete from database
+    delete_stmt = AnalyticsPageConfiguration.__table__.delete().where(AnalyticsPageConfiguration.id == page_id)
+    await postgres_db.execute(delete_stmt)
+    
+    return {"message": "Analytics page deleted successfully"}
+
+@router.get("/analytics-pages/{page_id}", response_model=AnalyticsPageConfigurationResponse)
+async def get_analytics_page(
+    request: Request,
+    page_id: int,
+    postgres_db=Depends(get_postgres_db),
+):
+    """
+    Get a specific analytics page configuration by ID
+    """
+    from schema import AnalyticsPageConfiguration
+    
+    query = select(AnalyticsPageConfiguration).where(AnalyticsPageConfiguration.id == page_id)
+    result = await postgres_db.fetch_one(query)
+    
+    if not result:
+        raise HTTPException(status_code=404, detail="Analytics page not found")
+    
+    return row_to_dict(result)
+
+@router.get("/analytics-pages/name/{page_name}", response_model=AnalyticsPageConfigurationResponse)
+async def get_analytics_page_by_name(
+    request: Request,
+    page_name: str,
+    postgres_db=Depends(get_postgres_db),
+):
+    """
+    Get a specific analytics page configuration by name
+    """
+    from schema import AnalyticsPageConfiguration
+    
+    query = select(AnalyticsPageConfiguration).where(AnalyticsPageConfiguration.page_name == page_name)
+    result = await postgres_db.fetch_one(query)
+    
+    if not result:
+        raise HTTPException(status_code=404, detail="Analytics page not found")
+    
+    return row_to_dict(result)

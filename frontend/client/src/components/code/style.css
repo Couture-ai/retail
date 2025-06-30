@@ -1,0 +1,62 @@
+/* Tab transitions */
+.tab-transition {
+  transition: transform 0.2s ease;
+}
+
+/* Hide scrollbar for tabs container while keeping functionality */
+.scrollbar-hidden::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+  background: transparent;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Tab drag styles */
+.tab-dragging {
+  opacity: 0.6;
+  z-index: 10;
+  background-color: hsl(var(--dark-7)); /* Add background during drag */
+}
+
+/* Style for the container div around the tab being dragged over */
+.tab-drag-over {
+  /* We'll use a pseudo-element to show the drop indicator */
+  position: relative; /* Needed for absolute positioning of pseudo-element */
+}
+
+/* The actual drop indicator (a vertical line before the tab) */
+.tab-drag-over::before {
+  content: "";
+  position: absolute;
+  left: -1px; /* Position just before the tab */
+  top: 15%; /* Adjust vertical positioning */
+  bottom: 15%; 
+  width: 2px; /* Indicator line width */
+  background-color: hsl(var(--primary)); /* Use primary color */
+  z-index: 5; /* Ensure it's visible */
+  border-radius: 1px;
+}
+
+/* Splitter Styles */
+.splitter {
+  background-color: hsl(var(--dark-7)); /* Base color */
+  transition: background-color 0.15s ease;
+}
+
+/* Drop Zone Indicator Styles */
+.drop-zone-top {
+  clip-path: inset(0 0 75% 0);
+}
+.drop-zone-bottom {
+  clip-path: inset(75% 0 0 0);
+}
+.drop-zone-left {
+  clip-path: inset(0 75% 0 0);
+}
+.drop-zone-right {
+  clip-path: inset(0 0 0 75%);
+} 

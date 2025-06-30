@@ -1,0 +1,307 @@
+/* Timeline component styles */
+.rct-outer {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: hsl(var(--dark-9));
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.rct-scroll {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.rct-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.rct-canvas {
+  position: relative;
+}
+
+.rct-item {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 4px;
+  z-index: 80;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.rct-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+  z-index: 90;
+}
+
+.rct-sidebar {
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-right: 1px solid hsl(var(--dark-6));
+}
+
+.rct-sidebar-header {
+  margin: 0;
+  color: hsl(var(--foreground));
+  background: hsl(var(--dark-10));
+  border-right: 1px solid hsl(var(--dark-6));
+  box-sizing: border-box;
+  border-bottom: 1px solid hsl(var(--dark-6));
+  overflow: hidden;
+  padding: 0.75rem;
+  font-weight: 500;
+}
+
+.rct-sidebar-row {
+  padding: 0 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+  margin: 0;
+  border-right: 1px solid hsl(var(--dark-6));
+  background: hsl(var(--dark-9));
+  color: hsl(var(--foreground));
+  border-bottom: 1px solid hsl(var(--dark-7));
+}
+
+.rct-calendar-header {
+  border-bottom: 1px solid hsl(var(--dark-6));
+  background-color: hsl(var(--dark-10));
+}
+
+.rct-dateHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border-bottom: 1px solid hsl(var(--dark-6));
+  cursor: pointer;
+  font-size: 12px;
+  color: white;
+  background: hsl(var(--dark-9));
+  font-weight: 500;
+}
+
+.rct-dateHeader-primary {
+  border-left: 1px solid hsl(var(--dark-6));
+  border-right: 1px solid hsl(var(--dark-6));
+  background: hsl(var(--dark-8));
+  color: white;
+}
+
+.rct-dateHeader-primary:last-child {
+  border-right: none;
+}
+
+.rct-dateHeader-secondary {
+  border-left: 1px solid hsl(var(--dark-6));
+  border-right: none;
+}
+
+.rct-dateHeader-secondary:last-child {
+  border-right: 1px solid hsl(var(--dark-6));
+}
+
+.rct-marker {
+  position: absolute;
+  z-index: 70;
+  border-left: 2px solid hsl(var(--primary));
+  height: 100%;
+}
+
+.rct-marker-content {
+  position: absolute;
+  background: hsl(var(--primary));
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  top: -8px;
+  left: -50%;
+  font-size: 12px;
+  white-space: nowrap;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.rct-vertical-lines {
+  position: absolute;
+  z-index: 30;
+}
+
+.rct-vertical-line {
+  position: absolute;
+  z-index: 40;
+  width: 1px;
+  background: hsl(var(--dark-7));
+}
+
+.rct-horizontal-lines {
+  position: absolute;
+  z-index: 30;
+}
+
+.rct-horizontal-line {
+  position: absolute;
+  z-index: 40;
+  height: 1px;
+  background: hsl(var(--dark-7));
+}
+
+.rct-cursor-line {
+  position: absolute;
+  z-index: 50;
+  width: 2px;
+  background: hsl(var(--primary));
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Timeline component specific styles */
+.react-calendar-timeline .rct-sidebar {
+  background-color: hsl(var(--dark-9));
+  color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.react-calendar-timeline .rct-header {
+  background-color: hsl(var(--dark-10));
+  color: white;
+}
+
+.react-calendar-timeline .rct-vertical-lines .rct-vl {
+  border-left: 1px solid hsl(var(--dark-7));
+}
+
+.react-calendar-timeline .rct-horizontal-lines .rct-hl {
+  border-bottom: 1px solid hsl(var(--dark-7));
+}
+
+.react-calendar-timeline .rct-dateHeader {
+  color: white;
+  font-weight: 500;
+}
+
+.react-calendar-timeline .rct-sidebar-row {
+  color: white;
+  transition: background-color 0.15s ease;
+}
+
+.react-calendar-timeline .rct-sidebar-row:hover {
+  background-color: hsl(var(--dark-8));
+}
+
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row.rct-sidebar-row-odd {
+  background-color: hsla(var(--dark-8), 0.5);
+}
+
+/* Timeline general styles */
+.react-calendar-timeline {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: hsl(var(--dark-9));
+}
+
+.react-calendar-timeline .rct-items .rct-item {
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  font-size: 12px;
+  padding: 2px 6px;
+  transition: all 0.2s ease;
+}
+
+.react-calendar-timeline .rct-items .rct-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14);
+  transform: translateY(-1px);
+}
+
+.react-calendar-timeline .rct-item-overflow {
+  overflow: visible;
+}
+
+/* Dark theme adjustments */
+.react-calendar-timeline .rct-sidebar-header {
+  background-color: hsl(var(--dark-10));
+  color: white;
+  font-weight: 500;
+  padding: 0.75rem;
+}
+
+.react-calendar-timeline .rct-dateHeader-primary {
+  color: white;
+  background-color: hsl(var(--dark-8));
+  font-weight: 500;
+}
+
+.react-calendar-timeline .rct-label-group {
+  background-color: hsl(var(--dark-9));
+  color: white;
+}
+
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
+  background-color: hsl(var(--dark-9));
+  padding: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row:hover {
+  background-color: hsl(var(--dark-8));
+}
+
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row.rct-sidebar-row-even {
+  background-color: hsl(var(--dark-9));
+}
+
+/* Today marker */
+.react-calendar-timeline .rct-today {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.react-calendar-timeline .rct-today-marker {
+  border-left: 2px solid hsl(var(--primary));
+  z-index: 60;
+  opacity: 0.8;
+}
+
+/* Priority indicators */
+.priority-urgent {
+  border-left: 3px solid #EF4444 !important;
+}
+
+.priority-high {
+  border-left: 3px solid #F59E0B !important;
+}
+
+.priority-medium {
+  border-left: 3px solid #10B981 !important;
+}
+
+.priority-low {
+  border-left: 3px solid #3B82F6 !important;
+}
+
+/* Status colors */
+.status-in-progress {
+  background-color: hsl(var(--primary));
+}
+
+.status-todo {
+  background-color: #6E7684;
+}
+
+.status-review {
+  background-color: #F59E0B;
+}
+
+.status-done {
+  background-color: #10B981;
+} 
