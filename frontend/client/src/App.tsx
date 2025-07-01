@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import NotFound from "@/pages/not-found";
 import { WorkspaceProvider } from "./context/WorkspaceProvider";
 import { ThemeProvider } from "./context/ThemeProvider";
+import TopBar from "./components/ui/TopBar";
 import React, { useState, useEffect } from 'react';
 import { ForecastRepository } from './repository/forecast_repository';
 
@@ -73,24 +74,27 @@ const App: React.FC = () => {
     <ThemeProvider>
       <WorkspaceProvider>
         <TooltipProvider>
-          <Toaster />
-          <Switch>
-            {/* Home route will render with the module extracted from the URL */}
-            <Route path={prefixedPath("/")} component={() => <Home initialModule={activeModule} />} />
-            {/* <Route path={prefixedPath("/chat")} component={() => <Home initialModule="chat" />} /> */}
-            {/* <Route path={prefixedPath("/docs")} component={() => <Home initialModule="docs" />} /> */}
-            {/* <Route path={prefixedPath("/code")} component={() => <Home initialModule="code" />} /> */}
-            <Route path={prefixedPath("/store")} component={() => <Home initialModule="store" />} />
-            <Route path={prefixedPath("/product")} component={() => <Home initialModule="product" />} />
-            <Route path={prefixedPath("/forecast")} component={() => <Home initialModule="forecast" />} />
-            <Route path={prefixedPath("/analytics")} component={() => <Home initialModule="analytics" />} />
-            {/* <Route path={prefixedPath("/organization")} component={() => <Home initialModule="organization" />} /> */}
-            {/* <Route path={prefixedPath("/chart")} component={() => <Home initialModule="chart" />} /> */}
-            {/* <Route path={prefixedPath("/budget")} component={() => <Home initialModule="budget" />} /> */}
-            {/* <Route path={prefixedPath("/task")} component={() => <Home initialModule="task" />} /> */}
-            <Route path={prefixedPath("/settings")} component={() => <Home initialModule="settings" />} />
-            <Route component={NotFound} />
-          </Switch>
+          <TopBar />
+          <div className="pt-10">
+            <Toaster />
+            <Switch>
+              {/* Home route will render with the module extracted from the URL */}
+              <Route path={prefixedPath("/")} component={() => <Home initialModule={activeModule} />} />
+              {/* <Route path={prefixedPath("/chat")} component={() => <Home initialModule="chat" />} /> */}
+              {/* <Route path={prefixedPath("/docs")} component={() => <Home initialModule="docs" />} /> */}
+              {/* <Route path={prefixedPath("/code")} component={() => <Home initialModule="code" />} /> */}
+              <Route path={prefixedPath("/store")} component={() => <Home initialModule="store" />} />
+              <Route path={prefixedPath("/product")} component={() => <Home initialModule="product" />} />
+              <Route path={prefixedPath("/forecast")} component={() => <Home initialModule="forecast" />} />
+              <Route path={prefixedPath("/analytics")} component={() => <Home initialModule="analytics" />} />
+              {/* <Route path={prefixedPath("/organization")} component={() => <Home initialModule="organization" />} /> */}
+              {/* <Route path={prefixedPath("/chart")} component={() => <Home initialModule="chart" />} /> */}
+              {/* <Route path={prefixedPath("/budget")} component={() => <Home initialModule="budget" />} /> */}
+              {/* <Route path={prefixedPath("/task")} component={() => <Home initialModule="task" />} /> */}
+              <Route path={prefixedPath("/settings")} component={() => <Home initialModule="settings" />} />
+              <Route component={NotFound} />
+            </Switch>
+          </div>
         </TooltipProvider>
       </WorkspaceProvider>
     </ThemeProvider>

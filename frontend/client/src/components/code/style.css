@@ -19,7 +19,7 @@
 .tab-dragging {
   opacity: 0.6;
   z-index: 10;
-  background-color: hsl(var(--dark-7)); /* Add background during drag */
+  background-color: hsl(var(--tab-dragging-background)); /* Use themed background during drag */
 }
 
 /* Style for the container div around the tab being dragged over */
@@ -36,14 +36,14 @@
   top: 15%; /* Adjust vertical positioning */
   bottom: 15%; 
   width: 2px; /* Indicator line width */
-  background-color: hsl(var(--primary)); /* Use primary color */
+  background-color: hsl(var(--tab-drag-over)); /* Use themed drag over color */
   z-index: 5; /* Ensure it's visible */
   border-radius: 1px;
 }
 
 /* Splitter Styles */
 .splitter {
-  background-color: hsl(var(--dark-7)); /* Base color */
+  background-color: hsl(var(--splitter-background)); /* Use themed splitter color */
   transition: background-color 0.15s ease;
 }
 

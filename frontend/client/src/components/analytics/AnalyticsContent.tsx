@@ -933,9 +933,9 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
       case 'heading':
         return (
           <div className={`flex flex-col h-full ${alignmentClass}`}>
-            <h1 className="text-white font-bold text-2xl mb-1 leading-tight">{widget.title}</h1>
+            <h1 className="text-[hsl(var(--dashboard-card-foreground))] font-bold text-2xl mb-1 leading-tight">{widget.title}</h1>
             {widget.description && (
-              <p className="text-slate-400 text-base leading-relaxed">{widget.description}</p>
+              <p className="text-[hsl(var(--dashboard-muted-foreground))] text-base leading-relaxed">{widget.description}</p>
             )}
           </div>
         );
@@ -944,10 +944,10 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
         return (
           <div className="w-full h-full flex flex-col">
             {/* Card header */}
-            <div className={`flex-shrink-0 p-4 border-b border-slate-600/20 ${alignmentClass}`}>
-              <h3 className="text-white font-semibold text-lg truncate">{widget.title}</h3>
+            <div className={`flex-shrink-0 p-4 border-b border-[hsl(var(--dashboard-card-border))] ${alignmentClass}`}>
+              <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-semibold text-lg truncate">{widget.title}</h3>
               {widget.description && (
-                <p className="text-slate-300 text-sm truncate mt-1">{widget.description}</p>
+                <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm truncate mt-1">{widget.description}</p>
               )}
             </div>
             
@@ -960,9 +960,9 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
               ) : (
                 <div className={`flex h-full ${alignmentClass}`}>
                   <div className="text-center">
-                    <BarChart3 size={48} className="text-slate-500 mx-auto mb-3" />
-                    <div className="text-slate-400 text-sm">No SQL query defined</div>
-                    <div className="text-slate-500 text-xs mt-1">Click edit to add a query</div>
+                    <BarChart3 size={48} className="text-[hsl(var(--dashboard-muted-foreground))] mx-auto mb-3" />
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">No SQL query defined</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))]/70 text-xs mt-1">Click edit to add a query</div>
                   </div>
                 </div>
               )}
@@ -974,10 +974,10 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
         return (
           <div className="w-full h-full flex flex-col relative">
             {/* Table header */}
-            <div className={`flex-shrink-0 p-4 border-b border-slate-600/20 ${alignmentClass}`}>
-              <h3 className="text-white font-semibold text-lg truncate">{widget.title}</h3>
+            <div className={`flex-shrink-0 p-4 border-b border-[hsl(var(--dashboard-card-border))] ${alignmentClass}`}>
+              <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-semibold text-lg truncate">{widget.title}</h3>
               {widget.description && (
-                <p className="text-slate-300 text-sm truncate mt-1">{widget.description}</p>
+                <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm truncate mt-1">{widget.description}</p>
               )}
             </div>
             
@@ -988,9 +988,9 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
               ) : (
                 <div className={`absolute inset-0 flex items-center justify-center ${alignmentClass}`}>
                   <div className="text-center">
-                    <Table size={48} className="text-slate-500 mx-auto mb-3" />
-                    <div className="text-slate-400 text-sm">No SQL query defined</div>
-                    <div className="text-slate-500 text-xs mt-1">Click edit to add a query</div>
+                    <Table size={48} className="text-[hsl(var(--dashboard-muted-foreground))] mx-auto mb-3" />
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">No SQL query defined</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))]/70 text-xs mt-1">Click edit to add a query</div>
                   </div>
                 </div>
               )}
@@ -1003,10 +1003,10 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
         return (
           <div className="w-full h-full flex flex-col">
             {/* Chart header */}
-            <div className={`flex-shrink-0 p-3 border-b border-slate-600/20 ${alignmentClass}`}>
-              <h3 className="text-white font-semibold text-base truncate">{widget.title}</h3>
+            <div className={`flex-shrink-0 p-3 border-b border-[hsl(var(--dashboard-card-border))] ${alignmentClass}`}>
+              <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-semibold text-base truncate">{widget.title}</h3>
               {widget.description && (
-                <p className="text-slate-300 text-sm truncate mt-1">{widget.description}</p>
+                <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm truncate mt-1">{widget.description}</p>
               )}
             </div>
             
@@ -1017,9 +1017,9 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <BarChart3 size={48} className="text-slate-500 mx-auto mb-3" />
-                    <div className="text-slate-400 text-sm">No SQL query defined</div>
-                    <div className="text-slate-500 text-xs mt-1">Click edit to add a query</div>
+                    <BarChart3 size={48} className="text-[hsl(var(--dashboard-muted-foreground))] mx-auto mb-3" />
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">No SQL query defined</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))]/70 text-xs mt-1">Click edit to add a query</div>
                   </div>
                 </div>
               )}
@@ -1043,12 +1043,12 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
         <div
           key={widget.id}
           className={`
-            ${isHeading ? 'bg-transparent border-transparent' : 'bg-slate-800/40 backdrop-blur-sm border-slate-600/30'} border rounded-xl relative overflow-hidden
-            ${isSelected ? 'border-blue-400/60 ring-2 ring-blue-400/20' : ''}
-            ${isPreview && !isValidPreview ? 'border-red-400/60 bg-red-900/20' : ''}
+            ${isHeading ? 'bg-transparent border-transparent' : 'bg-[hsl(var(--dashboard-card-background))] border-[hsl(var(--dashboard-card-border))]'} border rounded-xl relative overflow-hidden
+            ${isSelected ? 'border-[hsl(var(--dashboard-primary-blue))]/60 ring-2 ring-[hsl(var(--dashboard-primary-blue))]/20' : ''}
+            ${isPreview && !isValidPreview ? 'border-[hsl(var(--dashboard-error))]/60 bg-[hsl(var(--dashboard-error))]/10' : ''}
             ${!isDragging ? 'cursor-pointer transition-all duration-200' : ''}
-            ${isEditMode ? '' : (isHeading ? 'hover:scale-[1.01]' : 'hover:scale-[1.01] hover:shadow-lg')}
-            ${!isHeading ? 'shadow-xl' : ''}
+            ${isEditMode ? '' : (isHeading ? 'hover:scale-[1.01]' : 'hover:scale-[1.01] hover:bg-[hsl(var(--dashboard-card-hover))]')}
+            ${!isHeading ? 'shadow-lg hover:shadow-xl' : ''}
           `}
           style={{
             gridColumn: `${displayWidget.startCol + 1} / ${displayWidget.endCol + 2}`,
@@ -1061,7 +1061,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
           {/* Move handle - only in edit mode */}
           {isSelected && isEditMode && (
             <div
-              className="absolute top-3 left-3 w-8 h-8 bg-blue-500/90 hover:bg-blue-500 text-white rounded-lg cursor-move flex items-center justify-center transition-colors z-10 backdrop-blur-sm"
+              className="absolute top-3 left-3 w-8 h-8 bg-[hsl(var(--dashboard-primary-blue))]/90 hover:bg-[hsl(var(--dashboard-primary-blue))] text-white rounded-lg cursor-move flex items-center justify-center transition-colors z-10 backdrop-blur-sm shadow-lg"
               onMouseDown={(e) => handleMouseDown(e, widget.id, 'move')}
             >
               <Move size={14} />
@@ -1073,7 +1073,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             <div className="absolute top-3 right-3 flex space-x-2 z-10">
               {((widget.widgetType === 'chart' || widget.widgetType === 'card') && widget.sqlQuery) && (
                 <button
-                  className="w-8 h-8 bg-emerald-500/90 hover:bg-emerald-500 text-white rounded-lg flex items-center justify-center transition-colors backdrop-blur-sm"
+                  className="w-8 h-8 bg-[hsl(var(--dashboard-success))]/90 hover:bg-[hsl(var(--dashboard-success))] text-white rounded-lg flex items-center justify-center transition-colors backdrop-blur-sm shadow-lg"
                   onClick={(e) => {
                     e.stopPropagation();
                     executeQuery(widget.id, widget.sqlQuery!);
@@ -1085,7 +1085,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
               )}
               {(widget.widgetType === 'table' && widget.sqlQuery) && (
                 <button
-                  className="w-8 h-8 bg-emerald-500/90 hover:bg-emerald-500 text-white rounded-lg flex items-center justify-center transition-colors backdrop-blur-sm"
+                  className="w-8 h-8 bg-[hsl(var(--dashboard-success))]/90 hover:bg-[hsl(var(--dashboard-success))] text-white rounded-lg flex items-center justify-center transition-colors backdrop-blur-sm shadow-lg"
                   onClick={(e) => {
                     e.stopPropagation();
                     initializeTableState(widget.id);
@@ -1097,7 +1097,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                 </button>
               )}
               <button
-                className="w-8 h-8 bg-blue-500/90 hover:bg-blue-500 text-white rounded-lg flex items-center justify-center transition-colors backdrop-blur-sm"
+                className="w-8 h-8 bg-[hsl(var(--dashboard-primary-blue))]/90 hover:bg-[hsl(var(--dashboard-primary-blue))] text-white rounded-lg flex items-center justify-center transition-colors backdrop-blur-sm shadow-lg"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleEditWidget(widget.id);
@@ -1107,7 +1107,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                 <Edit size={14} />
               </button>
               <button
-                className="w-8 h-8 bg-red-500/90 hover:bg-red-500 text-white rounded-lg flex items-center justify-center transition-colors backdrop-blur-sm"
+                className="w-8 h-8 bg-[hsl(var(--dashboard-error))]/90 hover:bg-[hsl(var(--dashboard-error))] text-white rounded-lg flex items-center justify-center transition-colors backdrop-blur-sm shadow-lg"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteWidget(widget.id);
@@ -1124,37 +1124,37 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             <>
               {/* Corner handles */}
               <div
-                className="absolute -top-1 -left-1 w-4 h-4 bg-blue-500 rounded-full cursor-nw-resize z-10 shadow-lg"
+                className="absolute -top-1 -left-1 w-4 h-4 bg-[hsl(var(--dashboard-primary-blue))] rounded-full cursor-nw-resize z-10 shadow-lg"
                 onMouseDown={(e) => handleMouseDown(e, widget.id, 'resize-nw')}
               />
               <div
-                className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full cursor-ne-resize z-10 shadow-lg"
+                className="absolute -top-1 -right-1 w-4 h-4 bg-[hsl(var(--dashboard-primary-blue))] rounded-full cursor-ne-resize z-10 shadow-lg"
                 onMouseDown={(e) => handleMouseDown(e, widget.id, 'resize-ne')}
               />
               <div
-                className="absolute -bottom-1 -left-1 w-4 h-4 bg-blue-500 rounded-full cursor-sw-resize z-10 shadow-lg"
+                className="absolute -bottom-1 -left-1 w-4 h-4 bg-[hsl(var(--dashboard-primary-blue))] rounded-full cursor-sw-resize z-10 shadow-lg"
                 onMouseDown={(e) => handleMouseDown(e, widget.id, 'resize-sw')}
               />
               <div
-                className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full cursor-se-resize z-10 shadow-lg"
+                className="absolute -bottom-1 -right-1 w-4 h-4 bg-[hsl(var(--dashboard-primary-blue))] rounded-full cursor-se-resize z-10 shadow-lg"
                 onMouseDown={(e) => handleMouseDown(e, widget.id, 'resize-se')}
               />
               
               {/* Edge handles */}
               <div
-                className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full cursor-n-resize z-10 shadow-lg"
+                className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-[hsl(var(--dashboard-primary-blue))] rounded-full cursor-n-resize z-10 shadow-lg"
                 onMouseDown={(e) => handleMouseDown(e, widget.id, 'resize-n')}
               />
               <div
-                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full cursor-s-resize z-10 shadow-lg"
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-[hsl(var(--dashboard-primary-blue))] rounded-full cursor-s-resize z-10 shadow-lg"
                 onMouseDown={(e) => handleMouseDown(e, widget.id, 'resize-s')}
               />
               <div
-                className="absolute -left-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full cursor-w-resize z-10 shadow-lg"
+                className="absolute -left-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-[hsl(var(--dashboard-primary-blue))] rounded-full cursor-w-resize z-10 shadow-lg"
                 onMouseDown={(e) => handleMouseDown(e, widget.id, 'resize-w')}
               />
               <div
-                className="absolute -right-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full cursor-e-resize z-10 shadow-lg"
+                className="absolute -right-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-[hsl(var(--dashboard-primary-blue))] rounded-full cursor-e-resize z-10 shadow-lg"
                 onMouseDown={(e) => handleMouseDown(e, widget.id, 'resize-e')}
               />
             </>
@@ -1183,11 +1183,11 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
           <div
             key={`${row}-${col}`}
             className={`
-              border border-gray-600/30 cursor-pointer transition-all duration-150
-              ${isSelected ? 'bg-blue-500/50 border-blue-400' : ''}
-              ${isInSelection && !isSelected && selectionValid ? 'bg-blue-400/30 border-blue-300' : ''}
-              ${isInSelection && !isSelected && !selectionValid ? 'bg-red-400/30 border-red-400' : ''}
-              ${!isInSelection && !isSelected && !isWidget ? 'bg-gray-700/20 hover:bg-gray-600/30' : ''}
+              border border-[hsl(var(--dashboard-card-border))]/30 cursor-pointer transition-all duration-150
+              ${isSelected ? 'bg-[hsl(var(--dashboard-primary-blue))]/50 border-[hsl(var(--dashboard-primary-blue))]' : ''}
+              ${isInSelection && !isSelected && selectionValid ? 'bg-[hsl(var(--dashboard-primary-blue))]/20 border-[hsl(var(--dashboard-primary-blue))]/60' : ''}
+              ${isInSelection && !isSelected && !selectionValid ? 'bg-[hsl(var(--dashboard-error))]/20 border-[hsl(var(--dashboard-error))]' : ''}
+              ${!isInSelection && !isSelected && !isWidget ? 'bg-[hsl(var(--dashboard-accent-background))]/50 hover:bg-[hsl(var(--dashboard-card-hover))]/60' : ''}
               ${isWidget ? 'opacity-0' : ''}
             `}
             style={{
@@ -1205,6 +1205,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     return cells;
   };
 
+  // Remove the getThemeColor utility function and update chart theming
   const renderChart = (widget: Widget) => {
     const data = chartData[widget.id];
     const isLoading = loadingCharts[widget.id];
@@ -1214,7 +1215,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (isLoading) {
       return (
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[hsl(var(--dashboard-primary-blue))]"></div>
         </div>
       );
     }
@@ -1222,7 +1223,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (error) {
       return (
         <div className="flex items-center justify-center h-full p-2">
-          <div className="text-red-400 text-xs text-center">
+          <div className="text-[hsl(var(--dashboard-error))] text-xs text-center">
             <div className="font-medium mb-1">Query Error</div>
             <div className="opacity-80">{error}</div>
           </div>
@@ -1233,7 +1234,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (!data || data.length === 0) {
       return (
         <div className="flex items-center justify-center h-full">
-          <div className="text-gray-400 text-sm">No data available</div>
+          <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">No data available</div>
         </div>
       );
     }
@@ -1243,7 +1244,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (!transformedData || transformedData.length === 0) {
       return (
         <div className="flex items-center justify-center h-full">
-          <div className="text-gray-400 text-sm">Invalid data format</div>
+          <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Invalid data format</div>
         </div>
       );
     }
@@ -1252,50 +1253,62 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
       theme: {
         background: 'transparent',
         text: {
-          fill: '#e2e8f0',
+          fill: 'hsl(var(--dashboard-card-foreground))',
           fontSize: 11
         },
         axis: {
           domain: {
             line: {
-              stroke: '#475569',
+              stroke: 'hsl(var(--dashboard-chart-grid))',
               strokeWidth: 1
             }
           },
           legend: {
             text: {
-              fill: '#e2e8f0',
+              fill: 'hsl(var(--dashboard-card-foreground))',
               fontSize: 12
             }
           },
           ticks: {
             line: {
-              stroke: '#475569',
+              stroke: 'hsl(var(--dashboard-chart-grid))',
               strokeWidth: 1
             },
             text: {
-              fill: '#cbd5e1',
+              fill: 'hsl(var(--dashboard-muted-foreground))',
               fontSize: 10
             }
           }
         },
         grid: {
           line: {
-            stroke: '#334155',
+            stroke: 'hsl(var(--dashboard-chart-grid))',
             strokeWidth: 1
           }
         },
         tooltip: {
           container: {
-            background: '#1e293b',
-            color: '#f1f5f9',
+            background: 'hsl(var(--dashboard-card-background))',
+            color: 'hsl(var(--dashboard-card-foreground))',
             fontSize: 12,
             borderRadius: 8,
+            border: '1px solid hsl(var(--dashboard-card-border))',
             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
           }
         }
       }
     };
+
+    // Theme-aware chart colors
+    const chartColors = [
+      'hsl(var(--dashboard-primary-blue))',
+      'hsl(var(--dashboard-primary-green))', 
+      'hsl(var(--dashboard-primary-purple))',
+      'hsl(var(--dashboard-primary-orange))',
+      'hsl(var(--dashboard-error))',
+      'hsl(var(--dashboard-warning))',
+      'hsl(var(--dashboard-success))'
+    ];
 
     switch (chartType) {
       case 'bar':
@@ -1314,7 +1327,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             padding={0.3}
             valueScale={{ type: 'linear' }}
             indexScale={{ type: 'band', round: true }}
-            colors={['#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']}
+            colors={chartColors}
             borderRadius={4}
             borderColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
             axisTop={null}
@@ -1335,7 +1348,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             }}
             labelSkipWidth={12}
             labelSkipHeight={12}
-            labelTextColor="#1e293b"
+            labelTextColor="hsl(var(--dashboard-card-background))"
             animate={true}
             {...commonProps}
           />
@@ -1353,13 +1366,13 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             activeOuterRadiusOffset={8}
             borderWidth={2}
             borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-            colors={['#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']}
+            colors={chartColors}
             arcLinkLabelsSkipAngle={10}
-            arcLinkLabelsTextColor="#e2e8f0"
+            arcLinkLabelsTextColor="hsl(var(--dashboard-card-foreground))"
             arcLinkLabelsThickness={2}
             arcLinkLabelsColor={{ from: 'color' }}
             arcLabelsSkipAngle={10}
-            arcLabelsTextColor="#1e293b"
+            arcLabelsTextColor="hsl(var(--dashboard-card-background))"
             animate={true}
             {...commonProps}
           />
@@ -1396,7 +1409,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             pointBorderColor={{ from: 'serieColor' }}
             pointLabelYOffset={-12}
             useMesh={true}
-            colors={['#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']}
+            colors={chartColors}
             animate={true}
             {...commonProps}
           />
@@ -1428,7 +1441,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
               legendPosition: 'middle',
               legendOffset: -60
             }}
-            colors={['#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']}
+            colors={chartColors}
             borderRadius={2}
             borderWidth={2}
             borderColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
@@ -1437,13 +1450,14 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             whiskerEndSize={0.6}
             whiskerColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
             animate={true}
+            {...commonProps}
           />
         );
 
       default:
         return (
           <div className="flex items-center justify-center h-full">
-            <div className="text-gray-400 text-sm">Unsupported chart type</div>
+            <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Unsupported chart type</div>
           </div>
         );
     }
@@ -1458,7 +1472,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (isLoading) {
       return (
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[hsl(var(--dashboard-primary-blue))]"></div>
         </div>
       );
     }
@@ -1466,7 +1480,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (error) {
       return (
         <div className="flex items-center justify-center h-full p-3">
-          <div className="text-red-400 text-sm text-center bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800/30">
+          <div className="text-[hsl(var(--dashboard-error))] text-sm text-center bg-[hsl(var(--dashboard-error))]/10 p-3 rounded-lg border border-[hsl(var(--dashboard-error))]/20">
             <div className="font-medium mb-1">Query Error</div>
             <div className="opacity-80 text-xs">{error}</div>
           </div>
@@ -1477,7 +1491,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (!data || data.length === 0) {
       return (
         <div className="flex items-center justify-center h-full">
-          <div className="text-gray-400 text-sm">No data available</div>
+          <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">No data available</div>
         </div>
       );
     }
@@ -1503,19 +1517,19 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             }
           }
 
-          // Color scheme for different metrics
+          // Theme-aware color scheme for different metrics
           const colors = [
-            'text-blue-400',
-            'text-emerald-400', 
-            'text-purple-400',
-            'text-amber-400',
-            'text-rose-400',
-            'text-cyan-400'
+            'text-[hsl(var(--dashboard-primary-blue))]',
+            'text-[hsl(var(--dashboard-primary-green))]', 
+            'text-[hsl(var(--dashboard-primary-purple))]',
+            'text-[hsl(var(--dashboard-primary-orange))]',
+            'text-[hsl(var(--dashboard-error))]',
+            'text-[hsl(var(--dashboard-warning))]'
           ];
 
           return (
             <div key={index} className="flex flex-col space-y-2">
-              <div className="text-slate-400 text-xs font-medium uppercase tracking-wider">
+              <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs font-medium uppercase tracking-wider">
                 {formattedKey}
               </div>
               <div className={`text-2xl font-bold ${colors[index % colors.length]}`}>
@@ -1535,7 +1549,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (!tableState) {
       return (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[hsl(var(--dashboard-primary-blue))]"></div>
         </div>
       );
     }
@@ -1543,7 +1557,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (tableState.loading && tableState.data.length === 0) {
       return (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[hsl(var(--dashboard-primary-blue))]"></div>
         </div>
       );
     }
@@ -1551,7 +1565,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (tableState.error) {
       return (
         <div className="absolute inset-0 flex items-center justify-center p-3">
-          <div className="text-red-400 text-sm text-center bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800/30">
+          <div className="text-[hsl(var(--dashboard-error))] text-sm text-center bg-[hsl(var(--dashboard-error))]/10 p-3 rounded-lg border border-[hsl(var(--dashboard-error))]/20">
             <div className="font-medium mb-1">Query Error</div>
             <div className="opacity-80 text-xs">{tableState.error}</div>
           </div>
@@ -1562,7 +1576,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (!tableState.data || tableState.data.length === 0) {
       return (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-gray-400 text-sm">No data available</div>
+          <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">No data available</div>
         </div>
       );
     }
@@ -1575,12 +1589,12 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
         <div className="flex-1 overflow-auto min-h-0">
           <table className="w-full">
             {/* Table header */}
-            <thead className="sticky top-0 bg-slate-700/90 backdrop-blur-sm border-b border-slate-600 z-10">
+            <thead className="sticky top-0 bg-[hsl(var(--table-header-background))] backdrop-blur-sm border-b border-[hsl(var(--table-border))] z-10">
               <tr>
                 {columns.map((column, index) => (
                   <th
                     key={index}
-                    className={`px-4 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider ${alignmentClass}`}
+                    className={`px-4 py-3 text-left text-xs font-medium text-[hsl(var(--table-header-foreground))] uppercase tracking-wider ${alignmentClass}`}
                   >
                     {column.replace(/_/g, ' ')}
                   </th>
@@ -1589,16 +1603,16 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             </thead>
             
             {/* Table body */}
-            <tbody className="divide-y divide-slate-700/50">
+            <tbody className="divide-y divide-[hsl(var(--table-border))]">
               {data.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className="hover:bg-slate-700/30 transition-colors"
+                  className="hover:bg-[hsl(var(--table-row-hover))] transition-colors"
                 >
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`px-4 py-3 text-sm text-slate-300 ${alignmentClass}`}
+                      className={`px-4 py-3 text-sm text-[hsl(var(--table-foreground))] ${alignmentClass}`}
                     >
                       {row[column] !== null && row[column] !== undefined 
                         ? String(row[column]) 
@@ -1614,11 +1628,11 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
         {/* Load more button for infinite pagination - fixed height at bottom */}
         {widget.enablePagination && hasMore && (
-          <div className="flex-shrink-0 p-3 border-t border-slate-600/30 bg-slate-800/50">
+          <div className="flex-shrink-0 p-3 border-t border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]/50">
             <button
               onClick={() => loadMoreTableData(widget.id, widget)}
               disabled={loading}
-              className="w-full px-3 py-2 bg-blue-600/80 hover:bg-blue-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors flex items-center justify-center space-x-2"
+              className="w-full px-3 py-2 bg-[hsl(var(--dashboard-primary-blue))]/80 hover:bg-[hsl(var(--dashboard-primary-blue))] disabled:bg-[hsl(var(--dashboard-muted-foreground))] disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
@@ -1637,8 +1651,8 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
         {/* Show loading indicator when loading more data - fixed height overlay */}
         {loading && data.length > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-slate-600/30 bg-slate-800/90 backdrop-blur-sm">
-            <div className="flex items-center justify-center space-x-2 text-slate-400 text-sm">
+          <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]/90 backdrop-blur-sm">
+            <div className="flex items-center justify-center space-x-2 text-[hsl(var(--table-muted-foreground))] text-sm">
               <RefreshCw size={12} className="animate-spin" />
               <span>Loading more data...</span>
             </div>
@@ -1652,26 +1666,26 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     // View mode - show widgets without grid if any exist
     if (widgets.length > 0) {
       return (
-        <div className="flex-1 flex flex-col h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="flex-1 flex flex-col h-full bg-[hsl(var(--dashboard-background))]">
           {/* View Mode Header */}
-          <div className="h-12 bg-slate-800/50 border-b border-slate-700/30 flex items-center justify-between px-4 flex-shrink-0">
+          <div className="h-12 bg-[hsl(var(--dashboard-card-background))] border-b border-[hsl(var(--dashboard-card-border))] flex items-center justify-between px-4 flex-shrink-0">
             <div className="flex items-center">
-              <div className="w-6 h-6 bg-blue-500/80 rounded flex items-center justify-center mr-3">
-                #
+              <div className="w-6 h-6 bg-[hsl(var(--dashboard-primary-blue))] rounded flex items-center justify-center mr-3">
+                <span className="text-white text-xs font-bold">#</span>
               </div>
-              <h1 className="text-white font-medium text-base">{getAnalyticsTitle()}</h1>
+              <h1 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-base">{getAnalyticsTitle()}</h1>
             </div>
             <div className="flex items-center space-x-2">
               {/* Save Status Indicator */}
               {saving && (
-                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></div>
+                <div className="w-1.5 h-1.5 bg-[hsl(var(--dashboard-primary-blue))] rounded-full animate-pulse"></div>
               )}
               {saveError && (
-                <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                <div className="w-1.5 h-1.5 bg-[hsl(var(--dashboard-error))] rounded-full"></div>
               )}
               <button
                 onClick={handleEnterEditMode}
-                className="w-7 h-7 bg-slate-700/50 hover:bg-slate-600/70 text-slate-300 hover:text-white rounded transition-all duration-200 flex items-center justify-center"
+                className="w-7 h-7 bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] text-[hsl(var(--dashboard-muted-foreground))] hover:text-[hsl(var(--dashboard-card-foreground))] rounded transition-all duration-200 flex items-center justify-center border border-[hsl(var(--dashboard-card-border))]"
               >
                 <Edit size={14} />
               </button>
@@ -1693,9 +1707,9 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                   <div
                     key={widget.id}
                     className={`
-                      ${isHeading ? 'bg-transparent border-transparent' : 'bg-slate-800/40 backdrop-blur-sm border-slate-600/30 shadow-xl'} 
+                      ${isHeading ? 'bg-transparent border-transparent' : 'bg-[hsl(var(--dashboard-card-background))] border-[hsl(var(--dashboard-card-border))]'} 
                       border rounded-xl relative overflow-hidden transition-all duration-200
-                      ${isHeading ? 'hover:scale-[1.01]' : 'hover:scale-[1.01] hover:shadow-lg'}
+                      ${isHeading ? 'hover:scale-[1.01]' : 'hover:scale-[1.01] hover:bg-[hsl(var(--dashboard-card-hover))] shadow-lg hover:shadow-xl'}
                     `}
                     style={{
                       gridColumn: `${widget.startCol + 1} / ${widget.endCol + 2}`,
@@ -1718,19 +1732,19 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
     // Empty state when no widgets exist
     return (
-      <div className="flex-1 h-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="flex-1 h-full flex items-center justify-center bg-[hsl(var(--dashboard-background))]">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-3">
-            Master Analytics
+          <h2 className="text-2xl font-bold text-[hsl(var(--dashboard-card-foreground))] mb-3">
+            {getAnalyticsTitle()}
           </h2>
           
-          <p className="text-slate-400 mb-8 text-sm max-w-md">
+          <p className="text-[hsl(var(--dashboard-muted-foreground))] mb-8 text-sm max-w-md">
             Create your first analytics dashboard by adding charts, cards, and visualizations to track your data.
           </p>
         
           <button
             onClick={handleEnterEditMode}
-            className="px-6 py-3 bg-slate-700/80 hover:bg-slate-600 text-white rounded-lg text-sm transition-all duration-200 border border-slate-600/50"
+            className="px-6 py-3 bg-[hsl(var(--dashboard-card-background))] hover:bg-[hsl(var(--dashboard-card-hover))] text-[hsl(var(--dashboard-card-foreground))] rounded-lg text-sm transition-all duration-200 border border-[hsl(var(--dashboard-card-border))] shadow-sm hover:shadow-md"
           >
             <Plus size={16} className="inline mr-2" />
             Create Dashboard
@@ -1741,19 +1755,19 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="flex-1 flex flex-col h-full bg-[hsl(var(--dashboard-background))]">
       {/* Edit Mode Header */}
-      <div className="h-12 bg-slate-800/50 border-b border-slate-700/30 flex items-center justify-between px-4 flex-shrink-0">
+      <div className="h-12 bg-[hsl(var(--dashboard-card-background))] border-b border-[hsl(var(--dashboard-card-border))] flex items-center justify-between px-4 flex-shrink-0">
         <div className="flex items-center">
-          <div className="w-6 h-6 bg-orange-500/80 rounded flex items-center justify-center mr-3">
-            #
+          <div className="w-6 h-6 bg-[hsl(var(--dashboard-warning))] rounded flex items-center justify-center mr-3">
+            <span className="text-white text-xs font-bold">#</span>
           </div>
-          <h1 className="text-white font-medium text-base">{getAnalyticsTitle()}</h1>
-          <span className="ml-2 px-2 py-0.5 bg-orange-500/20 text-orange-300 text-xs rounded-full">Edit</span>
+          <h1 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-base">{getAnalyticsTitle()}</h1>
+          <span className="ml-2 px-2 py-0.5 bg-[hsl(var(--dashboard-warning))]/20 text-[hsl(var(--dashboard-warning))] text-xs rounded-full border border-[hsl(var(--dashboard-warning))]/30">Edit</span>
         </div>
         <button
           onClick={handleExitEditMode}
-          className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/70 text-slate-300 hover:text-white rounded text-sm transition-all duration-200 flex items-center"
+          className="px-3 py-1.5 bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] text-[hsl(var(--dashboard-muted-foreground))] hover:text-[hsl(var(--dashboard-card-foreground))] rounded text-sm transition-all duration-200 flex items-center border border-[hsl(var(--dashboard-card-border))]"
         >
           <X size={14} className="mr-1" />
           Done
@@ -1762,19 +1776,19 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
       {/* Minimal Instructions */}
       {selectedWidget ? (
-        <div className="bg-slate-800/30 border-b border-slate-700/20 px-4 py-2 text-xs text-slate-400 flex-shrink-0">
+        <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
           Move with arrow keys or drag • Resize with handles • Delete with backspace
         </div>
       ) : !selectedStart ? (
-        <div className="bg-slate-800/30 border-b border-slate-700/20 px-4 py-2 text-xs text-slate-400 flex-shrink-0">
+        <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
           Select area to create widget • Click existing widgets to edit
         </div>
       ) : isSelectionValid() ? (
-        <div className="bg-slate-800/30 border-b border-slate-700/20 px-4 py-2 text-xs text-slate-400 flex-shrink-0">
+        <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
           Click to complete selection
         </div>
       ) : (
-        <div className="bg-red-900/20 border-b border-red-700/20 px-4 py-2 text-xs text-red-400 flex-shrink-0">
+        <div className="bg-[hsl(var(--dashboard-error))]/10 border-b border-[hsl(var(--dashboard-error))]/20 px-4 py-2 text-xs text-[hsl(var(--dashboard-error))] flex-shrink-0">
           Selection overlaps • Choose different area
         </div>
       )}
@@ -1797,20 +1811,20 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
       {/* Widget Creation Form Modal */}
       {showWidgetForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 border border-slate-600 rounded-lg w-full max-w-4xl flex">
+          <div className="bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] rounded-lg w-full max-w-4xl flex shadow-2xl">
             {/* Left Panel - Form */}
             <div className="flex-1 p-6">
-              <h3 className="text-white font-medium text-lg mb-4">
+              <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-lg mb-4">
                 {editingWidget ? 'Edit Widget' : 'Create Widget'}
               </h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-slate-300 text-sm mb-1">Widget Type</label>
+                  <label className="block text-[hsl(var(--dashboard-card-foreground))] text-sm mb-1">Widget Type</label>
                   <select
                     value={widgetFormData.widgetType}
                     onChange={(e) => setWidgetFormData(prev => ({ ...prev, widgetType: e.target.value as 'chart' | 'card' | 'heading' | 'table' }))}
-                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-[hsl(var(--dashboard-accent-background))] border border-[hsl(var(--dashboard-card-border))] rounded text-[hsl(var(--dashboard-card-foreground))] text-sm focus:outline-none focus:border-[hsl(var(--dashboard-primary-blue))] focus:ring-1 focus:ring-[hsl(var(--dashboard-primary-blue))]"
                   >
                     <option value="chart">Chart</option>
                     <option value="card">Card</option>
@@ -1820,33 +1834,33 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 text-sm mb-1">Title</label>
+                  <label className="block text-[hsl(var(--dashboard-card-foreground))] text-sm mb-1">Title</label>
                   <input
                     type="text"
                     value={widgetFormData.title}
                     onChange={(e) => setWidgetFormData(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-400 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-[hsl(var(--dashboard-accent-background))] border border-[hsl(var(--dashboard-card-border))] rounded text-[hsl(var(--dashboard-card-foreground))] placeholder-[hsl(var(--dashboard-muted-foreground))] text-sm focus:outline-none focus:border-[hsl(var(--dashboard-primary-blue))] focus:ring-1 focus:ring-[hsl(var(--dashboard-primary-blue))]"
                     placeholder="Enter title"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 text-sm mb-1">Description</label>
+                  <label className="block text-[hsl(var(--dashboard-card-foreground))] text-sm mb-1">Description</label>
                   <textarea
                     value={widgetFormData.description}
                     onChange={(e) => setWidgetFormData(prev => ({ ...prev, description: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-400 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2 bg-[hsl(var(--dashboard-accent-background))] border border-[hsl(var(--dashboard-card-border))] rounded text-[hsl(var(--dashboard-card-foreground))] placeholder-[hsl(var(--dashboard-muted-foreground))] text-sm focus:outline-none focus:border-[hsl(var(--dashboard-primary-blue))] focus:ring-1 focus:ring-[hsl(var(--dashboard-primary-blue))] resize-none"
                     placeholder="Enter description"
                     rows={2}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 text-sm mb-1">Alignment</label>
+                  <label className="block text-[hsl(var(--dashboard-card-foreground))] text-sm mb-1">Alignment</label>
                   <select
                     value={widgetFormData.alignment}
                     onChange={(e) => setWidgetFormData(prev => ({ ...prev, alignment: e.target.value as 'left' | 'center' | 'right' }))}
-                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-[hsl(var(--dashboard-accent-background))] border border-[hsl(var(--dashboard-card-border))] rounded text-[hsl(var(--dashboard-card-foreground))] text-sm focus:outline-none focus:border-[hsl(var(--dashboard-primary-blue))] focus:ring-1 focus:ring-[hsl(var(--dashboard-primary-blue))]"
                   >
                     <option value="left">Left</option>
                     <option value="center">Center</option>
@@ -1856,11 +1870,11 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
                 {widgetFormData.widgetType === 'chart' && (
                   <div>
-                    <label className="block text-slate-300 text-sm mb-1">Chart Type</label>
+                    <label className="block text-[hsl(var(--dashboard-card-foreground))] text-sm mb-1">Chart Type</label>
                     <select
                       value={widgetFormData.chartType}
                       onChange={(e) => setWidgetFormData(prev => ({ ...prev, chartType: e.target.value as 'bar' | 'pie' | 'line' | 'boxplot' }))}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-[hsl(var(--dashboard-accent-background))] border border-[hsl(var(--dashboard-card-border))] rounded text-[hsl(var(--dashboard-card-foreground))] text-sm focus:outline-none focus:border-[hsl(var(--dashboard-primary-blue))] focus:ring-1 focus:ring-[hsl(var(--dashboard-primary-blue))]"
                     >
                       <option value="bar">Bar Chart</option>
                       <option value="pie">Pie Chart</option>
@@ -1872,11 +1886,11 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
                 {(widgetFormData.widgetType === 'chart' || widgetFormData.widgetType === 'card' || widgetFormData.widgetType === 'table') && (
                   <div>
-                    <label className="block text-slate-300 text-sm mb-1">SQL Query</label>
+                    <label className="block text-[hsl(var(--dashboard-card-foreground))] text-sm mb-1">SQL Query</label>
                     <textarea
                       value={widgetFormData.sqlQuery}
                       onChange={(e) => setWidgetFormData(prev => ({ ...prev, sqlQuery: e.target.value }))}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-400 font-mono text-xs focus:outline-none focus:border-blue-500 resize-none"
+                      className="w-full px-3 py-2 bg-[hsl(var(--dashboard-accent-background))] border border-[hsl(var(--dashboard-card-border))] rounded text-[hsl(var(--dashboard-card-foreground))] placeholder-[hsl(var(--dashboard-muted-foreground))] font-mono text-xs focus:outline-none focus:border-[hsl(var(--dashboard-primary-blue))] focus:ring-1 focus:ring-[hsl(var(--dashboard-primary-blue))] resize-none"
                       placeholder="SELECT column1, column2 FROM forecast"
                       rows={4}
                     />
@@ -1885,25 +1899,25 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
                 {widgetFormData.widgetType === 'table' && (
                   <div>
-                    <label className="block text-slate-300 text-sm mb-1">Page Size</label>
+                    <label className="block text-[hsl(var(--dashboard-card-foreground))] text-sm mb-1">Page Size</label>
                     <input
                       type="number"
                       value={widgetFormData.pageSize}
                       onChange={(e) => setWidgetFormData(prev => ({ ...prev, pageSize: Number(e.target.value) }))}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-[hsl(var(--dashboard-accent-background))] border border-[hsl(var(--dashboard-card-border))] rounded text-[hsl(var(--dashboard-card-foreground))] text-sm focus:outline-none focus:border-[hsl(var(--dashboard-primary-blue))] focus:ring-1 focus:ring-[hsl(var(--dashboard-primary-blue))]"
                     />
                   </div>
                 )}
 
                 {widgetFormData.widgetType === 'table' && (
-                  <div>
-                    <label className="block text-slate-300 text-sm mb-1">Enable Pagination</label>
+                  <div className="flex items-center">
                     <input
                       type="checkbox"
                       checked={widgetFormData.enablePagination}
                       onChange={(e) => setWidgetFormData(prev => ({ ...prev, enablePagination: e.target.checked }))}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                      className="mr-2 text-[hsl(var(--dashboard-primary-blue))] focus:ring-[hsl(var(--dashboard-primary-blue))]"
                     />
+                    <label className="text-[hsl(var(--dashboard-card-foreground))] text-sm">Enable Pagination</label>
                   </div>
                 )}
               </div>
@@ -1911,13 +1925,13 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
               <div className="flex justify-end space-x-3 mt-6">
                 <button
                   onClick={handleCancelWidget}
-                  className="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded text-sm transition-colors"
+                  className="px-4 py-2 bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] text-[hsl(var(--dashboard-muted-foreground))] hover:text-[hsl(var(--dashboard-card-foreground))] rounded text-sm transition-colors border border-[hsl(var(--dashboard-card-border))]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveWidget}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm transition-colors"
+                  className="px-4 py-2 bg-[hsl(var(--dashboard-primary-blue))] hover:bg-[hsl(var(--dashboard-primary-blue))]/90 text-white rounded text-sm transition-colors shadow-sm hover:shadow-md"
                 >
                   {editingWidget ? 'Update' : 'Create'}
                 </button>
@@ -1925,36 +1939,36 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             </div>
 
             {/* Right Panel - Examples */}
-            <div className="w-80 bg-slate-750 border-l border-slate-600 p-6 flex flex-col">
-              <h4 className="text-white font-medium text-base mb-4 flex-shrink-0">Example SQL Queries</h4>
+            <div className="w-80 bg-[hsl(var(--dashboard-accent-background))] border-l border-[hsl(var(--dashboard-card-border))] p-6 flex flex-col">
+              <h4 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-base mb-4 flex-shrink-0">Example SQL Queries</h4>
               
               {/* Scrollable container for examples */}
               <div className="flex-1 overflow-y-auto pr-2 space-y-6" style={{ maxHeight: 'calc(100vh - 200px)' }}>
                 {/* Bar Chart Examples */}
                 <div>
-                  <h5 className="text-blue-400 font-medium text-sm mb-3 sticky top-0 bg-slate-750 py-1">Bar Chart</h5>
+                  <h5 className="text-[hsl(var(--dashboard-primary-blue))] font-medium text-sm mb-3 sticky top-0 bg-[hsl(var(--dashboard-accent-background))] py-1">Bar Chart</h5>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Forecast Quantity by Region</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Forecast Quantity by Region</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT region, SUM(forecast_qty) as total_forecast FROM forecast GROUP BY region ORDER BY total_forecast DESC
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Sales by Super Category</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Sales by Super Category</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT super_category, SUM(sold_qty) as total_sales FROM forecast GROUP BY super_category ORDER BY total_sales DESC
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Store Performance by State</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Store Performance by State</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT state, COUNT(DISTINCT store_no) as store_count, AVG(forecast_qty) as avg_forecast FROM forecast GROUP BY state ORDER BY avg_forecast DESC
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Top Brands by Sales Volume</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Top Brands by Sales Volume</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT brand, SUM(sold_qty) as total_sales FROM forecast WHERE brand IS NOT NULL GROUP BY brand ORDER BY total_sales DESC LIMIT 10
                       </code>
                     </div>
@@ -1963,23 +1977,23 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
                 {/* Pie Chart Examples */}
                 <div>
-                  <h5 className="text-purple-400 font-medium text-sm mb-3 sticky top-0 bg-slate-750 py-1">Pie Chart</h5>
+                  <h5 className="text-[hsl(var(--dashboard-primary-purple))] font-medium text-sm mb-3 sticky top-0 bg-[hsl(var(--dashboard-accent-background))] py-1">Pie Chart</h5>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Sales Distribution by Store Type</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Sales Distribution by Store Type</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT store_type, SUM(sold_qty) as total_sales FROM forecast GROUP BY store_type
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Revenue Distribution by Vertical</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Revenue Distribution by Vertical</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT vertical, SUM(forecast_qty) as total_forecast FROM forecast WHERE vertical IS NOT NULL GROUP BY vertical
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Product Segment Distribution</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Product Segment Distribution</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT segment, COUNT(*) as product_count FROM forecast WHERE segment IS NOT NULL GROUP BY segment
                       </code>
                     </div>
@@ -1988,29 +2002,29 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
                 {/* Line Chart Examples */}
                 <div>
-                  <h5 className="text-cyan-400 font-medium text-sm mb-3 sticky top-0 bg-slate-750 py-1">Line Chart</h5>
+                  <h5 className="text-[hsl(var(--dashboard-primary-green))] font-medium text-sm mb-3 sticky top-0 bg-[hsl(var(--dashboard-accent-background))] py-1">Line Chart</h5>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Monthly Sales Trend</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Monthly Sales Trend</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT month_year, SUM(sold_qty) as total_sales, 'Actual Sales' as series FROM forecast GROUP BY month_year ORDER BY month_year
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Forecast vs Actual Comparison</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Forecast vs Actual Comparison</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT month_year, SUM(forecast_qty) as value, 'Forecast' as series FROM forecast GROUP BY month_year UNION ALL SELECT month_year, SUM(sold_qty), 'Actual' FROM forecast GROUP BY month_year ORDER BY month_year
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Regional Sales Trends</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Regional Sales Trends</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT month_year, SUM(sold_qty) as total_sales, region FROM forecast WHERE region IN ('North', 'South', 'East', 'West') GROUP BY month_year, region ORDER BY month_year
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Week-over-Week Performance</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Week-over-Week Performance</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT wom as week, AVG(sold_qty) as avg_sales, 'Weekly Average' as series FROM forecast GROUP BY wom ORDER BY wom
                       </code>
                     </div>
@@ -2019,23 +2033,23 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
                 {/* Box Plot Examples */}
                 <div>
-                  <h5 className="text-orange-400 font-medium text-sm mb-3 sticky top-0 bg-slate-750 py-1">Box Plot</h5>
+                  <h5 className="text-[hsl(var(--dashboard-primary-orange))] font-medium text-sm mb-3 sticky top-0 bg-[hsl(var(--dashboard-accent-background))] py-1">Box Plot</h5>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Forecast Accuracy Distribution by Region</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Forecast Accuracy Distribution by Region</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT region, (sold_qty - forecast_qty) as forecast_error FROM forecast WHERE sold_qty IS NOT NULL AND forecast_qty IS NOT NULL
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Sales Performance by Store Type</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Sales Performance by Store Type</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT store_type, sold_qty as sales_value FROM forecast WHERE sold_qty IS NOT NULL AND store_type IS NOT NULL
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Consensus vs Forecast Distribution</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Consensus vs Forecast Distribution</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT 'Consensus' as metric, consensus_qty as value FROM forecast WHERE consensus_qty IS NOT NULL UNION ALL SELECT 'Forecast', forecast_qty FROM forecast WHERE forecast_qty IS NOT NULL
                       </code>
                     </div>
@@ -2044,29 +2058,29 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
                 {/* Card Examples */}
                 <div>
-                  <h5 className="text-emerald-400 font-medium text-sm mb-3 sticky top-0 bg-slate-750 py-1">Card Widget</h5>
+                  <h5 className="text-[hsl(var(--dashboard-success))] font-medium text-sm mb-3 sticky top-0 bg-[hsl(var(--dashboard-accent-background))] py-1">Card Widget</h5>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Key Business Metrics</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Key Business Metrics</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT COUNT(DISTINCT store_no) as total_stores, COUNT(DISTINCT article_id) as total_products, SUM(sold_qty) as total_sales FROM forecast
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Forecast Accuracy Summary</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Forecast Accuracy Summary</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT AVG(forecast_qty) as avg_forecast, AVG(sold_qty) as avg_actual, AVG(ABS(forecast_qty - sold_qty)) as avg_error FROM forecast WHERE forecast_qty IS NOT NULL AND sold_qty IS NOT NULL
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Regional Performance</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Regional Performance</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT COUNT(DISTINCT region) as total_regions, COUNT(DISTINCT state) as total_states, COUNT(DISTINCT city) as total_cities FROM forecast
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Product Portfolio Overview</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Product Portfolio Overview</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT COUNT(DISTINCT super_category) as categories, COUNT(DISTINCT brand) as brands, COUNT(DISTINCT vertical) as verticals FROM forecast
                       </code>
                     </div>
@@ -2075,35 +2089,35 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
                 {/* Table Examples */}
                 <div>
-                  <h5 className="text-teal-400 font-medium text-sm mb-3 sticky top-0 bg-slate-750 py-1">Table Widget</h5>
+                  <h5 className="text-[hsl(var(--dashboard-primary-blue))] font-medium text-sm mb-3 sticky top-0 bg-[hsl(var(--dashboard-accent-background))] py-1">Table Widget</h5>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Forecast Data Overview</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Forecast Data Overview</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT store_no, article_id, forecast_qty, sold_qty, region, state FROM forecast ORDER BY forecast_qty DESC
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Product Performance Table</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Product Performance Table</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT article_id, brand, super_category, SUM(forecast_qty) as total_forecast, SUM(sold_qty) as total_sold, COUNT(*) as store_count FROM forecast GROUP BY article_id, brand, super_category ORDER BY total_forecast DESC
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Store Performance Analysis</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Store Performance Analysis</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT store_no, region, state, city, store_type, COUNT(DISTINCT article_id) as unique_products, AVG(forecast_qty) as avg_forecast, AVG(sold_qty) as avg_sold FROM forecast GROUP BY store_no, region, state, city, store_type ORDER BY avg_forecast DESC
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Monthly Sales Breakdown</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Monthly Sales Breakdown</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT month_year, region, super_category, SUM(forecast_qty) as forecast_total, SUM(sold_qty) as sold_total, COUNT(*) as record_count FROM forecast GROUP BY month_year, region, super_category ORDER BY month_year DESC, forecast_total DESC
                       </code>
                     </div>
                     <div>
-                      <p className="text-slate-400 text-xs mb-2">Detailed Article Information</p>
-                      <code className="block text-xs bg-slate-800 p-3 rounded text-green-400 leading-relaxed">
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Detailed Article Information</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT article_id, article_description, brand, vertical, super_category, segment, division, forecast_qty, sold_qty, consensus_qty, month_year FROM forecast WHERE article_description IS NOT NULL ORDER BY forecast_qty DESC
                       </code>
                     </div>

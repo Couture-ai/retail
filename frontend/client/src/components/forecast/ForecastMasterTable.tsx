@@ -13,9 +13,12 @@ import {
   ChevronUp,
   Check,
   Minus,
-  Plus
+  Plus,
+  ChevronLeft
 } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
+import { ResponsiveBar } from '@nivo/bar';
+import SalesChart from './SalesChart';
 
 interface ForecastMetadata {
   essential_columns: string[];
@@ -70,7 +73,31 @@ interface AppliedFilter {
   sqlCondition: string;
 }
 
-const ForecastMasterTable = () => {
+interface ForecastMasterTableProps {
+  consensusMode?: boolean;
+  selectedWeekStartDate?: string;
+}
+
+// TypeScript interfaces for waterfall chart data
+interface WaterfallDataPoint {
+  id: string;
+  value: number;
+  start?: number;
+  color: string;
+  isTotal?: boolean;
+}
+
+interface WaterfallChartData {
+  [key: string]: number | string;
+  id: string;
+  value: number;
+  start: number;
+  color: string;
+  spacer: number;
+  totalValue: number;
+}
+
+const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: propSelectedWeekStartDate }: ForecastMasterTableProps) => {
   const [data, setData] = useState<ForecastRecord[]>([]);
   const [metadata, setMetadata] = useState<ForecastMetadata | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,10 +107,14 @@ const ForecastMasterTable = () => {
   const [page, setPage] = useState(0);
   const [columnGroups, setColumnGroups] = useState<ColumnGroup[]>([]);
   
-  // Week start date state
+  // Week start date state - use prop if provided, otherwise use local state
   const [weekStartDates, setWeekStartDates] = useState<string[]>([]);
-  const [selectedWeekStartDate, setSelectedWeekStartDate] = useState<string>('');
+  const [localSelectedWeekStartDate, setLocalSelectedWeekStartDate] = useState<string>('');
   const [loadingWeekDates, setLoadingWeekDates] = useState(false);
+  
+  // Use prop if provided, otherwise fall back to local state
+  const selectedWeekStartDate = propSelectedWeekStartDate || localSelectedWeekStartDate;
+  const isWeekStartDateControlled = !!propSelectedWeekStartDate;
   
   // Search and sort state
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
@@ -100,6 +131,13 @@ const ForecastMasterTable = () => {
   const [selectedGroupByColumns, setSelectedGroupByColumns] = useState<string[]>([]);
   const [groupByColumns, setGroupByColumns] = useState<string[]>([]);
   
+  // Column selector state
+  const [showColumnSelector, setShowColumnSelector] = useState(false);
+  const [visibleColumnSettings, setVisibleColumnSettings] = useState<{ [key: string]: boolean }>({});
+  
+  // Row selection state
+  const [selectedRows, setSelectedRows] = useState<Set<string | number>>(new Set());
+  
   // Filter state
   const [showFilters, setShowFilters] = useState(false);
   const [discreteFilters, setDiscreteFilters] = useState<{ [key: string]: DiscreteFilter }>({});
@@ -107,6 +145,307 @@ const ForecastMasterTable = () => {
   const [searchFilters, setSearchFilters] = useState<{ [key: string]: SearchFilter }>({});
   const [appliedFilters, setAppliedFilters] = useState<AppliedFilter[]>([]);
   const [filterRanges, setFilterRanges] = useState<{ [key: string]: { min: number; max: number } }>({});
+  
+  // Bottom panel state for consensus mode
+  const [activeBottomTab, setActiveBottomTab] = useState<'sales' | 'waterfall'>('sales');
+  
+  // Adjustment values for consensus mode - keyed by row identifier
+  const [adjustmentValues, setAdjustmentValues] = useState<{ [key: string]: number | null }>({});
+  
+  // Helper function to get adjustment value for a row
+  const getAdjustmentValue = (record: ForecastRecord, index: number): number | null => {
+    const key = `${record.id || index}`;
+    return adjustmentValues[key] || null;
+  };
+  
+  // Calculate the difference between Adjusted Consensus and Interim Consensus
+  const getAdjustmentDifference = (record: ForecastRecord, index: number): number | null => {
+    const adjustedValue = getAdjustmentValue(record, index);
+    if (adjustedValue === null || adjustedValue === 0) return null;
+    
+    const interimConsensus = record.consensus_qty || 0;
+    return adjustedValue - interimConsensus;
+  };
+  
+  // Mock sales data for 2024 weeks 1-40 + forecast for weeks 41-52
+  const salesData = useMemo(() => {
+    // Get the selected row to influence the sales pattern
+    const selectedRecord = data.find((record, index) => {
+      const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+      return selectedRows.has(rowId);
+    });
+    
+    // Create a seed based on selected row properties for consistent but different patterns
+    const getSeedFromRecord = (record: ForecastRecord | undefined): number => {
+      if (!record) return 1; // Default seed
+      
+      // Create a numeric seed from various record properties
+      const storeNo = record.store_no ? String(record.store_no).charCodeAt(0) : 100;
+      const articleId = record.article_id ? String(record.article_id).charCodeAt(0) : 200;
+      const forecastQty = record.forecast_qty || 1000;
+      
+      return (storeNo + articleId + forecastQty) % 1000 + 1; // Ensure positive seed
+    };
+    
+    const seed = getSeedFromRecord(selectedRecord);
+    
+    // Simple seeded random function
+    const seededRandom = (seed: number, iteration: number): number => {
+      const x = Math.sin(seed * iteration) * 10000;
+      return x - Math.floor(x);
+    };
+    
+    const salesWeeks = [];
+    const forecastWeeks = [];
+    
+    // Base sales level influenced by selected row
+    const baseSalesMultiplier = selectedRecord ? 
+      (1 + ((selectedRecord.forecast_qty || 10000) / 20000)) : 1.2; // Scale based on forecast qty
+    
+    // Generate sales data for weeks 1-40 (historical)
+    for (let week = 1; week <= 40; week++) {
+      // Generate mock sales data with some seasonal patterns and holiday effects
+      let baseSales = (15000 * baseSalesMultiplier) + Math.sin((week / 52) * 2 * Math.PI) * 3000; // Seasonal pattern
+      
+      // Add holiday spikes and dips
+      if ([11, 12, 13].includes(week)) baseSales *= 1.3; // Q1 holiday spike
+      if ([19, 20].includes(week)) baseSales *= 0.8; // Spring dip
+      if ([26, 27, 28].includes(week)) baseSales *= 1.4; // Summer spike
+      if ([36, 37, 38].includes(week)) baseSales *= 1.5; // Back-to-school spike
+      if ([15, 16].includes(week)) baseSales *= 0.7; // Mid-year dip
+      
+      // Add seeded randomness based on selected row
+      baseSales += (seededRandom(seed, week) - 0.5) * 2000;
+      
+      salesWeeks.push({
+        x: `W${week}`,
+        y: Math.round(Math.max(baseSales, 1000)), // Ensure minimum sales
+        week: week
+      });
+    }
+    
+    // Generate forecast data for weeks 41-52 (future)
+    for (let week = 41; week <= 52; week++) {
+      // Generate forecast data with slightly different pattern (more optimistic)
+      let baseForecast = (16000 * baseSalesMultiplier) + Math.sin((week / 52) * 2 * Math.PI) * 3500; // Seasonal pattern
+      
+      // Add holiday forecast spikes for end of year
+      if ([47, 48, 49, 50].includes(week)) baseForecast *= 1.6; // Black Friday / Holiday season
+      if ([52].includes(week)) baseForecast *= 1.2; // New Year
+      
+      // Add seeded variance but less than historical
+      baseForecast += (seededRandom(seed, week + 100) - 0.5) * 1000;
+      
+      forecastWeeks.push({
+        x: `W${week}`,
+        y: Math.round(Math.max(baseForecast, 1200)), // Ensure minimum forecast
+        week: week
+      });
+    }
+    
+    return [
+      {
+        id: 'sales',
+        color: '#3b82f6', // blue for sales
+        data: salesWeeks
+      },
+      {
+        id: 'forecast', 
+        color: '#10b981', // green for forecast
+        data: forecastWeeks
+      }
+    ];
+  }, [data, selectedRows]); // Now depends on selectedRows to regenerate when selection changes
+  
+  // Waterfall data for consensus adjustments
+  const waterfallData = useMemo(() => {
+    // Get the selected row's forecast quantity or use default
+    const selectedRecord = data.find((record, index) => {
+      const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+      return selectedRows.has(rowId);
+    });
+    
+    const forecastQty =  10000; // Default 10,000 units
+    
+    // Generate mock adjustment data ensuring final value never goes below 0
+    // and adjustments are in range (-4000, 4000)
+    const generateSafeAdjustments = (initialValue: number, count: number) => {
+      const adjustments = [];
+      let runningTotal = initialValue;
+      
+      for (let i = 1; i <= count; i++) {
+        // Generate adjustment in range (-4000, 4000)
+        let adjustment = Math.floor(Math.random() * 8000) - 4000;
+        
+        // Ensure final value never goes below 0
+        if (runningTotal + adjustment < 0) {
+          adjustment = Math.max(-runningTotal + 100, -4000); // Keep at least 100 units
+        }
+        
+        runningTotal += adjustment;
+        adjustments.push({
+          x: `Adjustment ${i}`,
+          y: adjustment
+        });
+      }
+      
+      return adjustments;
+    };
+    
+    const adjustments = generateSafeAdjustments(forecastQty, 20);
+    
+    // Get current adjustment from user input
+    const currentAdjustment = selectedRecord ? getAdjustmentValue(selectedRecord, 0) || 0 : 0;
+    
+    // Create proper waterfall data with cascading effect using spacers
+    const createWaterfallData = (): WaterfallChartData[] => {
+      const result: WaterfallChartData[] = [];
+      let cumulativeValue = 0;
+      
+      // Starting forecast bar (always starts from 0)
+      result.push({
+        id: 'Forecast Qty',
+        value: forecastQty,
+        spacer: 0, // No spacer for first bar
+        start: 0,
+        color: '#3b82f6', // blue for starting forecast
+        totalValue: forecastQty
+      });
+      cumulativeValue = forecastQty;
+      
+      // Add adjustment bars (each starts where previous ended)
+      adjustments.forEach((adj, index) => {
+        const adjustmentValue = adj.y;
+        const startPosition = cumulativeValue;
+        
+        if (adjustmentValue >= 0) {
+          // Positive adjustment: spacer up to current level, then positive bar
+          result.push({
+            id: adj.x,
+            value: adjustmentValue,
+            spacer: startPosition,
+            start: startPosition,
+            color: '#10b981', // green for positive
+            totalValue: startPosition + adjustmentValue
+          });
+        } else {
+          // Negative adjustment: spacer up to final level, then positive bar representing the decrease
+          const finalLevel = startPosition + adjustmentValue;
+          result.push({
+            id: adj.x,
+            value: Math.abs(adjustmentValue),
+            spacer: finalLevel,
+            start: finalLevel,
+            color: '#ef4444', // red for negative
+            totalValue: finalLevel
+          });
+        }
+        
+        cumulativeValue += adjustmentValue;
+      });
+      
+      // Add current adjustment if any
+      if (currentAdjustment !== 0) {
+        const startPosition = cumulativeValue;
+        
+        if (currentAdjustment >= 0) {
+          result.push({
+            id: 'Current Adjustment',
+            value: currentAdjustment,
+            spacer: startPosition,
+            start: startPosition,
+            color: '#10b981',
+            totalValue: startPosition + currentAdjustment
+          });
+        } else {
+          const finalLevel = startPosition + currentAdjustment;
+          result.push({
+            id: 'Current Adjustment',
+            value: Math.abs(currentAdjustment),
+            spacer: finalLevel,
+            start: finalLevel,
+            color: '#ef4444',
+            totalValue: finalLevel
+          });
+        }
+        
+        cumulativeValue += currentAdjustment;
+      }
+      
+      // Final total bar
+      result.push({
+        id: 'Final Total',
+        value: cumulativeValue,
+        spacer: 0,
+        start: 0,
+        color: '#8b5cf6', // purple for final total
+        totalValue: cumulativeValue
+      });
+      
+      return result;
+    };
+
+    return createWaterfallData();
+  }, [data, selectedRows, adjustmentValues]);
+  
+  // Color function for waterfall chart
+  const setWaterfallColor = ({ id, data: _data }: { id: string; data: any }) => {
+    const transparent = "rgba(0,0,0,0)";
+    return id !== "subtotal" || !!_data.paintSubtotal ? _data.color : transparent;
+  };
+  
+  // Helper function to get display names for consensus mode
+  const getDisplayColumnName = (column: string): string => {
+    // Return display names for consensus mode
+    if (consensusMode) {
+      if (column === 'forecast_qty') {
+        return 'Forecasted Qty';
+      }
+      if (column === 'consensus_qty') {
+        return 'Interim Consensus';
+      }
+      if (column === 'Adjustment') {
+        return 'Adjusted Consensus';
+      }
+      // Handle sigma columns for consensus mode
+      if (column.startsWith('σ_forecast_qty')) {
+        return column.replace('σ_forecast_qty', 'Σ Forecasted Qty');
+      }
+      if (column.startsWith('σ_consensus_qty')) {
+        return column.replace('σ_consensus_qty', 'Σ Interim Consensus');
+      }
+      if (column.startsWith('Σforecast_qty')) {
+        return column.replace('Σforecast_qty', 'Σ Forecasted Qty');
+      }
+      if (column.startsWith('Σconsensus_qty')) {
+        return column.replace('Σconsensus_qty', 'Σ Interim Consensus');
+      }
+    }
+    
+    // Handle general sigma prefixes for group by mode (non-consensus)
+    if (column.startsWith('Σ')) {
+      return column; // Already has sigma prefix
+    }
+    
+    // Handle consensus_qty in non-consensus mode (shouldn't normally appear but just in case)
+    if (column === 'consensus_qty') {
+      return 'Interim Consensus';
+    }
+    
+    return column;
+  };
+  
+  // Holiday indicators
+  const holidayIndicators = [
+    { week: 11, type: 'spike', label: 'Valentine\'s Day' },
+    { week: 12, type: 'spike', label: 'Presidents Day' },
+    { week: 19, type: 'dip', label: 'Spring Slowdown' },
+    { week: 26, type: 'spike', label: 'Memorial Day' },
+    { week: 27, type: 'spike', label: 'Summer Start' },
+    { week: 36, type: 'spike', label: 'Back to School' },
+    { week: 37, type: 'spike', label: 'Labor Day' },
+    { week: 15, type: 'dip', label: 'Mid-Year Dip' }
+  ];
   
   // Refs for infinite scroll
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -120,8 +459,11 @@ const ForecastMasterTable = () => {
   // Load metadata and week dates on component mount
   useEffect(() => {
     loadMetadata();
-    loadWeekStartDates();
-  }, []);
+    // Only load week dates if not controlled by props
+    if (!isWeekStartDateControlled) {
+      loadWeekStartDates();
+    }
+  }, [isWeekStartDateControlled]);
   
   // Load initial data when week start date changes
   useEffect(() => {
@@ -151,7 +493,7 @@ const ForecastMasterTable = () => {
             setWeekStartDates(dates);
             // Set the earliest date as default
             if (dates.length > 0 && !selectedWeekStartDate) {
-              setSelectedWeekStartDate(dates[0]);
+              setLocalSelectedWeekStartDate(dates[0]);
             }
           }
         }
@@ -387,6 +729,13 @@ const ForecastMasterTable = () => {
     ];
     
     setColumnGroups(groups);
+    
+    // Initialize column visibility settings - all columns visible by default
+    const initialVisibility: { [key: string]: boolean } = {};
+    metadata.essential_columns.forEach(col => {
+      initialVisibility[col] = true;
+    });
+    setVisibleColumnSettings(initialVisibility);
   };
   
   const loadInitialData = async () => {
@@ -507,7 +856,8 @@ const ForecastMasterTable = () => {
   const getAllVisibleColumns = () => {
     return columnGroups
       .filter(group => group.expanded)
-      .flatMap(group => group.columns);
+      .flatMap(group => group.columns)
+      .filter(column => visibleColumnSettings[column] !== false);
   };
   
   // Separate columns into pinned and scrollable sections
@@ -515,17 +865,41 @@ const ForecastMasterTable = () => {
     if (isGroupByMode && groupByColumns.length > 0) {
       // In group by mode, different column layout
       const leftPinnedColumns = [...groupByColumns];
-      const rightPinnedColumns = ['Σconsensus_qty'];
+      const rightPinnedColumns = ['Σforecast_qty', 'Σconsensus_qty'];
       
       // Get all columns from data (since they include aggregated columns)
       const allDataColumns = data.length > 0 ? Object.keys(data[0]) : [];
-      const scrollableColumns = allDataColumns.filter(col => 
+      
+      // Filter columns based on visibility settings
+      const visibleDataColumns = allDataColumns.filter(col => {
+        // Always show grouped columns
+        if (leftPinnedColumns.includes(col)) return true;
+        
+        // For aggregated columns, check the original column visibility
+        if (col.startsWith('#') || col.startsWith('Σ')) {
+          const originalColumn = col.substring(1);
+          return visibleColumnSettings[originalColumn] !== false;
+        }
+        
+        // For regular columns, check visibility setting
+        return visibleColumnSettings[col] !== false;
+      });
+      
+      const scrollableColumns = visibleDataColumns.filter(col => 
         !leftPinnedColumns.includes(col) && 
         !rightPinnedColumns.includes(col)
       );
       
-      // Only include right pinned columns if they exist in data
-      const visibleRightPinnedColumns = rightPinnedColumns.filter(col => allDataColumns.includes(col));
+      // Only include right pinned columns if they exist in data and are visible
+      const visibleRightPinnedColumns = rightPinnedColumns.filter(col => {
+        if (!allDataColumns.includes(col)) return false;
+        // For aggregated columns, check the original column visibility
+        if (col.startsWith('Σ')) {
+          const originalColumn = col.substring(1);
+          return visibleColumnSettings[originalColumn] !== false;
+        }
+        return visibleColumnSettings[col] !== false;
+      });
       
       return {
         leftPinnedColumns,
@@ -536,13 +910,13 @@ const ForecastMasterTable = () => {
       // Regular mode
       const allVisibleColumns = getAllVisibleColumns();
       
-      // Only pin forecast_qty column on the right
-      const pinnedRightColumns = ['forecast_qty'];
+      // Pin both forecast_qty and consensus_qty columns on the right if they're visible
+      const pinnedRightColumns = ['forecast_qty', 'consensus_qty'].filter(col => visibleColumnSettings[col] !== false);
       
       // All other columns go to the scrollable middle section
       const scrollableColumns = allVisibleColumns.filter(col => !pinnedRightColumns.includes(col));
       
-      // Only include forecast_qty if it's actually visible
+      // Only include pinned columns if they're actually visible
       const visiblePinnedRightColumns = pinnedRightColumns.filter(col => allVisibleColumns.includes(col));
       
       return {
@@ -563,7 +937,7 @@ const ForecastMasterTable = () => {
   
   const handleWeekStartDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newDate = event.target.value;
-    setSelectedWeekStartDate(newDate);
+    setLocalSelectedWeekStartDate(newDate);
     // Reset pagination
     setData([]);
     setPage(0);
@@ -711,6 +1085,118 @@ const ForecastMasterTable = () => {
     );
   };
   
+  // Column selector functions
+  const handleColumnSelectorCancel = () => {
+    setShowColumnSelector(false);
+  };
+  
+  const handleColumnToggle = (column: string) => {
+    setVisibleColumnSettings(prev => ({
+      ...prev,
+      [column]: !prev[column]
+    }));
+  };
+  
+  const getAvailableColumns = () => {
+    if (!metadata) return { regularColumns: [], aggregatedColumns: [] };
+    
+    const regularColumns = metadata.essential_columns;
+    const aggregatedColumns: string[] = [];
+    
+    // If in group by mode, also include aggregated columns that would be generated
+    if (isGroupByMode && groupByColumns.length > 0) {
+      metadata.essential_columns.forEach(col => {
+        if (!groupByColumns.includes(col)) {
+          const dataType = metadata.essential_columns_datatypes[col];
+          if (dataType === 'string') {
+            aggregatedColumns.push(`#${col}`);
+          } else if (dataType === 'float' || dataType === 'integer') {
+            aggregatedColumns.push(`Σ${col}`);
+          }
+        }
+      });
+    }
+    
+    return { regularColumns, aggregatedColumns };
+  };
+  
+  const selectAllColumns = () => {
+    const { regularColumns, aggregatedColumns } = getAvailableColumns();
+    const newSettings: { [key: string]: boolean } = {};
+    
+    regularColumns.forEach(col => {
+      newSettings[col] = true;
+    });
+    
+    setVisibleColumnSettings(prev => ({ ...prev, ...newSettings }));
+  };
+  
+  const deselectAllColumns = () => {
+    const { regularColumns, aggregatedColumns } = getAvailableColumns();
+    const newSettings: { [key: string]: boolean } = {};
+    
+    regularColumns.forEach(col => {
+      newSettings[col] = false;
+    });
+    
+    setVisibleColumnSettings(prev => ({ ...prev, ...newSettings }));
+  };
+  
+  // Row selection functions
+  const handleRowClick = (record: ForecastRecord, index: number) => {
+    const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+    
+    // Single selection - clear previous and select new
+    setSelectedRows(new Set([rowId]));
+  };
+  
+  const clearRowSelection = () => {
+    setSelectedRows(new Set());
+  };
+  
+  const isRowSelected = (record: ForecastRecord, index: number): boolean => {
+    const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+    return selectedRows.has(rowId);
+  };
+  
+  // Handle adjustment value changes
+  const handleAdjustmentChange = (record: ForecastRecord, index: number, value: string) => {
+    const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+    
+    // Handle empty string as null (clear adjustment)
+    if (value === '') {
+      setAdjustmentValues(prev => ({
+        ...prev,
+        [rowId]: null
+      }));
+      return;
+    }
+    
+    // Parse integer value
+    const numValue = parseInt(value, 10);
+    
+    // Validate the input
+    if (isNaN(numValue)) {
+      // Invalid input - don't update
+      return;
+    }
+    
+    // Apply reasonable bounds (-999999 to 999999)
+    const clampedValue = Math.max(-999999, Math.min(999999, numValue));
+    
+    // Update the adjustment value
+    setAdjustmentValues(prev => ({
+      ...prev,
+      [rowId]: clampedValue
+    }));
+    
+    // If the value was clamped, optionally show feedback
+    if (clampedValue !== numValue) {
+      console.warn(`Adjustment value clamped from ${numValue} to ${clampedValue}`);
+    }
+  };
+  
+  
   // Helper function to convert column name to proper SQL expression for sorting in group by mode
   const getSortColumnExpression = (column: string): string => {
     if (!isGroupByMode || !metadata) {
@@ -745,7 +1231,7 @@ const ForecastMasterTable = () => {
   // Helper function to render card content
   const renderCardContent = (record: ForecastRecord, attributes: string[]) => {
     if (!attributes || attributes.length === 0) {
-      return <div className="text-xs text-red-400">No attributes</div>;
+      return <div className="text-xs text-[hsl(var(--panel-error))]">No attributes</div>;
     }
     
     const [primaryAttribute, ...secondaryAttributes] = attributes;
@@ -754,7 +1240,7 @@ const ForecastMasterTable = () => {
     // Show debug info if primary value is empty
     if (!primaryValue) {
       return (
-        <div className="text-xs text-yellow-400">
+        <div className="text-xs text-[hsl(var(--panel-warning))]">
           Missing: {primaryAttribute}
         </div>
       );
@@ -762,19 +1248,19 @@ const ForecastMasterTable = () => {
     
     return (
       <div className="space-y-0">
-        <div className="font-semibold text-white text-xs leading-tight truncate" title={`${primaryAttribute}: ${primaryValue}`}>
-          {primaryValue}
-        </div>
-        {secondaryAttributes.map((attr) => {
+        <span className="font-semibold text-[hsl(var(--table-foreground))] text-xs leading-tight truncate" title={`${primaryAttribute}: ${primaryValue}`}>
+          {primaryValue}{' '}
+        </span>
+        {secondaryAttributes.map((attr, index) => {
           const value = formatCellValue(record[attr]);
           return value ? (
-            <div 
+            <span 
               key={attr} 
-              className="text-[10px] text-[hsl(var(--dark-3))] leading-tight truncate" 
+              className="text-[10px] text-[hsl(var(--table-muted-foreground))] leading-tight truncate" 
               title={`${attr}: ${value}`}
             >
-              {value}
-            </div>
+              {index==0?'( ':''}{value}{index==secondaryAttributes.length-1 ?' )':', '}
+            </span>
           ) : null;
         })}
       </div>
@@ -1105,28 +1591,20 @@ const ForecastMasterTable = () => {
   
   if (loading && data.length === 0) {
     return (
-      <div className="h-full flex items-center justify-center bg-[hsl(var(--dark-8))]">
+      <div className="h-full flex items-center justify-center bg-[hsl(var(--table-background))]">
         <div className="flex items-center">
           <Loader2 className="animate-spin text-[hsl(var(--primary))] mr-2" size={24} />
-          <span className="text-white">Loading forecast data...</span>
+          <span className="text-[hsl(var(--table-foreground))]">Loading forecast data...</span>
         </div>
       </div>
     );
   }
   
-  if (error && data.length === 0) {
+  if (error) {
     return (
-      <div className="h-full flex items-center justify-center bg-[hsl(var(--dark-8))]">
-        <div className="text-center">
-          <AlertCircle className="text-red-400 mb-2 mx-auto" size={24} />
-          <div className="text-red-400 mb-2">{error}</div>
-          <button 
-            onClick={loadMetadata}
-            className="px-4 py-2 bg-[hsl(var(--primary))] text-white rounded hover:bg-[hsl(var(--primary))/90] flex items-center mx-auto"
-          >
-            <RefreshCw size={16} className="mr-2" />
-            Retry
-          </button>
+      <div className="h-full flex items-center justify-center bg-[hsl(var(--table-background))]">
+        <div className="flex items-center">
+          <span className="text-[hsl(var(--panel-error))]">{error}</span>
         </div>
       </div>
     );
@@ -1136,57 +1614,42 @@ const ForecastMasterTable = () => {
   const { leftPinnedColumns, scrollableColumns, rightPinnedColumns } = getColumnSections();
   
   return (
-    <div className="h-full flex flex-col bg-[hsl(var(--dark-8))]">
+    <div className="h-full flex flex-col bg-[hsl(var(--table-background))]">
       {/* Header */}
-      <div className="p-4 border-b border-gray-700/50">
+      <div className="p-4 border-b border-[hsl(var(--table-border))]">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-white font-semibold text-lg">Forecast Master Table</h2>
-            <p className="text-[hsl(var(--dark-3))] text-sm mt-1">
+            <h2 className="text-[hsl(var(--table-foreground))] font-semibold text-lg">
+              {/* write month instead of week start date, also year */}
+              {(consensusMode ? 'Consensus Adjustment' : 'Forecast Master Table') + ' - ' + new Date(selectedWeekStartDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            </h2>
+            <p className="text-[hsl(var(--table-muted-foreground))] text-sm mt-1">
               {data.length.toLocaleString()} records loaded
               {hasMore && " (loading more as you scroll)"}
+              {selectedRows.size > 0 && (
+                <span className="ml-2 text-[hsl(var(--primary))]">
+                  • 1 row selected
+                  {consensusMode && " - Consensus panel available below"}
+                </span>
+              )}
             </p>
           </div>
           
+          
           {/* Column Group Controls and Manual Load Button */}
           <div className="flex items-center space-x-2">
-            {/* Group By Button */}
-            <button
-              onClick={handleGroupByClick}
-              className={`px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors ${
-                isGroupByMode 
-                  ? 'bg-purple-600 text-white hover:bg-purple-700' 
-                  : 'bg-[hsl(var(--dark-7))] text-white border border-gray-600 hover:border-gray-500'
-              }`}
-            >
-              <Group size={14} />
-              <span>Group By</span>
-              {isGroupByMode && groupByColumns.length > 0 && (
-                <span className="bg-purple-500/30 px-1 rounded text-xs">
-                  {groupByColumns.length}
-                </span>
-              )}
-            </button>
-            
-            {/* Clear Group By Button */}
-            {isGroupByMode && (
-              <button
-                onClick={clearGroupBy}
-                className="px-2 py-1 rounded text-xs bg-red-600 text-white hover:bg-red-700 flex items-center"
-                title="Clear Group By"
-              >
-                <X size={12} />
-              </button>
-            )}
-            
-            {/* Week Start Date Dropdown */}
-            <div className="flex items-center">
-              <Calendar size={14} className="text-[hsl(var(--dark-3))] mr-2" />
+             {/* Week Start Date Dropdown */}
+             <div className="flex items-center">
+              <Calendar size={14} className="text-[hsl(var(--table-muted-foreground))] mr-2" />
               <select
                 value={selectedWeekStartDate}
                 onChange={handleWeekStartDateChange}
-                disabled={loadingWeekDates}
-                className="px-3 py-1 rounded text-xs bg-[hsl(var(--dark-7))] text-white border border-gray-600 hover:border-gray-500 focus:border-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loadingWeekDates || isWeekStartDateControlled}
+                className={`px-3 py-1 rounded text-xs border focus:outline-none ${
+                  isWeekStartDateControlled 
+                    ? 'bg-[hsl(var(--table-input-background))] text-[hsl(var(--table-muted-foreground))] border-[hsl(var(--table-border))] cursor-not-allowed' 
+                    : 'bg-[hsl(var(--table-input-background))] text-[hsl(var(--table-foreground))] border-[hsl(var(--table-input-border))] hover:border-[hsl(var(--table-border-strong))] focus:border-[hsl(var(--primary))]'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {loadingWeekDates ? (
                   <option value="">Loading dates...</option>
@@ -1194,6 +1657,15 @@ const ForecastMasterTable = () => {
                   <>
                     {weekStartDates.length === 0 && (
                       <option value="">No dates available</option>
+                    )}
+                    {selectedWeekStartDate && !weekStartDates.includes(selectedWeekStartDate) && (
+                      <option value={selectedWeekStartDate}>
+                        {new Date(selectedWeekStartDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </option>
                     )}
                     {weekStartDates.map((date) => (
                       <option key={date} value={date}>
@@ -1208,20 +1680,69 @@ const ForecastMasterTable = () => {
                 )}
               </select>
             </div>
+            {/* Group By Button */}
+            <button
+              onClick={handleGroupByClick}
+              className={`px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors ${
+                isGroupByMode 
+                  ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90' 
+                  : 'bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] border border-[hsl(var(--table-border))] hover:bg-[hsl(var(--table-button-hover))]'
+              }`}
+            >
+              <Group size={14} />
+              <span>Group By</span>
+              {isGroupByMode && groupByColumns.length > 0 && (
+                <span className="bg-[hsl(var(--primary))]/30 px-1 rounded text-xs">
+                  {groupByColumns.length}
+                </span>
+              )}
+            </button>
+            
+            {/* Clear Group By Button */}
+            {isGroupByMode && (
+              <button
+                onClick={clearGroupBy}
+                className="px-2 py-1 rounded text-xs bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] hover:bg-[hsl(var(--table-button-hover))] flex items-center transition-colors border border-[hsl(var(--table-border))]"
+                title="Clear Group By"
+              >
+                <X size={12} />
+              </button>
+            )}
+            
+            {/* Column Selector Button */}
+            <button
+              onClick={() => setShowColumnSelector(true)}
+              className="px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] border border-[hsl(var(--table-border))] hover:bg-[hsl(var(--table-button-hover))]"
+            >
+              <span>☰</span>
+              <span>Columns</span>
+            </button>
+            
+            {/* Clear Selection Button */}
+            {selectedRows.size > 0 && (
+              <button
+                onClick={clearRowSelection}
+                className="px-3 py-1 rounded text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90 flex items-center space-x-1"
+                title="Clear selected row"
+              >
+                <X size={12} />
+                <span>Clear Selection</span>
+              </button>
+            )}
             
             {/* Filter Toggle Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors ${
                 showFilters || appliedFilters.length > 0
-                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                  : 'bg-[hsl(var(--dark-7))] text-white border border-gray-600 hover:border-gray-500'
+                  ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90' 
+                  : 'bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] border border-[hsl(var(--table-border))] hover:bg-[hsl(var(--table-button-hover))]'
               }`}
             >
               <Filter size={14} />
               <span>Filters</span>
               {appliedFilters.length > 0 && (
-                <span className="bg-blue-500/30 px-1 rounded text-xs">
+                <span className="bg-[hsl(var(--primary))]/30 px-1 rounded text-xs">
                   {appliedFilters.length}
                 </span>
               )}
@@ -1232,14 +1753,14 @@ const ForecastMasterTable = () => {
       
       {/* Applied Filters Bar - Always Visible */}
       {appliedFilters.length > 0 && (
-        <div className="px-4 py-2 border-b border-gray-700/50 bg-[hsl(var(--dark-7))]">
+        <div className="px-4 py-2 border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 flex-wrap">
-              <span className="text-xs text-[hsl(var(--dark-3))] flex-shrink-0">Applied Filters:</span>
+              <span className="text-xs text-[hsl(var(--table-muted-foreground))] flex-shrink-0">Applied Filters:</span>
               {appliedFilters.map((filter, index) => (
                 <div
                   key={`${filter.column}-${filter.type}-${index}`}
-                  className="flex items-center space-x-1 bg-blue-600/20 text-blue-300 px-2 py-1 rounded text-xs border border-blue-600/30"
+                  className="flex items-center space-x-1 bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))] px-2 py-1 rounded text-xs border border-[hsl(var(--primary))]/30"
                 >
                   <span className="font-medium">
                     {filter.column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
@@ -1247,7 +1768,7 @@ const ForecastMasterTable = () => {
                   <span>{filter.displayValue}</span>
                   <button
                     onClick={() => removeFilter(filter)}
-                    className="text-red-400 hover:text-red-300 ml-1"
+                    className="text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 ml-1"
                     title="Remove filter"
                   >
                     <X size={12} />
@@ -1257,7 +1778,7 @@ const ForecastMasterTable = () => {
             </div>
             <button
               onClick={clearAllFilters}
-              className="text-xs text-red-400 hover:text-red-300 flex items-center space-x-1"
+              className="text-xs text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 flex items-center space-x-1"
             >
               <X size={12} />
               <span>Clear All</span>
@@ -1268,13 +1789,13 @@ const ForecastMasterTable = () => {
       
       {/* Filter Panel - Collapsible */}
       {showFilters && (
-        <div className="border-b border-gray-700/50 bg-[hsl(var(--dark-7))]">
+        <div className="border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
           <div className="p-4">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Store Parameters */}
               <div className="space-y-3">
-                <h3 className="text-white font-medium text-sm flex items-center">
-                  <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+                <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                  <div className="w-3 h-3 bg-[hsl(var(--primary))] rounded mr-2"></div>
                   Store Parameters
                 </h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -1300,8 +1821,8 @@ const ForecastMasterTable = () => {
               
               {/* Product Parameters */}
               <div className="space-y-3">
-                <h3 className="text-white font-medium text-sm flex items-center">
-                  <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+                <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                  <div className="w-3 h-3 bg-[hsl(var(--panel-success))] rounded mr-2"></div>
                   Product Parameters
                 </h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -1327,8 +1848,8 @@ const ForecastMasterTable = () => {
               
               {/* Forecast Parameters */}
               <div className="space-y-3">
-                <h3 className="text-white font-medium text-sm flex items-center">
-                  <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
+                <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                  <div className="w-3 h-3 bg-[hsl(var(--panel-warning))] rounded mr-2"></div>
                   Forecast Parameters
                 </h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -1353,399 +1874,127 @@ const ForecastMasterTable = () => {
               </div>
             </div>
             
-            {/* Filter Actions */}
-            <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-700/50">
-              <div className="text-xs text-[hsl(var(--dark-3))]">
-                {Object.keys(discreteFilters).reduce((acc, col) => acc + discreteFilters[col].selectedValues.length, 0) +
-                 Object.keys(rangeFilters).reduce((acc, col) => acc + (rangeFilters[col].min !== null || rangeFilters[col].max !== null ? 1 : 0), 0) +
-                 Object.keys(searchFilters).reduce((acc, col) => acc + (searchFilters[col].value.trim() ? 1 : 0), 0)} filters configured
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setShowFilters(false)}
-                  className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    applyFilters();
-                    setShowFilters(false);
-                  }}
-                  className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Apply Filters
-                </button>
-              </div>
+            {/* Apply Filters Button */}
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={applyFilters}
+                className="px-6 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90"
+              >
+                Apply Filters
+              </button>
             </div>
           </div>
         </div>
       )}
       
-      {/* Table Container with pinned columns */}
-      <div 
-        ref={tableContainerRef}
-        className="flex-1 overflow-y-auto overflow-x-hidden relative"
-        style={{ minHeight: '400px' }}
-      >
-        <div className="flex h-fit min-h-full">
-          {/* Left Pinned Columns */}
-          <div className="flex-shrink-0 bg-[hsl(var(--dark-8))] border-r border-gray-700/50 z-20">
-            <table className="text-sm h-full">
-              <thead className="sticky top-0 bg-[hsl(var(--dark-7))] border-b border-gray-700/50 z-50">
-                <tr className="h-10">
-                  {!isGroupByMode && (
-                    <>
-                      {/* Row number column */}
-                      <th className="px-2 py-2 text-left text-[hsl(var(--dark-2))] font-medium w-[60px] border-r border-gray-700/50">
-                        #
-                      </th>
-                      
-                      {/* Store Card Column */}
-                      <th className="px-2 py-2 text-left text-white font-medium w-[150px] border-r border-gray-700/50 bg-blue-500/10 border-blue-500/30">
-                        <div className="flex items-center">
-                          <span className="truncate" title="Store Information">
-                            Store
-                          </span>
-                        </div>
-                      </th>
-                      
-                      {/* Product Card Column */}
-                      <th className="px-2 py-2 text-left text-white font-medium w-[200px] border-r border-gray-700/50 bg-green-500/10 border-green-500/30">
-                        <div className="flex items-center">
-                          <span className="truncate" title="Product Information">
-                            Product
-                          </span>
-                        </div>
-                      </th>
-                    </>
-                  )}
-                  
-                  {/* Group By Columns */}
-                  {leftPinnedColumns.map((column) => {
-                    const isSearchable = isColumnSearchable(column);
-                    const sortIcon = getSortIcon(column);
-                    
-                    return (
-                      <th 
-                        key={column}
-                        className="px-2 py-2 text-left text-white font-medium min-w-[120px] border-r border-gray-700/50 bg-purple-500/10 border-purple-500/30 relative cursor-pointer hover:bg-opacity-80 transition-colors"
-                        onMouseEnter={() => setHoveredColumn(column)}
-                        onMouseLeave={() => setHoveredColumn(null)}
-                        onClick={() => handleColumnSort(column)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2 flex-1 min-w-0">
-                            <span className="truncate" title={column}>
-                              {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                            </span>
-                            {/* Show active search term inline */}
-                            {activeSearches[column] && (
-                              <div className="flex items-center space-x-1">
-                                <span className="text-xs text-blue-300 bg-blue-500/20 px-1 rounded whitespace-nowrap">
-                                  "{activeSearches[column]}"
-                                </span>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleClearSearch(column);
-                                  }}
-                                  className="text-xs text-red-400 hover:text-red-300 flex-shrink-0"
-                                  title="Clear search"
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                          {sortIcon && (
-                            <span className="ml-1 text-xs font-bold flex-shrink-0">{sortIcon}</span>
-                          )}
-                        </div>
-                        
-                        {/* Search input for string columns */}
-                        {isSearchable && hoveredColumn === column && (
-                          <div className="absolute top-full left-0 w-full z-50 p-2 bg-[hsl(var(--dark-6))] border border-gray-600 rounded-b shadow-lg">
-                            <div className="flex items-center space-x-1">
-                              <input
-                                type="text"
-                                placeholder={`Search...`}
-                                value={searchValues[column] || ''}
-                                onChange={(e) => handleSearchChange(column, e.target.value)}
-                                onKeyPress={(e) => handleSearchKeyPress(column, e)}
-                                onClick={(e) => e.stopPropagation()}
-                                className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--dark-8))] text-white border border-gray-600 rounded focus:border-blue-500 focus:outline-none min-w-0"
-                                autoFocus
-                              />
-                              {searchValues[column]?.trim() && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleSearchExecute(column);
-                                  }}
-                                  className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
-                                  title="Search"
-                                >
-                                  <Search size={12} />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              
-              <tbody>
-                {data.map((record, index) => (
-                  <tr 
-                    key={record.id || index}
-                    className="border-b border-gray-700/30 hover:bg-[hsl(var(--dark-7))/50] transition-colors"
-                  >
+      {/* Main Content Area with Table and Bottom Panel */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Table Container with dynamic height based on consensus panel */}
+        <div 
+          ref={tableContainerRef}
+          className="flex-1 overflow-y-auto overflow-x-hidden relative"
+          style={{ 
+            height: consensusMode && selectedRows.size > 0 ? '100%' : '100%',
+            minHeight: '300px'
+          }}
+        >
+          <div className="flex h-fit min-h-full">
+            {/* Left Pinned Columns */}
+            <div className="flex-shrink-0 bg-[hsl(var(--table-background))] border-r border-[hsl(var(--table-border))] z-20">
+              <table className="text-sm h-full">
+                <thead className="sticky top-0 bg-[hsl(var(--table-header-background))] border-b border-[hsl(var(--table-border))] z-50">
+                  <tr className="h-10">
                     {!isGroupByMode && (
                       <>
-                        {/* Row number */}
-                        <td className="px-2 py-1 text-[hsl(var(--dark-3))] border-r border-gray-700/50 font-mono text-xs w-[60px]">
-                          {index + 1}
-                        </td>
+                        {/* Row number column */}
+                        <th className="px-2 py-2 text-left text-[hsl(var(--table-muted-foreground))] font-medium w-[60px] border-r border-[hsl(var(--table-border))]">
+                          #
+                        </th>
                         
-                        {/* Store Card */}
-                        <td className="px-2 py-1 border-r border-gray-700/50 w-[150px] bg-blue-500/5 align-top">
-                          {metadata?.store_card_attributes ? (
-                            renderCardContent(record, metadata.store_card_attributes)
-                          ) : (
-                            <div className="text-xs text-gray-400">No store metadata</div>
-                          )}
-                        </td>
+                        {/* Store Card Column */}
+                        <th className="px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium w-[150px] border-r border-[hsl(var(--table-border))] bg-[hsl(var(--table-card-store-background))] border-[hsl(var(--table-card-store-border))]">
+                          <div className="flex items-center">
+                            <span className="truncate" title="Store Information">
+                              Store
+                            </span>
+                          </div>
+                        </th>
                         
-                        {/* Product Card */}
-                        <td className="px-2 py-1 border-r border-gray-700/50 w-[200px] bg-green-500/5 align-top">
-                          {metadata?.product_card_attributes ? (
-                            renderCardContent(record, metadata.product_card_attributes)
-                          ) : (
-                            <div className="text-xs text-gray-400">No product metadata</div>
-                          )}
-                        </td>
+                        {/* Product Card Column */}
+                        <th className="px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium w-[150px] border-r border-[hsl(var(--table-border))] bg-[hsl(var(--table-card-product-background))] border-[hsl(var(--table-card-product-border))]">
+                          <div className="flex items-center">
+                            <span className="truncate" title="Product Information">
+                              Product
+                            </span>
+                          </div>
+                        </th>
                       </>
                     )}
                     
                     {/* Group By Columns */}
-                    {leftPinnedColumns.map((column) => (
-                      <td 
-                        key={column}
-                        className="px-2 py-1 text-white border-r border-gray-700/50 max-w-[200px] bg-purple-500/5"
-                      >
-                        <div className="truncate" title={formatCellValue(record[column])}>
-                          {formatCellValue(record[column])}
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-                
-                {/* Loading row for left columns */}
-                {loadingMore && (
-                  <tr>
-                    <td colSpan={!isGroupByMode ? 3 + leftPinnedColumns.length : leftPinnedColumns.length} className="px-3 py-4 text-center">
-                      <div className="flex items-center justify-center">
-                        <Loader2 className="animate-spin text-[hsl(var(--primary))] mr-2" size={16} />
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          
-          {/* Scrollable Middle Columns */}
-          <div className="flex-1 overflow-x-auto relative">
-            <table className="w-full text-sm h-full">
-              <thead className="sticky top-0 bg-[hsl(var(--dark-7))] border-b border-gray-700/50 z-40">
-                <tr className="h-10">
-                  {scrollableColumns.map((column) => {
-                    const group = columnGroups.find(g => g.columns.includes(column));
-                    const isSearchable = isColumnSearchable(column);
-                    const sortIcon = getSortIcon(column);
-                    
-                    return (
-                      <th 
-                        key={column}
-                        className={`px-2 py-2 text-left text-white font-medium min-w-[120px] border-r border-gray-700/50 ${group?.color || ''} relative cursor-pointer hover:bg-opacity-80 transition-colors`}
-                        onMouseEnter={() => setHoveredColumn(column)}
-                        onMouseLeave={() => setHoveredColumn(null)}
-                        onClick={() => handleColumnSort(column)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2 flex-1 min-w-0">
-                            <span className="truncate" title={column}>
-                              {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                            </span>
-                            {/* Show active search term inline */}
-                            {activeSearches[column] && (
-                              <div className="flex items-center space-x-1">
-                                <span className="text-xs text-blue-300 bg-blue-500/20 px-1 rounded whitespace-nowrap">
-                                  "{activeSearches[column]}"
-                                </span>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleClearSearch(column);
-                                  }}
-                                  className="text-xs text-red-400 hover:text-red-300 flex-shrink-0"
-                                  title="Clear search"
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                          {sortIcon && (
-                            <span className="ml-1 text-xs font-bold flex-shrink-0">{sortIcon}</span>
-                          )}
-                        </div>
-                        
-                        {/* Search input for string columns - positioned to stay in bounds */}
-                        {isSearchable && hoveredColumn === column && (
-                          <div className="absolute top-full left-0 w-full z-50 p-2 bg-[hsl(var(--dark-6))] border border-gray-600 rounded-b shadow-lg">
-                            <div className="flex items-center space-x-1">
-                              <input
-                                type="text"
-                                placeholder={`Search...`}
-                                value={searchValues[column] || ''}
-                                onChange={(e) => handleSearchChange(column, e.target.value)}
-                                onKeyPress={(e) => handleSearchKeyPress(column, e)}
-                                onClick={(e) => e.stopPropagation()}
-                                className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--dark-8))] text-white border border-gray-600 rounded focus:border-blue-500 focus:outline-none min-w-0"
-                                autoFocus
-                              />
-                              {searchValues[column]?.trim() && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleSearchExecute(column);
-                                  }}
-                                  className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
-                                  title="Search"
-                                >
-                                  <Search size={12} />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              
-              <tbody>
-                {data.map((record, index) => (
-                  <tr 
-                    key={record.id || index}
-                    className="border-b border-gray-700/30 hover:bg-[hsl(var(--dark-7))/50] transition-colors"
-                  >
-                    {scrollableColumns.map((column) => (
-                      <td 
-                        key={column}
-                        className="px-2 py-1 text-white border-r border-gray-700/50 max-w-[200px]"
-                      >
-                        <div className="truncate" title={formatCellValue(record[column])}>
-                          {formatCellValue(record[column])}
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-                
-                {/* Loading row for middle columns */}
-                {loadingMore && (
-                  <tr>
-                    <td colSpan={scrollableColumns.length} className="px-3 py-4 text-center">
-                      <span className="text-[hsl(var(--dark-3))]">Loading...</span>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          
-          {/* Right Pinned Columns (Forecast Qty) */}
-          {rightPinnedColumns.length > 0 && (
-            <div className="flex-shrink-0 bg-[hsl(var(--dark-8))] border-l border-gray-700/50 z-20">
-              <table className="text-sm h-full">
-                <thead className="sticky top-0 bg-[hsl(var(--dark-7))] border-b border-gray-700/50 z-50">
-                  <tr className="h-10">
-                    {rightPinnedColumns.map((column) => {
-                      const isSearchable = isColumnSearchable(column);
-                      const sortIcon = getSortIcon(column);
-                      
+                    {leftPinnedColumns.map((column) => {
+                      const isSearchActive = activeSearches[column];
                       return (
                         <th 
                           key={column}
-                          className="px-2 py-2 text-left text-white font-medium min-w-[120px] border-r border-gray-700/50 bg-amber-500/10 border-amber-500/30 relative cursor-pointer hover:bg-opacity-80 transition-colors"
-                          onMouseEnter={() => setHoveredColumn(column)}
-                          onMouseLeave={() => setHoveredColumn(null)}
-                          onClick={() => handleColumnSort(column)}
+                          className="px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] bg-[hsl(var(--table-card-group-background))] border-[hsl(var(--table-card-group-border))] relative"
                         >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2 flex-1 min-w-0">
-                              <span className="truncate" title={column}>
-                                {column === 'forecast_qty' ? 'Forecast Qty' : column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                              </span>
-                              {/* Show active search term inline */}
-                              {activeSearches[column] && (
-                                <div className="flex items-center space-x-1">
-                                  <span className="text-xs text-blue-300 bg-blue-500/20 px-1 rounded whitespace-nowrap">
-                                    "{activeSearches[column]}"
+                          {!isSearchActive ? (
+                            <div className="flex items-center justify-between group">
+                              <div className="flex items-center flex-1 min-w-0">
+                                <span className="truncate cursor-pointer hover:text-[hsl(var(--primary))]" title={getDisplayColumnName(column)}>
+                                  {getDisplayColumnName(column)}
+                                </span>
+                                {sortState.column === column && (
+                                  <span className="ml-1 text-[hsl(var(--primary))]">
+                                    {getSortIcon(column)}
                                   </span>
+                                )}
+                              </div>
+                              <div className="flex items-center ml-1">
+                                {isColumnSearchable(column) && (
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleClearSearch(column);
+                                      const searchValue = searchValues[column];
+                                      if (searchValue?.trim()) {
+                                        handleSearchExecute(column);
+                                      } else {
+                                        setSearchValues({ ...searchValues, [column]: '' });
+                                        const searchContainer = e.currentTarget.closest('th');
+                                        const searchInput = searchContainer?.querySelector('input');
+                                        setTimeout(() => searchInput?.focus(), 0);
+                                      }
                                     }}
-                                    className="text-xs text-red-400 hover:text-red-300 flex-shrink-0"
-                                    title="Clear search"
-                                  >
-                                    ×
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                            {sortIcon && (
-                              <span className="ml-1 text-xs font-bold flex-shrink-0">{sortIcon}</span>
-                            )}
-                          </div>
-                          
-                          {/* Search input for string columns - positioned to stay in bounds */}
-                          {isSearchable && hoveredColumn === column && (
-                            <div className="absolute top-full left-0 w-full z-50 p-2 bg-[hsl(var(--dark-6))] border border-gray-600 rounded-b shadow-lg">
-                              <div className="flex items-center space-x-1">
-                                <input
-                                  type="text"
-                                  placeholder={`Search...`}
-                                  value={searchValues[column] || ''}
-                                  onChange={(e) => handleSearchChange(column, e.target.value)}
-                                  onKeyPress={(e) => handleSearchKeyPress(column, e)}
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--dark-8))] text-white border border-gray-600 rounded focus:border-blue-500 focus:outline-none min-w-0"
-                                  autoFocus
-                                />
-                                {searchValues[column]?.trim() && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleSearchExecute(column);
-                                    }}
-                                    className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
+                                    className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
                                     title="Search"
                                   >
                                     <Search size={12} />
                                   </button>
                                 )}
                               </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center space-x-1">
+                              <input
+                                type="text"
+                                value={searchValues[column] || ''}
+                                onChange={(e) => handleSearchChange(column, e.target.value)}
+                                onKeyPress={(e) => handleSearchKeyPress(column, e)}
+                                placeholder={`Search ${getDisplayColumnName(column)}...`}
+                                className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--table-input-background))] border border-[hsl(var(--table-input-border))] rounded text-[hsl(var(--table-foreground))] placeholder-[hsl(var(--table-muted-foreground))] focus:outline-none focus:border-[hsl(var(--primary))] min-w-0"
+                                autoFocus
+                              />
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleSearchExecute(column);
+                                }}
+                                className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
+                                title="Search"
+                              >
+                                <Search size={12} />
+                              </button>
                             </div>
                           )}
                         </th>
@@ -1755,127 +2004,829 @@ const ForecastMasterTable = () => {
                 </thead>
                 
                 <tbody>
-                  {data.map((record, index) => (
-                    <tr 
-                      key={record.id || index}
-                      className="border-b border-gray-700/30 hover:bg-[hsl(var(--dark-7))/50] transition-colors"
-                    >
-                      {rightPinnedColumns.map((column) => (
-                        <td 
-                          key={column}
-                          className="px-2 py-1 text-white border-r border-gray-700/50 max-w-[200px] font-semibold bg-amber-500/5"
-                        >
-                          <div className="truncate" title={formatCellValue(record[column])}>
-                            {formatCellValue(record[column])}
-                          </div>
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
+                  {data.map((record, index) => {
+                    const isSelected = isRowSelected(record, index);
+                    return (
+                      <tr 
+                        key={record.id || index}
+                        className={`border-b border-[hsl(var(--table-border))] transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-[hsl(var(--table-row-selected))] border-t border-t-[hsl(var(--table-row-selected-border))] border-r border-r-[hsl(var(--table-row-selected-border))]' 
+                            : 'hover:bg-[hsl(var(--table-row-hover))]'
+                        }`}
+                        onClick={() => handleRowClick(record, index)}
+                      >
+                        {!isGroupByMode && (
+                          <>
+                            {/* Row number */}
+                            <td className="px-2 py-1 text-[hsl(var(--table-muted-foreground))] border-r border-[hsl(var(--table-border))] font-mono text-xs w-[60px]">
+                              {index + 1}
+                            </td>
+                            
+                            {/* Store Card */}
+                            <td className="px-2 py-1 border-r border-[hsl(var(--table-border))] w-[150px] bg-[hsl(var(--table-card-store-background))] align-top">
+                              {metadata?.store_card_attributes ? (
+                                renderCardContent(record, metadata.store_card_attributes)
+                              ) : (
+                                <div className="text-xs text-[hsl(var(--table-muted-foreground))]">No store metadata</div>
+                              )}
+                            </td>
+                            
+                            {/* Product Card */}
+                            <td className="px-2 py-1 border-r border-[hsl(var(--table-border))] w-[150px] bg-[hsl(var(--table-card-product-background))] align-top">
+                              {metadata?.product_card_attributes ? (
+                                renderCardContent(record, metadata.product_card_attributes)
+                              ) : (
+                                <div className="text-xs text-[hsl(var(--table-muted-foreground))]">No product metadata</div>
+                              )}
+                            </td>
+                          </>
+                        )}
+                        
+                        {/* Group By Columns */}
+                        {leftPinnedColumns.map((column) => (
+                          <td 
+                            key={column}
+                            className="px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[200px] bg-[hsl(var(--table-card-group-background))]"
+                          >
+                            <div className="truncate" title={formatCellValue(record[column])}>
+                              {formatCellValue(record[column])}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
                   
-                  {/* Loading row for right columns */}
+                  {/* Loading row for left columns */}
                   {loadingMore && (
                     <tr>
-                      <td colSpan={rightPinnedColumns.length} className="px-3 py-4 text-center">
-                        <span className="text-[hsl(var(--dark-3))]">Loading...</span>
+                      <td colSpan={!isGroupByMode ? 3 + leftPinnedColumns.length : leftPinnedColumns.length} className="px-3 py-4 text-center">
+                        <div className="flex items-center justify-center">
+                          <Loader2 className="animate-spin text-[hsl(var(--primary))] mr-2" size={16} />
+                        </div>
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Status bar */}
-      <div className="px-4 py-2 border-t border-gray-700/50 bg-[hsl(var(--dark-7))]">
-        <div className="flex items-center justify-between text-xs text-[hsl(var(--dark-3))]">
-          <div className="flex items-center space-x-4">
-            {isGroupByMode ? (
-              <span>
-                Grouped by {groupByColumns.length} column{groupByColumns.length !== 1 ? 's' : ''}: {groupByColumns.join(', ')}
-              </span>
-            ) : (
-              <span>
-                Showing {visibleColumns.length + 2} columns ({scrollableColumns.length} scrollable + {rightPinnedColumns.length} pinned + 2 cards) of {(metadata?.essential_columns.length || 0) + 2} total
-              </span>
-            )}
-            {selectedWeekStartDate && (
-              <span className="flex items-center">
-                <Calendar size={12} className="mr-1" />
-                Week: {new Date(selectedWeekStartDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })}
-              </span>
+            
+            {/* Scrollable Middle Columns */}
+            <div className="flex-1 overflow-x-auto relative">
+              <table className="w-full text-sm h-full">
+                <thead className="sticky top-0 bg-[hsl(var(--table-header-background))] border-b border-[hsl(var(--table-border))] z-40">
+                  <tr className="h-10">
+                    {scrollableColumns.map((column) => {
+                      const group = columnGroups.find(g => g.columns.includes(column));
+                      const isSearchActive = activeSearches[column];
+                      
+                      return (
+                        <th 
+                          key={column}
+                          className={`px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] ${group?.color || ''} relative cursor-pointer hover:bg-[hsl(var(--table-row-hover))] transition-colors`}
+                          onClick={() => handleColumnSort(column)}
+                        >
+                          {!isSearchActive ? (
+                            <div className="flex items-center justify-between group">
+                              <div className="flex items-center flex-1 min-w-0">
+                                <span className="truncate hover:text-[hsl(var(--primary))]" title={getDisplayColumnName(column)}>
+                                  {getDisplayColumnName(column)}
+                                </span>
+                                {/* Show active search term inline */}
+                                {activeSearches[column] && (
+                                  <div className="flex items-center space-x-1 ml-2">
+                                    <span className="text-xs text-[hsl(var(--primary))] bg-[hsl(var(--primary))]/20 px-1 rounded whitespace-nowrap">
+                                      "{activeSearches[column]}"
+                                    </span>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleClearSearch(column);
+                                      }}
+                                      className="text-xs text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 flex-shrink-0"
+                                      title="Clear search"
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                )}
+                                {sortState.column === column && (
+                                  <span className="ml-1 text-xs font-bold text-[hsl(var(--primary))] flex-shrink-0">{getSortIcon(column)}</span>
+                                )}
+                              </div>
+                              <div className="flex items-center ml-1">
+                                {isColumnSearchable(column) && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const searchValue = searchValues[column];
+                                      if (searchValue?.trim()) {
+                                        handleSearchExecute(column);
+                                      } else {
+                                        setSearchValues({ ...searchValues, [column]: '' });
+                                        const searchContainer = e.currentTarget.closest('th');
+                                        const searchInput = searchContainer?.querySelector('input');
+                                        setTimeout(() => searchInput?.focus(), 0);
+                                      }
+                                    }}
+                                    className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                    title="Search"
+                                  >
+                                    <Search size={12} />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center space-x-1">
+                              <input
+                                type="text"
+                                placeholder={`Search ${getDisplayColumnName(column)}...`}
+                                value={searchValues[column] || ''}
+                                onChange={(e) => handleSearchChange(column, e.target.value)}
+                                onKeyPress={(e) => handleSearchKeyPress(column, e)}
+                                className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--table-input-background))] border border-[hsl(var(--table-input-border))] rounded text-[hsl(var(--table-foreground))] placeholder-[hsl(var(--table-muted-foreground))] focus:outline-none focus:border-[hsl(var(--primary))] min-w-0"
+                                autoFocus
+                              />
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleSearchExecute(column);
+                                }}
+                                className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
+                                title="Search"
+                              >
+                                <Search size={12} />
+                              </button>
+                            </div>
+                          )}
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  {data.map((record, index) => {
+                    const isSelected = isRowSelected(record, index);
+                    return (
+                      <tr 
+                        key={record.id || index}
+                        className={`border-b border-[hsl(var(--table-border))] transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-[hsl(var(--table-row-selected))] border-t border-t-[hsl(var(--table-row-selected-border))]' 
+                            : 'hover:bg-[hsl(var(--table-row-hover))]'
+                        }`}
+                        onClick={() => handleRowClick(record, index)}
+                      >
+                        {scrollableColumns.map((column) => (
+                          <td 
+                            key={column}
+                            className="px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[200px]"
+                          >
+                            <div className="truncate" title={formatCellValue(record[column])}>
+                              {formatCellValue(record[column])}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                  
+                  {/* Loading row for middle columns */}
+                  {loadingMore && (
+                    <tr>
+                      <td colSpan={scrollableColumns.length} className="px-3 py-4 text-center">
+                        <span className="text-[hsl(var(--table-muted-foreground))]">Loading...</span>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Right Pinned Columns (Forecast Qty) */}
+            {(rightPinnedColumns.length > 0 || consensusMode) && (
+              <div className="flex-shrink-0 bg-[hsl(var(--table-background))] border-l border-[hsl(var(--table-border))] z-20">
+                <table className="text-sm h-full">
+                  <thead className="sticky top-0 bg-[hsl(var(--table-header-background))] border-b border-[hsl(var(--table-border))] z-50">
+                    <tr className="h-10">
+                      {rightPinnedColumns.map((column) => {
+                        const isSearchActive = activeSearches[column];
+                        
+                        return (
+                          <th 
+                            key={column}
+                            className="px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] bg-[hsl(var(--table-card-forecast-background))] border-[hsl(var(--table-card-forecast-border))] relative cursor-pointer hover:bg-[hsl(var(--table-row-hover))] transition-colors"
+                            onClick={() => handleColumnSort(column)}
+                          >
+                            {!isSearchActive ? (
+                              <div className="flex items-center justify-between group">
+                                <div className="flex items-center flex-1 min-w-0">
+                                  <span className="truncate hover:text-[hsl(var(--primary))]" title={getDisplayColumnName(column)}>
+                                    {getDisplayColumnName(column)}
+                                  </span>
+                                  {/* Show active search term inline */}
+                                  {activeSearches[column] && (
+                                    <div className="flex items-center space-x-1 ml-2">
+                                      <span className="text-xs text-[hsl(var(--primary))] bg-[hsl(var(--primary))]/20 px-1 rounded whitespace-nowrap">
+                                        "{activeSearches[column]}"
+                                      </span>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleClearSearch(column);
+                                        }}
+                                        className="text-xs text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 flex-shrink-0"
+                                        title="Clear search"
+                                      >
+                                        ×
+                                      </button>
+                                    </div>
+                                  )}
+                                  {sortState.column === column && (
+                                    <span className="ml-1 text-xs font-bold text-[hsl(var(--primary))] flex-shrink-0">{getSortIcon(column)}</span>
+                                  )}
+                                </div>
+                                <div className="flex items-center ml-1">
+                                  {isColumnSearchable(column) && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const searchValue = searchValues[column];
+                                        if (searchValue?.trim()) {
+                                          handleSearchExecute(column);
+                                        } else {
+                                          setSearchValues({ ...searchValues, [column]: '' });
+                                          const searchContainer = e.currentTarget.closest('th');
+                                          const searchInput = searchContainer?.querySelector('input');
+                                          setTimeout(() => searchInput?.focus(), 0);
+                                        }
+                                      }}
+                                      className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                      title="Search"
+                                    >
+                                      <Search size={12} />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex items-center space-x-1">
+                                <input
+                                  type="text"
+                                  placeholder={`Search ${getDisplayColumnName(column)}...`}
+                                  value={searchValues[column] || ''}
+                                  onChange={(e) => handleSearchChange(column, e.target.value)}
+                                  onKeyPress={(e) => handleSearchKeyPress(column, e)}
+                                  className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--table-input-background))] border border-[hsl(var(--table-input-border))] rounded text-[hsl(var(--table-foreground))] placeholder-[hsl(var(--table-muted-foreground))] focus:outline-none focus:border-[hsl(var(--primary))] min-w-0"
+                                  autoFocus
+                                />
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSearchExecute(column);
+                                  }}
+                                  className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
+                                  title="Search"
+                                >
+                                  <Search size={12} />
+                                </button>
+                              </div>
+                            )}
+                          </th>
+                        );
+                      })}
+                      
+                      {/* Adjustment Column - Only in consensus mode */}
+                      {consensusMode && (
+                        <th className="px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] bg-[hsl(var(--table-card-adjustment-background))] border-[hsl(var(--table-card-adjustment-border))]">
+                          <div className="flex items-center">
+                            <span className="truncate" title="Adjustment">
+                              {getDisplayColumnName('Adjustment')}
+                            </span>
+                          </div>
+                        </th>
+                      )}
+                    </tr>
+                  </thead>
+                  
+                  <tbody>
+                    {data.map((record, index) => {
+                      const isSelected = isRowSelected(record, index);
+                      return (
+                        <tr 
+                          key={record.id || index}
+                          className={`border-b border-[hsl(var(--table-border))] transition-colors cursor-pointer ${
+                            isSelected 
+                              ? 'bg-[hsl(var(--table-row-selected))] border-t border-t-[hsl(var(--table-row-selected-border))] border-r border-r-[hsl(var(--table-row-selected-border))]' 
+                              : 'hover:bg-[hsl(var(--table-row-hover))]'
+                          }`}
+                          onClick={() => handleRowClick(record, index)}
+                        >
+                          {rightPinnedColumns.map((column) => (
+                            <td 
+                              key={column}
+                              className="px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[200px] font-semibold bg-[hsl(var(--table-card-forecast-background))]"
+                            >
+                              <div className="truncate" title={formatCellValue(record[column])}>
+                                {formatCellValue(record[column])}
+                              </div>
+                            </td>
+                          ))}
+                          
+                          {/* Adjustment Column - Only in consensus mode */}
+                          {consensusMode && (
+                            <td className="px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[120px] font-semibold bg-[hsl(var(--table-card-adjustment-background))] relative">
+                              <div className="relative">
+                                <input
+                                  type="number"
+                                  value={getAdjustmentValue(record, index) || ''}
+                                  onChange={(e) => handleAdjustmentChange(record, index, e.target.value)}
+                                  onClick={(e) => {
+                                    // Select the row when clicking on the input
+                                    handleRowClick(record, index);
+                                  }}
+                                  onMouseDown={(e) => {
+                                    // Prevent row click during actual input interaction
+                                    e.stopPropagation();
+                                  }}
+                                  onFocus={(e) => e.target.select()}
+                                  className={`w-full px-3 py-1.5 text-sm border rounded-md focus:outline-none transition-all duration-200 text-center font-medium ${
+                                    (() => {
+                                      const difference = getAdjustmentDifference(record, index);
+                                      if (difference === null) return 'bg-[hsl(var(--table-input-background))] border-[hsl(var(--table-input-border))] text-[hsl(var(--table-foreground))] focus:border-[hsl(var(--primary))] focus:bg-[hsl(var(--table-input-background))]';
+                                      if (difference > 0) return 'bg-[hsl(var(--panel-success))]/20 border-[hsl(var(--panel-success))]/50 text-[hsl(var(--panel-success))] focus:border-[hsl(var(--panel-success))] focus:bg-[hsl(var(--panel-success))]/30';
+                                      if (difference < 0) return 'bg-[hsl(var(--panel-error))]/20 border-[hsl(var(--panel-error))]/50 text-[hsl(var(--panel-error))] focus:border-[hsl(var(--panel-error))] focus:bg-[hsl(var(--panel-error))]/30';
+                                      return 'bg-[hsl(var(--table-input-background))] border-[hsl(var(--table-input-border))] text-[hsl(var(--table-foreground))] focus:border-[hsl(var(--primary))] focus:bg-[hsl(var(--table-input-background))]';
+                                    })()
+                                  }`}
+                                  placeholder="0"
+                                  step="1"
+                                />
+                              </div>
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })}
+                    
+                    {/* Loading row for right columns */}
+                    {loadingMore && (
+                      <tr>
+                        <td colSpan={rightPinnedColumns.length + (consensusMode ? 1 : 0)} className="px-3 py-4 text-center">
+                          <span className="text-[hsl(var(--table-muted-foreground))]">Loading...</span>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
-          <div>
-            {data.length.toLocaleString()} {isGroupByMode ? 'groups' : 'rows'} loaded
-            {hasMore && " • Scroll down for more"}
+        </div>
+        
+        {/* Status bar */}
+        <div className="px-4 py-2 border-t border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
+          <div className="flex items-center justify-between text-xs text-[hsl(var(--table-muted-foreground))]">
+            <div className="flex items-center space-x-4">
+              {isGroupByMode ? (
+                <span>
+                  Grouped by {groupByColumns.length} column{groupByColumns.length !== 1 ? 's' : ''}: {groupByColumns.join(', ')}
+                </span>
+              ) : (
+                <span>
+                  Showing {visibleColumns.length + 2 + (consensusMode ? 1 : 0)} columns ({scrollableColumns.length} scrollable + {rightPinnedColumns.length + (consensusMode ? 1 : 0)} pinned + 2 cards) of {(metadata?.essential_columns.length || 0) + 2 + (consensusMode ? 1 : 0)} total
+                </span>
+              )}
+              {selectedWeekStartDate && (
+                <span className="flex items-center">
+                  <Calendar size={12} className="mr-1" />
+                  Week: {new Date(selectedWeekStartDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </span>
+              )}
+            </div>
+            <div>
+              {data.length.toLocaleString()} {isGroupByMode ? 'groups' : 'rows'} loaded
+              {hasMore && " • Scroll down for more"}
+            </div>
           </div>
         </div>
+        
+        {/* Consensus Bottom Panel - Only show in consensus mode when a row is selected */}
+        {consensusMode && selectedRows.size > 0 && (
+          <div className="border-t border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))] flex flex-col" style={{ height: '50%' }}>
+            {/* Tab Header */}
+            <div className="flex border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-background))]">
+              <button
+                onClick={() => setActiveBottomTab('sales')}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeBottomTab === 'sales'
+                    ? 'text-[hsl(var(--table-foreground))] border-b-2 border-[hsl(var(--primary))] bg-[hsl(var(--table-row-hover))]'
+                    : 'text-[hsl(var(--table-muted-foreground))] hover:text-[hsl(var(--table-foreground))] hover:bg-[hsl(var(--table-row-hover))]'
+                }`}
+              >
+                Sales
+              </button>
+              <button
+                onClick={() => setActiveBottomTab('waterfall')}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeBottomTab === 'waterfall'
+                    ? 'text-[hsl(var(--table-foreground))] border-b-2 border-[hsl(var(--primary))] bg-[hsl(var(--table-row-hover))]'
+                    : 'text-[hsl(var(--table-muted-foreground))] hover:text-[hsl(var(--table-foreground))] hover:bg-[hsl(var(--table-row-hover))]'
+                }`}
+              >
+                Consensus Waterfall
+              </button>
+            </div>
+            
+            {/* Tab Content */}
+            <div className="flex-1 p-4 overflow-hidden">
+              {activeBottomTab === 'sales' ? (
+                <div className="h-full flex flex-col">
+                  <div className="mb-4">
+                    <h3 className="text-[hsl(var(--table-foreground))] font-medium text-lg mb-1">Weekly Sales Data 2024</h3>
+                    <p className="text-[hsl(var(--table-muted-foreground))] text-sm">
+                      Sales performance across weeks 1-40 with holiday indicators
+                    </p>
+                  </div>
+                  
+                  <div className="flex-1 relative">
+                    <SalesChart 
+                      data={data} 
+                      selectedRows={selectedRows}
+                      selectedRecord={data.find((record, index) => {
+                        const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+                        return selectedRows.has(rowId);
+                      })}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="h-full flex flex-col">
+                  <div className="mb-4">
+                    <h3 className="text-[hsl(var(--table-foreground))] font-medium text-lg mb-1">Consensus Waterfall</h3>
+                    <p className="text-[hsl(var(--table-muted-foreground))] text-sm">
+                      Forecast adjustments breakdown showing cumulative impact
+                    </p>
+                  </div>
+                  
+                  <div className="flex-1 relative mb-4">
+                    <ResponsiveBar
+                      data={waterfallData}
+                      keys={['spacer', 'value']}
+                      indexBy="id"
+                      layout="horizontal"
+                      margin={{ top: 20, right: 80, bottom: 60, left: 150 }}
+                      padding={0.3}
+                      valueScale={{ type: 'linear' }}
+                      indexScale={{ type: 'band', round: true }}
+                      colors={({ id, data }) => {
+                        if (id === 'spacer') return 'transparent';
+                        return data.color;
+                      }}
+                      borderColor={{
+                        from: 'color',
+                        modifiers: [['darker', 0]]
+                      }}
+                      borderWidth={0}
+                      enableLabel={false}
+                      axisTop={null}
+                      axisRight={{
+                        tickSize: 5,
+                        tickPadding: 5,
+                        tickRotation: 0,
+                        legend: 'Quantity',
+                        legendPosition: 'middle',
+                        legendOffset: 60,
+                        format: value => `${(Number(value) / 1000).toFixed(0)}K`
+                      }}
+                      axisBottom={{
+                        tickSize: 5,
+                        tickPadding: 5,
+                        tickRotation: 0,
+                        legend: 'Quantity',
+                        legendPosition: 'middle',
+                        legendOffset: 50,
+                        format: value => `${(Number(value) / 1000).toFixed(0)}K`
+                      }}
+                      axisLeft={{
+                        tickSize: 5,
+                        tickPadding: 5,
+                        tickRotation: 0,
+                        legend: 'Adjustment Steps',
+                        legendPosition: 'middle',
+                        legendOffset: -120
+                      }}
+                      layers={['grid', 'axes', 'bars', 'markers', 'legends']}
+                      theme={{
+                        background: 'transparent',
+                        text: {
+                          fontSize: 11,
+                          fill: '#9ca3af',
+                          outlineWidth: 0,
+                          outlineColor: 'transparent'
+                        },
+                        axis: {
+                          domain: {
+                            line: {
+                              stroke: '#374151',
+                              strokeWidth: 1
+                            }
+                          },
+                          legend: {
+                            text: {
+                              fontSize: 12,
+                              fill: '#9ca3af'
+                            }
+                          },
+                          ticks: {
+                            line: {
+                              stroke: '#374151',
+                              strokeWidth: 1
+                            },
+                            text: {
+                              fontSize: 11,
+                              fill: '#9ca3af'
+                            }
+                          }
+                        },
+                        grid: {
+                          line: {
+                            stroke: '#374151',
+                            strokeWidth: 1,
+                            strokeOpacity: 0.3
+                          }
+                        },
+                        tooltip: {
+                          container: {
+                            background: '#1f2937',
+                            color: '#ffffff',
+                            fontSize: '12px',
+                            border: '1px solid #374151',
+                            borderRadius: '4px'
+                          }
+                        }
+                      }}
+                      tooltip={({ data, value, id }) => {
+                        const barData = data as WaterfallChartData;
+                        if (id === 'spacer') return null; // Don't show tooltip for spacer bars
+                        
+                        return (
+                          <div className="bg-[hsl(var(--panel-background))] p-3 rounded border border-[hsl(var(--panel-border))] text-[hsl(var(--panel-foreground))] text-xs">
+                            <div className="font-medium mb-1">{barData.id}</div>
+                            {barData.id === 'Forecast Qty' || barData.id === 'Final Total' ? (
+                              <div>Total Amount: {Number(barData.totalValue).toLocaleString()}</div>
+                            ) : (
+                              <>
+                                <div className={`${barData.color === '#10b981' ? 'text-[hsl(var(--panel-success))]' : 'text-[hsl(var(--panel-error))]'}`}>
+                                  {barData.color === '#10b981' ? '+' : '-'}{Number(barData.value).toLocaleString()}
+                                </div>
+                                <div className="text-[hsl(var(--panel-muted-foreground))]">
+                                  Running Total: {Number(barData.totalValue).toLocaleString()}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        );
+                      }}
+                      animate={true}
+                      motionConfig="wobbly"
+                    />
+                  </div>
+                  
+                  {/* Legend positioned below the chart */}
+                  <div className="flex justify-center">
+                    <div className="bg-[hsl(var(--panel-background))] p-3 rounded border border-[hsl(var(--panel-border))] flex space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-[hsl(var(--primary))] rounded"></div>
+                        <span className="text-[hsl(var(--primary))] text-xs">Forecast</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-[hsl(var(--panel-success))] rounded"></div>
+                        <span className="text-[hsl(var(--panel-success))] text-xs">Positive Adj.</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-[hsl(var(--panel-error))] rounded"></div>
+                        <span className="text-[hsl(var(--panel-error))] text-xs">Negative Adj.</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-[hsl(var(--secondary))] rounded"></div>
+                        <span className="text-[hsl(var(--secondary))] text-xs">Final Total</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
       
       {/* Group By Modal */}
       {showGroupByModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[hsl(var(--dark-7))] border border-gray-600 rounded-lg p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[hsl(var(--panel-background))] border border-[hsl(var(--panel-border))] rounded-lg p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-semibold text-lg">Group By Columns</h3>
+              <h3 className="text-[hsl(var(--panel-foreground))] font-semibold text-lg">Group By Columns</h3>
               <button
                 onClick={handleGroupByCancel}
-                className="text-gray-400 hover:text-white"
+                className="text-[hsl(var(--panel-muted-foreground))] hover:text-[hsl(var(--panel-foreground))]"
               >
                 <X size={20} />
               </button>
             </div>
             
-            <p className="text-[hsl(var(--dark-3))] text-sm mb-4">
-              Select string columns to group by. Aggregated values will be calculated for other columns.
-            </p>
-            
-            <div className="max-h-60 overflow-y-auto mb-4">
-              <div className="space-y-2">
+            <div className="mb-4">
+              <p className="text-[hsl(var(--panel-muted-foreground))] text-sm mb-3">
+                Select columns to group by. Only string columns are available for grouping.
+              </p>
+              
+              <div className="space-y-2 max-h-60 overflow-y-auto">
                 {getGroupByColumns().map((column) => (
                   <label
                     key={column}
-                    className="flex items-center space-x-2 p-2 rounded hover:bg-[hsl(var(--dark-6))] cursor-pointer"
+                    className="flex items-center space-x-2 text-sm hover:bg-[hsl(var(--panel-hover))] p-2 rounded cursor-pointer"
                   >
                     <input
                       type="checkbox"
                       checked={selectedGroupByColumns.includes(column)}
                       onChange={() => handleGroupByColumnToggle(column)}
-                      className="rounded border-gray-600 text-purple-600 focus:ring-purple-500 focus:ring-2"
+                      className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
                     />
-                    <span className="text-white text-sm">
+                    <span className="text-[hsl(var(--panel-foreground))]">
                       {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                     </span>
                   </label>
                 ))}
               </div>
+              
+              {getGroupByColumns().length === 0 && (
+                <div className="text-[hsl(var(--panel-muted-foreground))] text-sm text-center py-4">
+                  No string columns available for grouping
+                </div>
+              )}
             </div>
             
             <div className="flex items-center justify-between">
-              <div className="text-xs text-[hsl(var(--dark-3))]">
+              <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
                 {selectedGroupByColumns.length} column{selectedGroupByColumns.length !== 1 ? 's' : ''} selected
               </div>
-              
-              <div className="flex items-center space-x-2">
+              <div className="flex space-x-2">
                 <button
                   onClick={handleGroupByCancel}
-                  className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="px-3 py-2 text-sm bg-[hsl(var(--panel-button-background))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-button-hover))]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleGroupBySubmit}
                   disabled={selectedGroupByColumns.length === 0}
-                  className="px-3 py-1 text-xs bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 text-sm bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/80 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Apply Group By
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Column Selector Modal */}
+      {showColumnSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[hsl(var(--panel-background))] border border-[hsl(var(--panel-border))] rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[hsl(var(--panel-foreground))] font-semibold text-lg">Column Visibility</h3>
+              <button
+                onClick={handleColumnSelectorCancel}
+                className="text-[hsl(var(--panel-muted-foreground))] hover:text-[hsl(var(--panel-foreground))]"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <div className="flex items-center space-x-2 mb-3">
+                <button
+                  onClick={selectAllColumns}
+                  className="px-3 py-1 text-xs bg-[hsl(var(--panel-success))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-success))]/80"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={deselectAllColumns}
+                  className="px-3 py-1 text-xs bg-[hsl(var(--panel-error))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-error))]/80"
+                >
+                  Deselect All
+                </button>
+              </div>
+              
+              {/* Regular Columns */}
+              <div className="mb-6">
+                <h4 className="text-[hsl(var(--panel-foreground))] font-medium text-sm mb-3">Data Columns</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {/* Store Parameters */}
+                  <div>
+                    <h5 className="text-[hsl(var(--table-card-store-border))] font-medium text-xs mb-2 flex items-center">
+                      <div className="w-2 h-2 bg-[hsl(var(--table-card-store-border))] rounded mr-1"></div>
+                      Store Parameters
+                    </h5>
+                    <div className="space-y-1 max-h-40 overflow-y-auto">
+                      {metadata?.store_attributes.map((column) => (
+                        <label
+                          key={column}
+                          className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={visibleColumnSettings[column] !== false}
+                            onChange={() => handleColumnToggle(column)}
+                            className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                          />
+                          <span className="text-[hsl(var(--panel-foreground))] flex-1 truncate" title={column}>
+                            {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Product Parameters */}
+                  <div>
+                    <h5 className="text-[hsl(var(--table-card-product-border))] font-medium text-xs mb-2 flex items-center">
+                      <div className="w-2 h-2 bg-[hsl(var(--table-card-product-border))] rounded mr-1"></div>
+                      Product Parameters
+                    </h5>
+                    <div className="space-y-1 max-h-40 overflow-y-auto">
+                      {metadata?.product_attributes.map((column) => (
+                        <label
+                          key={column}
+                          className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={visibleColumnSettings[column] !== false}
+                            onChange={() => handleColumnToggle(column)}
+                            className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                          />
+                          <span className="text-[hsl(var(--panel-foreground))] flex-1 truncate" title={column}>
+                            {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Forecast Parameters */}
+                  <div>
+                    <h5 className="text-[hsl(var(--table-card-forecast-border))] font-medium text-xs mb-2 flex items-center">
+                      <div className="w-2 h-2 bg-[hsl(var(--table-card-forecast-border))] rounded mr-1"></div>
+                      Forecast Parameters
+                    </h5>
+                    <div className="space-y-1 max-h-40 overflow-y-auto">
+                      {metadata?.essential_columns
+                        .filter(col => 
+                          !metadata.store_attributes.includes(col) && 
+                          !metadata.product_attributes.includes(col)
+                        )
+                        .map((column) => (
+                          <label
+                            key={column}
+                            className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={visibleColumnSettings[column] !== false}
+                              onChange={() => handleColumnToggle(column)}
+                              className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                            />
+                            <span className="text-[hsl(var(--panel-foreground))] flex-1 truncate" title={column}>
+                              {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </span>
+                          </label>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between border-t border-[hsl(var(--panel-border))] pt-4">
+              <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+                {Object.values(visibleColumnSettings).filter(Boolean).length} of {metadata?.essential_columns.length || 0} columns visible
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleColumnSelectorCancel}
+                  className="px-3 py-2 text-sm bg-[hsl(var(--panel-button-background))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-button-hover))]"
+                >
+                  Close
                 </button>
               </div>
             </div>
@@ -1944,13 +2895,13 @@ const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
         <div className="space-y-2">
           {/* Search input for discrete options */}
           <div className="relative">
-            <Search size={12} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-[hsl(var(--dark-3))]" />
+            <Search size={12} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-[hsl(var(--panel-muted-foreground))]" />
             <input
               type="text"
               placeholder={`Search ${displayName.toLowerCase()}...`}
               value={filter.searchTerm}
               onChange={(e) => onDiscreteSearch(column, e.target.value)}
-              className="w-full pl-6 pr-2 py-1 text-xs bg-[hsl(var(--dark-7))] text-white border border-gray-600 rounded focus:border-blue-500 focus:outline-none"
+              className="w-full pl-6 pr-2 py-1 text-xs bg-[hsl(var(--panel-input-background))] text-[hsl(var(--panel-foreground))] border border-[hsl(var(--panel-input-border))] rounded focus:border-[hsl(var(--primary))] focus:outline-none"
             />
           </div>
           
@@ -1958,18 +2909,18 @@ const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
             {filteredOptions.map((option) => (
               <label
                 key={option.value}
-                className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--dark-6))] p-1 rounded cursor-pointer"
+                className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
               >
                 <input
                   type="checkbox"
                   checked={filter.selectedValues.includes(option.value)}
                   onChange={(e) => onDiscreteChange(column, option.value, e.target.checked)}
-                  className="rounded border-gray-600 text-blue-600 focus:ring-blue-500 focus:ring-1"
+                  className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
                 />
-                <span className="flex-1 truncate text-white" title={option.value}>
+                <span className="flex-1 truncate text-[hsl(var(--panel-foreground))]" title={option.value}>
                   {option.value}
                 </span>
-                <span className="text-[hsl(var(--dark-3))] text-xs">
+                <span className="text-[hsl(var(--panel-muted-foreground))] text-xs">
                   {option.count.toLocaleString()}
                 </span>
               </label>
@@ -1977,28 +2928,28 @@ const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
             
             {filter.loading && (
               <div className="flex items-center justify-center p-2">
-                <Loader2 size={14} className="animate-spin text-[hsl(var(--dark-3))]" />
-                <span className="text-xs text-[hsl(var(--dark-3))] ml-2">Loading...</span>
+                <Loader2 size={14} className="animate-spin text-[hsl(var(--panel-muted-foreground))]" />
+                <span className="text-xs text-[hsl(var(--panel-muted-foreground))] ml-2">Loading...</span>
               </div>
             )}
             
             {filter.hasMore && !filter.loading && (
               <button
                 onClick={() => onLoadMoreDiscrete(column)}
-                className="w-full text-xs text-blue-400 hover:text-blue-300 p-1 text-center"
+                className="w-full text-xs text-[hsl(var(--primary))] hover:text-[hsl(var(--primary))]/80 p-1 text-center"
               >
                 Load More...
               </button>
             )}
             
             {filteredOptions.length === 0 && !filter.loading && filter.searchTerm && (
-              <div className="text-xs text-[hsl(var(--dark-3))] text-center p-2">
+              <div className="text-xs text-[hsl(var(--panel-muted-foreground))] text-center p-2">
                 No options match "{filter.searchTerm}"
               </div>
             )}
           </div>
           
-          <div className="flex justify-between items-center text-xs text-[hsl(var(--dark-3))] border-t border-gray-700/50 pt-2">
+          <div className="flex justify-between items-center text-xs text-[hsl(var(--panel-muted-foreground))] border-t border-[hsl(var(--panel-border))] pt-2">
             <span>
               {filter.selectedValues.length > 0 ? `${filter.selectedValues.length} selected` : 'None selected'}
             </span>
@@ -2018,29 +2969,29 @@ const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
       
       return (
         <div className="space-y-3">
-          <div className="text-xs text-[hsl(var(--dark-3))]">
+          <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
             Range: {range.min.toLocaleString()} - {range.max.toLocaleString()}
           </div>
           
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-xs text-[hsl(var(--dark-3))] block mb-1">Min</label>
+              <label className="text-xs text-[hsl(var(--panel-muted-foreground))] block mb-1">Min</label>
               <input
                 type="number"
                 placeholder={range.min.toString()}
                 value={filter.min?.toString() || ''}
                 onChange={(e) => onRangeChange(column, 'min', e.target.value ? parseFloat(e.target.value) : null)}
-                className="w-full px-2 py-1 text-xs bg-[hsl(var(--dark-8))] text-white border border-gray-600 rounded focus:border-blue-500 focus:outline-none"
+                className="w-full px-2 py-1 text-xs bg-[hsl(var(--panel-input-background))] text-[hsl(var(--panel-foreground))] border border-[hsl(var(--panel-input-border))] rounded focus:border-[hsl(var(--primary))] focus:outline-none"
               />
             </div>
             <div>
-              <label className="text-xs text-[hsl(var(--dark-3))] block mb-1">Max</label>
+              <label className="text-xs text-[hsl(var(--panel-muted-foreground))] block mb-1">Max</label>
               <input
                 type="number"
                 placeholder={range.max.toString()}
                 value={filter.max?.toString() || ''}
                 onChange={(e) => onRangeChange(column, 'max', e.target.value ? parseFloat(e.target.value) : null)}
-                className="w-full px-2 py-1 text-xs bg-[hsl(var(--dark-8))] text-white border border-gray-600 rounded focus:border-blue-500 focus:outline-none"
+                className="w-full px-2 py-1 text-xs bg-[hsl(var(--panel-input-background))] text-[hsl(var(--panel-foreground))] border border-[hsl(var(--panel-input-border))] rounded focus:border-[hsl(var(--primary))] focus:outline-none"
               />
             </div>
           </div>
@@ -2056,7 +3007,7 @@ const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
             placeholder={`Search ${displayName.toLowerCase()}...`}
             value={filter.value}
             onChange={(e) => onSearchChange(column, e.target.value)}
-            className="w-full px-2 py-1 text-xs bg-[hsl(var(--dark-8))] text-white border border-gray-600 rounded focus:border-blue-500 focus:outline-none"
+            className="w-full px-2 py-1 text-xs bg-[hsl(var(--panel-input-background))] text-[hsl(var(--panel-foreground))] border border-[hsl(var(--panel-input-border))] rounded focus:border-[hsl(var(--primary))] focus:outline-none"
           />
         </div>
       );
@@ -2066,28 +3017,28 @@ const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
   };
   
   return (
-    <div className="border border-gray-700/50 rounded bg-[hsl(var(--dark-8))]">
+    <div className="border border-[hsl(var(--panel-border))] rounded bg-[hsl(var(--panel-background))]">
       <button
         onClick={handleToggleExpand}
-        className="w-full flex items-center justify-between p-2 hover:bg-[hsl(var(--dark-6))] transition-colors"
+        className="w-full flex items-center justify-between p-2 hover:bg-[hsl(var(--panel-hover))] transition-colors"
       >
-        <span className="text-xs text-white font-medium truncate" title={displayName}>
+        <span className="text-xs text-[hsl(var(--panel-foreground))] font-medium truncate" title={displayName}>
           {displayName}
         </span>
         <div className="flex items-center space-x-1">
-          <span className="text-xs text-[hsl(var(--dark-3))] capitalize">
+          <span className="text-xs text-[hsl(var(--panel-muted-foreground))] capitalize">
             {filterType}
           </span>
           {isExpanded ? (
-            <ChevronUp size={12} className="text-[hsl(var(--dark-3))]" />
+            <ChevronUp size={12} className="text-[hsl(var(--panel-muted-foreground))]" />
           ) : (
-            <ChevronDown size={12} className="text-[hsl(var(--dark-3))]" />
+            <ChevronDown size={12} className="text-[hsl(var(--panel-muted-foreground))]" />
           )}
         </div>
       </button>
       
       {isExpanded && (
-        <div className="p-2 border-t border-gray-700/50">
+        <div className="p-2 border-t border-[hsl(var(--panel-border))]">
           {renderFilterContent()}
         </div>
       )}

@@ -168,16 +168,16 @@ const AnalyticsModule = () => {
     <div className="flex-1 flex overflow-hidden" ref={containerRef}>
       {/* Analytics Side Panel */}
       <div style={{ width: sidebarWidth, flexShrink: 0 }} className="h-full overflow-hidden">
-        <div className="h-full bg-[hsl(var(--dark-9))] border-r border-gray-700/50 flex flex-col">
+        <div className="h-full bg-[hsl(var(--sidepanel-background))] border-r border-[hsl(var(--sidepanel-border))] flex flex-col">
           {/* Panel Header */}
-          <div className="h-12 border-b border-gray-700/50 flex items-center justify-between px-3">
+          <div className="h-12 border-b border-[hsl(var(--sidepanel-border))] flex items-center justify-between px-3">
             <div className="flex items-center">
-              <BarChart3 className="text-[hsl(var(--dark-2))] mr-2" size={16} />
-              <h3 className="font-medium text-white text-sm">Analytics</h3>
+              <BarChart3 className="text-[hsl(var(--sidepanel-muted-foreground))] mr-2" size={16} />
+              <h3 className="font-medium text-[hsl(var(--sidepanel-foreground))] text-sm">Analytics</h3>
             </div>
             <button
               onClick={() => setShowCreateForm(!showCreateForm)}
-              className="p-1 text-[hsl(var(--dark-3))] hover:text-white hover:bg-[hsl(var(--dark-7))] rounded"
+              className="p-1 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-[hsl(var(--sidepanel-foreground))] hover:bg-[hsl(var(--sidepanel-hover))] rounded"
             >
               <Plus size={14} />
             </button>
@@ -185,14 +185,14 @@ const AnalyticsModule = () => {
           
           {/* Create Form */}
           {showCreateForm && (
-            <div className="p-3 border-b border-gray-700/50 bg-[hsl(var(--dark-8))]">
+            <div className="p-3 border-b border-[hsl(var(--sidepanel-border))] bg-[hsl(var(--sidepanel-input-background))]">
               <div className="flex items-center space-x-2">
                 <input
                   type="text"
                   value={newPageName}
                   onChange={(e) => setNewPageName(e.target.value)}
                   placeholder="Page name"
-                  className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--dark-7))] border border-gray-600/50 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                  className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--sidepanel-input-background))] border border-[hsl(var(--sidepanel-input-border))] rounded text-[hsl(var(--sidepanel-foreground))] placeholder-[hsl(var(--sidepanel-muted-foreground))] focus:outline-none focus:border-[hsl(var(--primary))]"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleCreatePage();
                     if (e.key === 'Escape') setShowCreateForm(false);
@@ -202,7 +202,7 @@ const AnalyticsModule = () => {
                 <button
                   onClick={handleCreatePage}
                   disabled={!newPageName.trim() || loading}
-                  className="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded"
+                  className="px-2 py-1 text-xs bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 disabled:bg-[hsl(var(--sidepanel-muted-foreground))] text-[hsl(var(--primary-foreground))] rounded"
                 >
                   Add
                 </button>
@@ -214,12 +214,12 @@ const AnalyticsModule = () => {
           <div className="flex-1 overflow-y-auto">
             {loading && (
               <div className="flex items-center justify-center p-4">
-                <Loader2 className="animate-spin text-[hsl(var(--dark-3))]" size={16} />
+                <Loader2 className="animate-spin text-[hsl(var(--sidepanel-loading-foreground))]" size={16} />
               </div>
             )}
             
             {error && (
-              <div className="p-3 text-xs text-red-400 bg-red-500/10 border-b border-red-500/20">
+              <div className="p-3 text-xs text-[hsl(var(--sidepanel-error-foreground))] bg-[hsl(var(--sidepanel-error-background))] border-b border-[hsl(var(--sidepanel-error-border))]">
                 {error}
               </div>
             )}
@@ -233,7 +233,7 @@ const AnalyticsModule = () => {
                         type="text"
                         value={editingPage.page_name}
                         onChange={(e) => setEditingPage({ ...editingPage, page_name: e.target.value })}
-                        className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--dark-7))] border border-gray-600/50 rounded text-white focus:outline-none focus:border-blue-500"
+                        className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--sidepanel-input-background))] border border-[hsl(var(--sidepanel-input-border))] rounded text-[hsl(var(--sidepanel-foreground))] focus:outline-none focus:border-[hsl(var(--primary))]"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') handleUpdatePage();
                           if (e.key === 'Escape') setEditingPage(null);
@@ -248,12 +248,12 @@ const AnalyticsModule = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between p-2 hover:bg-[hsl(var(--dark-8))] rounded cursor-pointer">
+                    <div className="flex items-center justify-between p-2 hover:bg-[hsl(var(--sidepanel-hover))] rounded cursor-pointer">
                       <div
                         onClick={() => handlePageClick(page.page_name)}
                         className="flex-1 min-w-0"
                       >
-                        <div className="text-white text-sm font-medium truncate">
+                        <div className="text-[hsl(var(--sidepanel-foreground))] text-sm font-medium truncate">
                           # {page.page_name}
                         </div>
                       </div>
@@ -263,7 +263,7 @@ const AnalyticsModule = () => {
                             e.stopPropagation();
                             handleEditPage(page);
                           }}
-                          className="p-1 text-[hsl(var(--dark-3))] hover:text-blue-400 hover:bg-blue-500/20 rounded"
+                          className="p-1 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-blue-400 hover:bg-blue-500/20 rounded"
                         >
                           <Edit size={12} />
                         </button>
@@ -272,7 +272,7 @@ const AnalyticsModule = () => {
                             e.stopPropagation();
                             handleDeletePage(page.id);
                           }}
-                          className="p-1 text-[hsl(var(--dark-3))] hover:text-red-400 hover:bg-red-500/20 rounded"
+                          className="p-1 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-red-400 hover:bg-red-500/20 rounded"
                         >
                           <Trash2 size={12} />
                         </button>
@@ -283,7 +283,7 @@ const AnalyticsModule = () => {
               ))}
               
               {analyticsPages.length === 0 && !loading && (
-                <div className="p-3 text-xs text-[hsl(var(--dark-3))] text-center">
+                <div className="p-3 text-xs text-[hsl(var(--sidepanel-muted-foreground))] text-center">
                   No analytics pages yet. Click + to create one.
                 </div>
               )}

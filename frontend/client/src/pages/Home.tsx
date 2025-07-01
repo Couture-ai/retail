@@ -49,7 +49,8 @@ import {
   ArrowDownRight,
   Wifi,
   Server,
-  RefreshCw
+  RefreshCw,
+  Trophy
 } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
 
@@ -61,7 +62,7 @@ interface DashboardStats {
   totalStores: number;
   totalProducts: number;
   totalForecasts: number;
-  avgForecastAccuracy: number;
+  avgForecastImprovement: number;
   totalSales: number;
   avgInventoryTurnover: number;
 }
@@ -75,7 +76,7 @@ interface RegionalData {
 
 interface ProductPerformance {
   category: string;
-  forecastAccuracy: number;
+  forecastImprovement: number;
   salesVolume: number;
   trend: 'up' | 'down' | 'stable';
 }
@@ -95,7 +96,7 @@ export default function Home({ initialModule }: HomeProps) {
     totalStores: 0, 
     totalProducts: 0, 
     totalForecasts: 0, 
-    avgForecastAccuracy: 0,
+    avgForecastImprovement: 0,
     totalSales: 0,
     avgInventoryTurnover: 0
   });
@@ -157,7 +158,7 @@ export default function Home({ initialModule }: HomeProps) {
         totalProducts: statsResults[1]?.data?.[0]?.count || 0,
         totalForecasts: statsResults[2]?.data?.[0]?.count || 0,
         totalSales: statsResults[3]?.data?.[0]?.total_sales || 0,
-        avgForecastAccuracy: statsResults[4]?.data?.[0]?.accuracy || 0,
+        avgForecastImprovement: statsResults[4]?.data?.[0]?.accuracy || 0,
         avgInventoryTurnover: 4.2 // Mock value for now
       });
 
@@ -234,7 +235,7 @@ export default function Home({ initialModule }: HomeProps) {
       if (result?.data) {
         setProductPerformance(result.data.map((row: any) => ({
           category: row.category,
-          forecastAccuracy: row.forecast_accuracy,
+          forecastImprovement: row.forecast_accuracy,
           salesVolume: row.sales_volume,
           trend: row.forecast_accuracy > 85 ? 'up' : row.forecast_accuracy < 70 ? 'down' : 'stable'
         })));
@@ -286,7 +287,7 @@ export default function Home({ initialModule }: HomeProps) {
           AVG(forecast_qty) as avg_forecast,
           COUNT(DISTINCT store_no) as store_count
         FROM forecast 
-        WHERE article_description IS NOT NULL AND sold_qty > 0
+        WHERE article_description IS NOT NULL AND sold_qty > 0 AND article_description != 'dummy'
         GROUP BY article_description, brand
         ORDER BY total_sales DESC
         LIMIT 5
@@ -380,7 +381,7 @@ export default function Home({ initialModule }: HomeProps) {
   if (activeModule !== "home") {
     return (
       <>
-        <div className="h-screen flex overflow-hidden bg-background">
+        <div className="h-[calc(100vh-3rem)] flex overflow-hidden bg-[hsl(var(--dashboard-background))]">
           <Sidebar />
           <div className="flex-1 flex overflow-hidden">
             {shouldUseCodeModule(activeModule) ? (
@@ -418,25 +419,25 @@ export default function Home({ initialModule }: HomeProps) {
 
   return (
     <>
-      <div className="h-screen flex overflow-hidden bg-[#1a1a1a]">
+      <div className="h-[calc(100vh-3rem)] flex overflow-hidden bg-[hsl(var(--dashboard-background))]">
         <Sidebar />
-        <div className="flex-1 overflow-auto bg-[#1a1a1a] p-6">
+        <div className="flex-1 overflow-auto bg-[hsl(var(--dashboard-background))] p-6">
           {/* Main Grid Layout */}
           <div className="grid grid-cols-12 gap-6 h-full">
             
             {/* Left Column - Inventory & Performance */}
             <div className="col-span-3 space-y-6">
               {/* Inventory Overview */}
-              <div className="bg-[#2a2a2a] rounded-2xl p-6">
-                <h3 className="text-white text-lg font-medium mb-6"> Overview</h3>
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
+                <h3 className="text-[hsl(var(--dashboard-card-foreground))] text-lg font-medium mb-6"> Overview</h3>
                 
                 {/* Total Products */}
                 <div className="mb-6">
                   <div className="flex items-center mb-2">
-                    <Package size={16} className="text-blue-400 mr-2" />
-                    <span className="text-white text-sm">Total Products</span>
+                    <Package size={16} className="text-[hsl(var(--dashboard-primary-blue))] mr-2" />
+                    <span className="text-[hsl(var(--dashboard-card-foreground))] text-sm">Total Products</span>
                   </div>
-                  <div className="text-white text-lg font-medium">
+                  <div className="text-[hsl(var(--dashboard-card-foreground))] text-lg font-medium">
                     {loading ? '...' : stats.totalProducts.toLocaleString()}
                   </div>
                 </div>
@@ -444,15 +445,15 @@ export default function Home({ initialModule }: HomeProps) {
                 {/* Total Sales */}
                 <div className="mb-6">
                   <div className="flex items-center mb-2">
-                    <DollarSign size={16} className="text-green-400 mr-2" />
-                    <span className="text-white text-sm">Total Sales Volume</span>
+                    ₹
+                    <span className="text-[hsl(var(--dashboard-card-foreground))] text-sm">Total Sales Volume</span>
                   </div>
-                  <div className="text-white text-lg font-medium">
+                  <div className="text-[hsl(var(--dashboard-card-foreground))] text-lg font-medium">
                     {loading ? '...' : Math.round(stats.totalSales).toLocaleString()}
                   </div>
                 </div>
 
-                {/* Forecast Accuracy Circle */}
+                {/* Forecast Improvement Circle */}
                 <div className="flex justify-center mb-6">
                   <div className="relative w-32 h-32">
                     <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
@@ -460,7 +461,7 @@ export default function Home({ initialModule }: HomeProps) {
                         cx="60"
                         cy="60"
                         r="50"
-                        stroke="#3a3a3a"
+                        stroke="hsl(var(--dashboard-accent-background))"
                         strokeWidth="8"
                         fill="none"
                       />
@@ -472,21 +473,21 @@ export default function Home({ initialModule }: HomeProps) {
                         strokeWidth="8"
                         fill="none"
                         strokeDasharray={`${2 * Math.PI * 50}`}
-                        strokeDashoffset={`${2 * Math.PI * 50 * (1 - Math.min(stats.avgForecastAccuracy / 100, 1))}`}
+                        strokeDashoffset={`${2 * Math.PI * 50 * (1 - Math.min(stats.avgForecastImprovement / 100, 1))}`}
                         strokeLinecap="round"
                       />
                       <defs>
                         <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#60a5fa" />
-                          <stop offset="100%" stopColor="#3b82f6" />
+                          <stop offset="0%" stopColor="hsl(var(--dashboard-primary-blue))" />
+                          <stop offset="100%" stopColor="hsl(var(--primary))" />
                         </linearGradient>
                       </defs>
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-white text-2xl font-bold">
-                        {loading ? '...' : `${Math.round(stats.avgForecastAccuracy)}%`}
+                      <span className="text-[hsl(var(--dashboard-card-foreground))] text-2xl font-bold">
+                        {loading ? '...' : `${Math.round(stats.avgForecastImprovement)}%`}
                       </span>
-                      <span className="text-gray-400 text-sm">Accuracy</span>
+                      <span className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Improvement</span>
                     </div>
                   </div>
                 </div>
@@ -494,73 +495,73 @@ export default function Home({ initialModule }: HomeProps) {
                 {/* Key Metrics */}
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="text-center">
-                    <div className="text-white font-medium">Stores</div>
-                    <div className="text-gray-400 text-sm">
+                    <div className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Stores</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">
                       {loading ? '...' : stats.totalStores}
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-white font-medium">Records</div>
-                    <div className="text-gray-400 text-sm">
+                    <div className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Records</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">
                       {loading ? '...' : `${Math.round(stats.totalForecasts / 1000)}K`}
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-white font-medium">Turnover</div>
-                    <div className="text-gray-400 text-sm">{stats.avgInventoryTurnover}x</div>
+                    <div className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Turnover</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">{stats.avgInventoryTurnover}x</div>
                   </div>
                 </div>
 
                 {/* Stats Row */}
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-[#3a3a3a] rounded-xl p-4 text-center">
-                    <Target size={20} className="text-gray-400 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-white">
-                      {Math.round(stats.avgForecastAccuracy)}
+                  <div className="bg-[hsl(var(--dashboard-accent-background))] rounded-xl p-4 text-center border border-[hsl(var(--dashboard-card-border))]">
+                    <Target size={20} className="text-[hsl(var(--dashboard-muted-foreground))] mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-[hsl(var(--dashboard-card-foreground))]">
+                      {Math.round(stats.avgForecastImprovement)}
                     </div>
-                    <div className="text-gray-400 text-xs">Accuracy %</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Improvement %</div>
                   </div>
-                  <div className="bg-[#3a3a3a] rounded-xl p-4 text-center">
-                    <Store size={20} className="text-gray-400 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-white">{stats.totalStores}</div>
-                    <div className="text-gray-400 text-xs">Active Stores</div>
+                  <div className="bg-[hsl(var(--dashboard-accent-background))] rounded-xl p-4 text-center border border-[hsl(var(--dashboard-card-border))]">
+                    <Store size={20} className="text-[hsl(var(--dashboard-muted-foreground))] mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-[hsl(var(--dashboard-card-foreground))]">{stats.totalStores}</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Active Stores</div>
                   </div>
-                  <div className="bg-[#3a3a3a] rounded-xl p-4 text-center">
-                    <Truck size={20} className="text-gray-400 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-white">
+                  <div className="bg-[hsl(var(--dashboard-accent-background))] rounded-xl p-4 text-center border border-[hsl(var(--dashboard-card-border))]">
+                    <Truck size={20} className="text-[hsl(var(--dashboard-muted-foreground))] mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-[hsl(var(--dashboard-card-foreground))]">
                       {Math.round(stats.totalSales / stats.totalStores)}
                     </div>
-                    <div className="text-gray-400 text-xs">Avg per Store</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Avg per Store</div>
                   </div>
                 </div>
               </div>
 
               {/* Product Performance */}
-              <div className="bg-[#2a2a2a] rounded-2xl p-6">
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
                 <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
+                  <div className="w-8 h-8 bg-[hsl(var(--dashboard-primary-purple))] rounded-full flex items-center justify-center mr-3">
                     <BarChart3 size={16} className="text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white font-medium">Product Performance</h3>
-                    <p className="text-gray-400 text-sm">Category accuracy trends</p>
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Product Performance</h3>
+                    <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Category accuracy trends</p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   {loading ? (
-                    <div className="text-gray-400 text-sm">Loading...</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Loading...</div>
                   ) : (
                     productPerformance.slice(0, 3).map((product, index) => (
                       <div key={index} className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className={`w-2 h-2 rounded-full mr-3 ${
-                            product.trend === 'up' ? 'bg-green-400' : 
-                            product.trend === 'down' ? 'bg-red-400' : 'bg-yellow-400'
+                            product.trend === 'up' ? 'bg-[hsl(var(--dashboard-success))]' : 
+                            product.trend === 'down' ? 'bg-[hsl(var(--dashboard-error))]' : 'bg-[hsl(var(--dashboard-warning))]'
                           }`}></div>
-                          <span className="text-white text-sm">{product.category}</span>
+                          <span className="text-[hsl(var(--dashboard-card-foreground))] text-sm">{product.category}</span>
                         </div>
-                        <span className="text-gray-400 text-sm">
-                          {Math.round(product.forecastAccuracy)}%
+                        <span className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">
+                          {Math.round(product.forecastImprovement)}%
                         </span>
                       </div>
                     ))
@@ -569,17 +570,17 @@ export default function Home({ initialModule }: HomeProps) {
               </div>
 
               {/* Low Stock Alerts */}
-              <div className="bg-[#2a2a2a] rounded-2xl p-6">
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
                 <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
+                  <div className="w-8 h-8 bg-[hsl(var(--dashboard-error))] rounded-full flex items-center justify-center mr-3">
                     <AlertTriangle size={16} className="text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white font-medium">Low Stock Alerts</h3>
-                    <p className="text-gray-400 text-sm">Items need attention</p>
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Low Stock Alerts</h3>
+                    <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Items need attention</p>
                   </div>
                 </div>
-                <div className="text-gray-400 text-sm">
+                <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">
                   {loading ? 'Loading...' : `${lowStockAlerts.length} products with low forecast`}
                 </div>
               </div>
@@ -588,15 +589,9 @@ export default function Home({ initialModule }: HomeProps) {
             {/* Center Column - Trends & Analytics */}
             <div className="col-span-6 space-y-6">
               {/* Quick Navigation Links */}
-              <div className="bg-[#2a2a2a] rounded-2xl p-6">
-                <h3 className="text-white text-lg font-medium mb-2">Quick Navigation</h3>
-                <div className="flex items-center mb-4">
-                  <span className="text-3xl font-bold text-white mr-2">
-                    {loading ? '...' : Math.round(stats.avgForecastAccuracy)}%
-                  </span>
-                  <span className="text-gray-400">Average Accuracy</span>
-                </div>
-                <p className="text-gray-400 text-sm mb-6">
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
+                <h3 className="text-[hsl(var(--dashboard-card-foreground))] text-lg font-medium mb-2">Quick Navigation</h3>
+                <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm mb-6">
                   Access key modules and tools for retail analytics and forecasting.
                 </p>
 
@@ -607,18 +602,18 @@ export default function Home({ initialModule }: HomeProps) {
                       setActiveModule('store');
                       navigate(prefixedPath('/store'));
                     }}
-                    className="bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-xl p-4 text-left transition-all duration-200 group"
+                    className="bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] rounded-xl p-4 text-left transition-all duration-200 group border border-[hsl(var(--dashboard-card-border))]"
                   >
                     <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-400 transition-colors">
+                      <div className="w-10 h-10 bg-[hsl(var(--dashboard-primary-blue))] rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
                         <Store size={20} className="text-white" />
                       </div>
                       <div>
-                        <h4 className="text-white font-medium text-sm">Store Master</h4>
-                        <p className="text-gray-400 text-xs">Manage locations</p>
+                        <h4 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-sm">Store Master</h4>
+                        <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Manage locations</p>
                       </div>
                     </div>
-                    <div className="text-gray-400 text-xs">
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
                       {loading ? '...' : `${stats.totalStores} stores`}
                     </div>
                   </button>
@@ -628,18 +623,18 @@ export default function Home({ initialModule }: HomeProps) {
                       setActiveModule('product');
                       navigate(prefixedPath('/product'));
                     }}
-                    className="bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-xl p-4 text-left transition-all duration-200 group"
+                    className="bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] rounded-xl p-4 text-left transition-all duration-200 group border border-[hsl(var(--dashboard-card-border))]"
                   >
                     <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-400 transition-colors">
+                      <div className="w-10 h-10 bg-[hsl(var(--dashboard-primary-green))] rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
                         <Package size={20} className="text-white" />
                       </div>
                       <div>
-                        <h4 className="text-white font-medium text-sm">Product Master</h4>
-                        <p className="text-gray-400 text-xs">Browse catalog</p>
+                        <h4 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-sm">Product Master</h4>
+                        <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Browse catalog</p>
                       </div>
                     </div>
-                    <div className="text-gray-400 text-xs">
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
                       {loading ? '...' : `${stats.totalProducts.toLocaleString()} products`}
                     </div>
                   </button>
@@ -649,18 +644,18 @@ export default function Home({ initialModule }: HomeProps) {
                       setActiveModule('forecast');
                       navigate(prefixedPath('/forecast'));
                     }}
-                    className="bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-xl p-4 text-left transition-all duration-200 group"
+                    className="bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] rounded-xl p-4 text-left transition-all duration-200 group border border-[hsl(var(--dashboard-card-border))]"
                   >
                     <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-400 transition-colors">
+                      <div className="w-10 h-10 bg-[hsl(var(--dashboard-primary-purple))] rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
                         <TrendingUp size={20} className="text-white" />
                       </div>
                       <div>
-                        <h4 className="text-white font-medium text-sm">Forecast</h4>
-                        <p className="text-gray-400 text-xs">View predictions</p>
+                        <h4 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-sm">Forecast</h4>
+                        <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">View predictions</p>
                       </div>
                     </div>
-                    <div className="text-gray-400 text-xs">
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
                       {loading ? '...' : `${Math.round(stats.totalForecasts / 1000)}K records`}
                     </div>
                   </button>
@@ -670,18 +665,18 @@ export default function Home({ initialModule }: HomeProps) {
                       setActiveModule('analytics');
                       navigate(prefixedPath('/analytics'));
                     }}
-                    className="bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-xl p-4 text-left transition-all duration-200 group"
+                    className="bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] rounded-xl p-4 text-left transition-all duration-200 group border border-[hsl(var(--dashboard-card-border))]"
                   >
                     <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-400 transition-colors">
+                      <div className="w-10 h-10 bg-[hsl(var(--dashboard-primary-orange))] rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
                         <BarChart3 size={20} className="text-white" />
                       </div>
                       <div>
-                        <h4 className="text-white font-medium text-sm">Analytics</h4>
-                        <p className="text-gray-400 text-xs">Data insights</p>
+                        <h4 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-sm">Analytics</h4>
+                        <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Data insights</p>
                       </div>
                     </div>
-                    <div className="text-gray-400 text-xs">
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
                       Advanced reports
                     </div>
                   </button>
@@ -694,93 +689,143 @@ export default function Home({ initialModule }: HomeProps) {
                       setActiveModule('store');
                       navigate(prefixedPath('/store'));
                     }}
-                    className="bg-[#3a3a3a] hover:bg-blue-500/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-blue-500/30"
+                    className="bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-primary-blue))]/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-[hsl(var(--dashboard-primary-blue))]/30"
                   >
-                    <Plus size={16} className="text-blue-400 mx-auto mb-1" />
-                    <div className="text-white text-xs">Add Store</div>
+                    <Plus size={16} className="text-[hsl(var(--dashboard-primary-blue))] mx-auto mb-1" />
+                    <div className="text-[hsl(var(--dashboard-card-foreground))] text-xs">Add Store</div>
                   </button>
                   <button
                     onClick={() => {
                       setActiveModule('product');
                       navigate(prefixedPath('/product'));
                     }}
-                    className="bg-[#3a3a3a] hover:bg-green-500/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-green-500/30"
+                    className="bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-primary-green))]/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-[hsl(var(--dashboard-primary-green))]/30"
                   >
-                    <Package size={16} className="text-green-400 mx-auto mb-1" />
-                    <div className="text-white text-xs">Add Product</div>
+                    <Package size={16} className="text-[hsl(var(--dashboard-primary-green))] mx-auto mb-1" />
+                    <div className="text-[hsl(var(--dashboard-card-foreground))] text-xs">Add Product</div>
                   </button>
                   <button
                     onClick={() => {
                       setActiveModule('analytics');
                       navigate(prefixedPath('/analytics'));
                     }}
-                    className="bg-[#3a3a3a] hover:bg-purple-500/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-purple-500/30"
+                    className="bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-primary-purple))]/20 rounded-lg p-3 text-center transition-all duration-200 border border-transparent hover:border-[hsl(var(--dashboard-primary-purple))]/30"
                   >
-                    <BarChart3 size={16} className="text-purple-400 mx-auto mb-1" />
-                    <div className="text-white text-xs">View Reports</div>
+                    <BarChart3 size={16} className="text-[hsl(var(--dashboard-primary-purple))] mx-auto mb-1" />
+                    <div className="text-[hsl(var(--dashboard-card-foreground))] text-xs">View Reports</div>
                   </button>
                 </div>
               </div>
 
-              {/* Regional Performance Heatmap */}
-              <div className="rounded-2xl p-6" style={{ background: '#E2B8DF' }}>
+              {/* Regional Distribution Heatmap */}
+              <div className="rounded-2xl p-6 bg-[hsl(var(--dashboard-regional-pink))] border border-[hsl(var(--dashboard-card-border))]">
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h3 className="text-black text-lg font-medium mb-2">Regional Performance</h3>
-                    <p className="text-black text-sm opacity-80">
-                      {loading ? 'Loading...' : `${regionalData.length} regions tracked with ${regionalData.reduce((sum, r) => sum + r.stores, 0)} total stores`}
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] text-lg font-medium mb-2">Regional Distribution</h3>
+                    <p className="text-[hsl(var(--dashboard-card-foreground))] text-sm opacity-80">
+                      {loading ? 'Loading...' : `${regionalData.length} regions with ${regionalData.reduce((sum, r) => sum + r.stores, 0)} stores • Avg accuracy: ${Math.round(regionalData.length > 0 ? regionalData.reduce((sum, r) => sum + r.performance, 0) / regionalData.length : 0)}%`}
                     </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[hsl(var(--dashboard-card-foreground))] text-sm font-medium">
+                      {loading ? '...' : `${Math.round(regionalData.reduce((sum, r) => sum + r.avgSales, 0))} total units`}
+                    </div>
+                    <div className="text-[hsl(var(--dashboard-card-foreground))] text-xs opacity-70">across all regions</div>
                   </div>
                 </div>
 
-                {/* Performance Matrix */}
+                {/* Enhanced Performance Matrix */}
                 <div className="grid grid-cols-7 gap-2 mb-4">
                   {Array.from({ length: 49 }, (_, i) => {
-                    const regionIndex = i % regionalData.length;
+                    const regionIndex = regionalData.length > 0 ? i % regionalData.length : 0;
                     const region = regionalData[regionIndex];
-                    const intensity = region ? Math.min(region.performance / 100, 1) : Math.random();
+                    const intensity = region ? Math.min(region.performance / 100, 1) : 0.3;
+                    const hasData = region && region.performance > 0;
+                    const performance = region ? region.performance : 0;
                     return (
-                      <div key={i} className={`w-3 h-3 rounded-full ${
-                        intensity > 0.8 ? 'bg-black' : 
-                        intensity > 0.6 ? 'bg-gray-800' : 
-                        intensity > 0.4 ? 'bg-gray-600' : 'bg-gray-400'
-                      }`}></div>
+                      <div 
+                        key={i} 
+                        className={`w-3 h-3 rounded-full transition-all duration-200 hover:scale-125 ${
+                          !hasData ? 'bg-[hsl(var(--dashboard-muted-foreground))]/30' :
+                          performance > 95 ? 'bg-[hsl(var(--dashboard-success))]/80' : 
+                          performance > 90 ? 'bg-[hsl(var(--dashboard-success))]/60' : 
+                          performance > 85 ? 'bg-[hsl(var(--dashboard-warning))]/60' : 
+                          performance > 80 ? 'bg-[hsl(var(--dashboard-warning))]/80' : 'bg-[hsl(var(--dashboard-error))]/80'
+                        }`}
+                        title={hasData ? `${region.region}: ${Math.round(region.performance)}% performance` : 'No data'}
+                      ></div>
                     );
                   })}
                 </div>
 
-                {/* Region labels */}
-                <div className="grid grid-cols-7 gap-2 text-center">
+                {/* Enhanced Region labels with metrics */}
+                <div className="grid grid-cols-7 gap-2 text-center mb-4">
                   {regionalData.slice(0, 7).map((region, index) => (
-                    <span key={index} className="text-black text-xs truncate opacity-80">
-                      {region.region.slice(0, 3)}
-                    </span>
+                    <div key={index} className="text-[hsl(var(--dashboard-card-foreground))] text-xs">
+                      <div className="font-medium truncate opacity-90">
+                        {region.region.slice(0, 6)}
+                      </div>
+                      <div className="opacity-70">
+                        {region.stores}s • {Math.round(region.performance)}%
+                      </div>
+                    </div>
                   ))}
+                </div>
+
+                {/* Performance legend */}
+                <div className="flex items-center justify-between text-[hsl(var(--dashboard-card-foreground))] text-xs">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-[hsl(var(--dashboard-error))]/80 rounded-full mr-1"></div>
+                      <span className="opacity-80">Below 80%</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-[hsl(var(--dashboard-warning))]/80 rounded-full mr-1"></div>
+                      <span className="opacity-80">80-85%</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-[hsl(var(--dashboard-warning))]/60 rounded-full mr-1"></div>
+                      <span className="opacity-80">85-90%</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-[hsl(var(--dashboard-success))]/60 rounded-full mr-1"></div>
+                      <span className="opacity-80">90-95%</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-[hsl(var(--dashboard-success))]/80 rounded-full mr-1"></div>
+                      <span className="opacity-80">Above 95%</span>
+                    </div>
+                  </div>
+                  <div className="opacity-70">
+                    s = stores
+                  </div>
                 </div>
               </div>
 
               {/* Forecast vs Actual Chart */}
-              <div className="bg-[#2a2a2a] rounded-2xl p-6">
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
                 <div className="flex justify-between items-center mb-6">
                   <div>
-                    <h3 className="text-white font-medium">Forecast vs Actual</h3>
-                    <p className="text-gray-400 text-sm">Weekly comparison</p>
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Forecast vs Actual</h3>
+                    <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Weekly comparison</p>
                   </div>
                   <div>
-                    <h3 className="text-white font-medium">Accuracy Trend</h3>
-                    <p className="text-gray-400 text-sm">
-                      {loading ? '...' : `${Math.round(stats.avgForecastAccuracy)}% avg`}
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Improvement Trend</h3>
+                    <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">
+                      {loading ? '...' : `${Math.round(stats.avgForecastImprovement)}% avg`}
                     </p>
                   </div>
                 </div>
 
                 {/* Performance Chart */}
-                <div className="h-32 bg-[#3a3a3a] rounded-lg p-4 mb-4">
+                <div className="h-32 bg-[hsl(var(--dashboard-chart-background))] rounded-lg p-4 mb-4 border border-[hsl(var(--dashboard-card-border))]">
                   <svg className="w-full h-full" viewBox="0 0 300 100">
+                    {weeklyTrends.length > 1 && (
+                      <>
                     {/* Forecast line */}
                     <polyline
                       fill="none"
-                      stroke="#60a5fa"
+                          stroke="hsl(var(--dashboard-primary-blue))"
                       strokeWidth="2"
                       points={weeklyTrends.map((week, index) => 
                         `${(index / (weeklyTrends.length - 1)) * 300},${100 - (week.forecast / Math.max(...weeklyTrends.map(w => w.forecast)) * 80)}`
@@ -789,23 +834,30 @@ export default function Home({ initialModule }: HomeProps) {
                     {/* Actual line */}
                     <polyline
                       fill="none"
-                      stroke="#10b981"
+                          stroke="hsl(var(--dashboard-success))"
                       strokeWidth="2"
                       points={weeklyTrends.map((week, index) => 
                         `${(index / (weeklyTrends.length - 1)) * 300},${100 - (week.actual / Math.max(...weeklyTrends.map(w => w.actual)) * 80)}`
                       ).join(' ')}
                     />
+                      </>
+                    )}
+                    {weeklyTrends.length === 0 && (
+                      <text x="150" y="50" textAnchor="middle" className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
+                        No data available
+                      </text>
+                    )}
                   </svg>
                 </div>
 
                 {/* Legend */}
-                <div className="flex justify-between text-gray-400 text-xs">
+                <div className="flex justify-between text-[hsl(var(--dashboard-muted-foreground))] text-xs">
                   <div className="flex items-center">
-                    <div className="w-3 h-0.5 bg-blue-400 mr-2"></div>
+                    <div className="w-3 h-0.5 bg-[hsl(var(--dashboard-primary-blue))] mr-2"></div>
                     <span>Forecast</span>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-3 h-0.5 bg-green-400 mr-2"></div>
+                    <div className="w-3 h-0.5 bg-[hsl(var(--dashboard-success))] mr-2"></div>
                     <span>Actual</span>
                   </div>
                 </div>
@@ -814,179 +866,216 @@ export default function Home({ initialModule }: HomeProps) {
 
             {/* Right Column - Insights & Rankings */}
             <div className="col-span-3 space-y-6">
-              {/* Key Insights */}
-              <div className="bg-[#2a2a2a] rounded-2xl p-6">
-                <h3 className="text-white text-lg font-medium mb-6">Key Insights</h3>
+              {/* Quick Actions */}
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
+                <h3 className="text-[hsl(var(--dashboard-card-foreground))] text-lg font-medium mb-6">Quick Actions</h3>
                 
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-2xl font-bold text-white">
-                    {loading ? '...' : `${Math.round(stats.avgForecastAccuracy)}%`}
-                  </span>
-                  <button className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <TrendingUp size={16} className="text-white" />
+                <div className="space-y-4">
+                  <button
+                    onClick={() => {
+                      setActiveModule('forecast');
+                      navigate(prefixedPath('/forecast'));
+                    }}
+                    className="w-full bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] rounded-xl p-4 text-left transition-all duration-200 group border border-[hsl(var(--dashboard-card-border))] hover:border-[hsl(var(--dashboard-primary-blue))]/30"
+                  >
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-[hsl(var(--dashboard-primary-blue))] rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
+                        <TrendingUp size={20} className="text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-sm">View Forecasts</h4>
+                        <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Analyze predictions</p>
+                      </div>
+                      <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
+                        {loading ? '...' : `${Math.round(stats.totalForecasts / 1000)}K`}
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setActiveModule('analytics');
+                      navigate(prefixedPath('/analytics'));
+                    }}
+                    className="w-full bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] rounded-xl p-4 text-left transition-all duration-200 group border border-[hsl(var(--dashboard-card-border))] hover:border-[hsl(var(--dashboard-primary-purple))]/30"
+                  >
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-[hsl(var(--dashboard-primary-purple))] rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
+                        <BarChart3 size={20} className="text-white" />
+                  </div>
+                      <div className="flex-1">
+                        <h4 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-sm">Analytics</h4>
+                        <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Deep insights</p>
+                  </div>
+                      <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
+                        Reports
+                  </div>
+                </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setActiveModule('product');
+                      navigate(prefixedPath('/product'));
+                    }}
+                    className="w-full bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] rounded-xl p-4 text-left transition-all duration-200 group border border-[hsl(var(--dashboard-card-border))] hover:border-[hsl(var(--dashboard-primary-green))]/30"
+                  >
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-[hsl(var(--dashboard-primary-green))] rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
+                        <Package size={20} className="text-white" />
+                        </div>
+                      <div className="flex-1">
+                        <h4 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-sm">Manage Products</h4>
+                        <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Catalog tools</p>
+                        </div>
+                      <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
+                        {loading ? '...' : `${Math.round(stats.totalProducts / 1000)}K`}
+                      </div>
+                    </div>
                   </button>
                 </div>
-                
-                <p className="text-gray-400 text-sm mb-2">Overall forecast accuracy</p>
-                <p className="text-gray-400 text-xs mb-6">
-                  {stats.avgForecastAccuracy > 80 ? 'Performing above target' : 'Room for improvement'}
-                </p>
+              </div>
 
-                {/* Accuracy Progress */}
-                <div className="flex justify-center mb-6">
-                  <div className="relative">
-                    <div className="w-16 h-20 bg-[#3a3a3a] rounded-full relative overflow-hidden">
+              {/* Advanced Analytics */}
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-[hsl(var(--dashboard-primary-blue))] rounded-full flex items-center justify-center mr-3">
+                    <TrendingUp size={16} className="text-white" />
+                    </div>
+                  <div>
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Advanced Analytics</h3>
+                    <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">AI-powered insights</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-[hsl(var(--dashboard-accent-background))] rounded-lg p-4 border border-[hsl(var(--dashboard-card-border))]">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[hsl(var(--dashboard-card-foreground))] text-sm font-medium">Forecast Accuracy</span>
+                      <span className="text-[hsl(var(--dashboard-primary-blue))] text-sm font-bold">
+                        {loading ? '...' : `${Math.round(stats.avgForecastImprovement)}%`}
+                      </span>
+                    </div>
+                    <div className="w-full bg-[hsl(var(--dashboard-chart-grid))] rounded-full h-2">
                       <div 
-                        className="absolute bottom-0 w-full bg-blue-500 rounded-full transition-all duration-500" 
-                        style={{ height: `${Math.min(stats.avgForecastAccuracy, 100)}%` }}
+                        className="bg-[hsl(var(--dashboard-primary-blue))] h-2 rounded-full transition-all duration-500"
+                        style={{ width: loading ? '0%' : `${Math.min(stats.avgForecastImprovement, 100)}%` }}
                       ></div>
                     </div>
-                    <button className="absolute -right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
-                      <BarChart3 size={12} className="text-white" />
-                    </button>
                   </div>
-                </div>
 
-                <div className="flex items-center text-sm text-gray-400 mb-6">
-                  <LineChart size={16} className="mr-2" />
-                  <span>Forecast accuracy impacts inventory optimization and customer satisfaction.</span>
-                </div>
-
-                <div className="text-center mb-6">
-                  <p className="text-gray-400 text-sm">
-                    {stats.avgForecastAccuracy > 85 ? 
-                      'Excellent performance across all categories' : 
-                      'Focus on improving low-performing categories'
-                    }
-                  </p>
-                </div>
-
-                {/* Performance comparison */}
-                <div className="space-y-2">
-                  <div className="rounded-full px-4 py-2 text-center" style={{ background: '#B7CAE1' }}>
-                    <span className="text-black text-sm font-medium">
-                      {Math.round(stats.avgForecastAccuracy)}% - Current Week
+                  <div className="bg-[hsl(var(--dashboard-accent-background))] rounded-lg p-4 border border-[hsl(var(--dashboard-card-border))]">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[hsl(var(--dashboard-card-foreground))] text-sm font-medium">Inventory Turnover</span>
+                      <span className="text-[hsl(var(--dashboard-primary-green))] text-sm font-bold">
+                        {loading ? '...' : `${stats.avgInventoryTurnover}x`}
                     </span>
                   </div>
-                  <div className="bg-gray-600 rounded-full px-4 py-2 text-center">
-                    <span className="text-white text-sm font-medium">
-                      {Math.round(stats.avgForecastAccuracy * 0.95)}% - Previous Week
-                    </span>
+                    <div className="w-full bg-[hsl(var(--dashboard-chart-grid))] rounded-full h-2">
+                      <div 
+                        className="bg-[hsl(var(--dashboard-primary-green))] h-2 rounded-full transition-all duration-500"
+                        style={{ width: loading ? '0%' : `${Math.min(stats.avgInventoryTurnover * 10, 100)}%` }}
+                      ></div>
+                    </div>
+                </div>
+
+                  <div className="bg-[hsl(var(--dashboard-accent-background))] rounded-lg p-4 border border-[hsl(var(--dashboard-card-border))]">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[hsl(var(--dashboard-card-foreground))] text-sm font-medium">System Performance</span>
+                      <span className="text-[hsl(var(--dashboard-primary-purple))] text-sm font-bold">98%</span>
+                    </div>
+                    <div className="w-full bg-[hsl(var(--dashboard-chart-grid))] rounded-full h-2">
+                      <div className="bg-[hsl(var(--dashboard-primary-purple))] h-2 rounded-full w-[98%] transition-all duration-500"></div>
+                  </div>
                   </div>
                 </div>
               </div>
 
               {/* Top Performing Products */}
-              <div className="bg-[#2a2a2a] rounded-2xl p-6">
-                <h3 className="text-white text-lg font-medium mb-6">Top Products</h3>
-                
-                <p className="text-gray-400 text-sm mb-4">
-                  Best selling products across all stores
-                </p>
-
-                {/* Product badges */}
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  <div className="rounded-xl p-3 text-center" style={{ background: '#B7CAE1' }}>
-                    <Star size={20} className="text-black mx-auto mb-1" />
-                    <div className="text-black text-xs">Best Seller</div>
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
+                <div className="flex items-center mb-6">
+                  <div className="w-8 h-8 bg-[hsl(var(--dashboard-primary-green))] rounded-full flex items-center justify-center mr-3">
+                    <Trophy size={16} className="text-white" />
                   </div>
-                  <div className="rounded-xl p-3 text-center" style={{ background: '#E2B8DF' }}>
-                    <Target size={20} className="text-black mx-auto mb-1" />
-                    <div className="text-black text-xs">High Accuracy</div>
-                  </div>
-                  <div className="bg-purple-500 rounded-xl p-3 text-center">
-                    <TrendingUp size={20} className="text-white mx-auto mb-1" />
-                    <div className="text-white text-xs">Trending</div>
+                  <div>
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Top Performing Products</h3>
+                    <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Forecast accuracy leaders</p>
                   </div>
                 </div>
-
-                {/* Product list */}
-                <div className="space-y-2">
-                  {loading ? (
-                    <div className="text-gray-400 text-sm">Loading products...</div>
-                  ) : (
-                    topProducts.slice(0, 3).map((product, index) => (
-                      <div key={index} className="bg-[#3a3a3a] rounded-lg p-3">
-                        <div className="text-white text-sm font-medium truncate">
-                          {product.article_description}
-                        </div>
-                        <div className="text-gray-400 text-xs">
-                          {product.brand} • {Math.round(product.total_sales)} units sold
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-
-              {/* Alert Categories */}
-              <div className="space-y-4">
-                <div className="bg-[#2a2a2a] rounded-2xl p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <AlertTriangle size={16} className="text-red-400 mr-2" />
-                      <span className="text-white font-medium">Low Stock Alert</span>
-                    </div>
-                    <span className="text-gray-400 text-sm">{lowStockAlerts.length} items</span>
-                  </div>
-                  <p className="text-gray-400 text-xs mt-1">Requires immediate attention</p>
-                </div>
-
-                <div className="bg-[#2a2a2a] rounded-2xl p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <CheckCircle size={16} className="text-green-400 mr-2" />
-                      <span className="text-white font-medium">Optimal Performance</span>
-                    </div>
-                    <span className="text-gray-400 text-sm">
-                      {productPerformance.filter(p => p.trend === 'up').length} categories
-                    </span>
-                  </div>
-                  <p className="text-gray-400 text-xs mt-1">Above target accuracy</p>
-                </div>
-
-                <div className="bg-[#2a2a2a] rounded-2xl p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Activity size={16} className="text-blue-400 mr-2" />
-                      <span className="text-white font-medium">Monitoring Required</span>
-                    </div>
-                    <span className="text-gray-400 text-sm">
-                      {productPerformance.filter(p => p.trend === 'stable').length} categories
-                    </span>
-                  </div>
-                  <p className="text-gray-400 text-xs mt-1">Watch for trends</p>
-                </div>
-              </div>
-
-              {/* Regional Rankings */}
-              <div className="bg-[#2a2a2a] rounded-2xl p-6">
-                <h3 className="text-white text-lg font-medium mb-6">Regional Rankings</h3>
                 
                 <div className="space-y-4">
                   {loading ? (
-                    <div className="text-gray-400 text-sm">Loading regions...</div>
+                    <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Loading...</div>
                   ) : (
-                    regionalData.slice(0, 4).map((region, index) => (
-                      <div key={region.region} className="flex items-center justify-between">
+                    topProducts.slice(0, 4).map((product, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-[hsl(var(--dashboard-accent-background))] rounded-lg border border-[hsl(var(--dashboard-card-border))]">
                         <div className="flex items-center">
-                          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center mr-3">
-                            <span className="text-white text-sm">{index + 1}</span>
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white mr-3 ${
+                            index === 0 ? 'bg-[hsl(var(--dashboard-warning))]' : 
+                            index === 1 ? 'bg-[hsl(var(--dashboard-chart-grid))]' : 
+                            index === 2 ? 'bg-[hsl(var(--dashboard-primary-orange))]' : 'bg-[hsl(var(--dashboard-muted-foreground))]'
+                          }`}>
+                            {index + 1}
                           </div>
                           <div>
-                            <div className="text-white font-medium text-sm">{region.region}</div>
-                            <div className="text-gray-400 text-xs">{region.stores} stores</div>
+                            <div className="text-[hsl(var(--dashboard-card-foreground))] text-sm font-medium">
+                              {product.article_description && product.article_description.length > 20 ? 
+                                `${product.article_description.substring(0, 20)}...` : 
+                                product.article_description || 'Unknown Product'}
+                            </div>
+                            <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
+                              {product.brand || 'Unknown Brand'}
+                            </div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-white text-sm">
-                            {Math.round(region.avgSales)} avg units
+                          <div className="text-[hsl(var(--dashboard-success))] text-sm font-bold">
+                            {Math.round(product.total_sales || 0)}
                           </div>
-                          {index < 3 && <Medal size={16} className="text-yellow-400 ml-auto" />}
+                          <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
+                            sales
+                          </div>
                         </div>
                       </div>
                     ))
                   )}
+                </div>
+              </div>
+
+              {/* Recent Activity */}
+              <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-6 border border-[hsl(var(--dashboard-card-border))]">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-[hsl(var(--dashboard-primary-orange))] rounded-full flex items-center justify-center mr-3">
+                    <Activity size={16} className="text-white" />
+            </div>
+                  <div>
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] font-medium">Recent Activity</h3>
+                    <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">System updates</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-start">
+                    <div className="w-2 h-2 bg-[hsl(var(--dashboard-success))] rounded-full mt-2 mr-3"></div>
+                    <div>
+                      <div className="text-[hsl(var(--dashboard-card-foreground))] text-sm">Forecast updated</div>
+                      <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">2 hours ago</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-2 h-2 bg-[hsl(var(--dashboard-primary-blue))] rounded-full mt-2 mr-3"></div>
+                    <div>
+                      <div className="text-[hsl(var(--dashboard-card-foreground))] text-sm">New products added</div>
+                      <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">4 hours ago</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-2 h-2 bg-[hsl(var(--dashboard-warning))] rounded-full mt-2 mr-3"></div>
+                    <div>
+                      <div className="text-[hsl(var(--dashboard-card-foreground))] text-sm">System maintenance</div>
+                      <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">Yesterday</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1001,3 +1090,4 @@ export default function Home({ initialModule }: HomeProps) {
     </>
   );
 }
+

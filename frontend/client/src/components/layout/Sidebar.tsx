@@ -172,15 +172,14 @@ const Sidebar = () => {
               trigger={
                 <IconButton
                   variant={"default"}
-                  // on hover, change bg
-                  className={`relative hover:bg-gray-700/50`}
+                  className={`relative`}
                   onClick={() => handleModuleClick(item.module)}
                   aria-label={item.id}
                 >
                   {item.icon}
                   {/* a circle if active */}
                   {activeModule === item.module && (
-                    <div className="absolute right-0 w-1 h-1 bg-primary rounded-full"></div>
+                    <div className="absolute right-0 w-1 h-1 bg-[hsl(var(--sidebar-primary))] rounded-full"></div>
                   )}
                 </IconButton>
               }

@@ -80,14 +80,14 @@ const Splitter: React.FC<SplitterProps> = ({ splitterId, orientation, initialPer
     <div
       ref={splitterRef}
       className={`splitter ${cursorClass} ${sizeClass} select-none z-10 flex justify-center items-center 
-                 bg-black`}
+                 bg-[hsl(var(--splitter-background))]`}
       onMouseDown={handleMouseDown}
       style={{
         // Position needs to be set by parent layout
         flexShrink: 0,
       }}
     >
-      <div className={`splitter-grip ${gripSizeClass} bg-gray-600/50 rounded-full pointer-events-none`}></div>
+      <div className={`splitter-grip ${gripSizeClass} bg-[hsl(var(--splitter-grip))] rounded-full pointer-events-none`}></div>
       
       {/* Overlay during drag */}
        {isDragging && (

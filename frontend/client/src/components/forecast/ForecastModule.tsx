@@ -4,6 +4,14 @@ import ForecastSidebar from "./ForecastSidebar";
 import EditorLayout from "../code/EditorLayout";
 import SidebarSplitter from "../ui/SidebarSplitter";
 import { ChevronRight } from "lucide-react";
+import { ForecastRepository } from "@/repository/forecast_repository";
+
+// Global registry to store forecast tab data
+export const forecastTabDataRegistry = new Map<string, {
+  selectedWeekStartDate: string;
+  forecastType: string;
+  title: string;
+}>();
 
 const ForecastModule = () => {
   const { 
@@ -18,11 +26,93 @@ const ForecastModule = () => {
   const [isResizingSidebar, setIsResizingSidebar] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Month selector state
+  const [weekStartDates, setWeekStartDates] = useState<string[]>([]);
+  const [selectedWeekStartDate, setSelectedWeekStartDate] = useState<string>('');
+  const [loadingWeekDates, setLoadingWeekDates] = useState(false);
+
+  // Initialize forecast repository
+  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+
+  // Load week start dates on mount
+  useEffect(() => {
+    loadWeekStartDates();
+  }, []);
+
+  const loadWeekStartDates = async () => {
+    try {
+      setLoadingWeekDates(true);
+      const sqlQuery = `SELECT DISTINCT week_start_date FROM forecast ORDER BY week_start_date ASC`;
+      
+      const stateSetters = {
+        setLoading: () => {},
+        setError: (error: string | null) => console.error('Error loading week dates:', error),
+        setData: (response: any) => {
+          if (response && response.data) {
+            const dates = response.data.map((row: any) => row.week_start_date).filter(Boolean);
+            setWeekStartDates(dates);
+            // Set the earliest date as default
+            if (dates.length > 0 && !selectedWeekStartDate) {
+              setSelectedWeekStartDate(dates[0]);
+            }
+          }
+        }
+      };
+      
+      await forecastRepo.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+    } catch (err) {
+      console.error('Error loading week start dates:', err);
+    } finally {
+      setLoadingWeekDates(false);
+    }
+  };
+
+  const handleWeekStartDateChange = (newDate: string) => {
+    setSelectedWeekStartDate(newDate);
+    
+    // Update all existing forecast tabs with the new date
+    forecastTabDataRegistry.forEach((data, tabId) => {
+      const dateDisplay = newDate ? 
+        ` (${new Date(newDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })})` : '';
+      
+      const baseTitle = data.forecastType === 'consensus-adjustment' ? 'Consensus Adjustment' : 
+                        data.forecastType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      
+      forecastTabDataRegistry.set(tabId, {
+        ...data,
+        selectedWeekStartDate: newDate,
+        title: baseTitle + dateDisplay
+      });
+    });
+  };
+
   const handleSidebarItemClick = (itemId: string, itemData: any) => {
     // Create tab for forecast content
     const tabId = `forecast-${itemId}`;
     
-    console.log('[ForecastModule] Sidebar item clicked:', { itemId, itemData, tabId });
+    // Add selected date to the title if available
+    const dateDisplay = selectedWeekStartDate ? 
+      ` (${new Date(selectedWeekStartDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })})` : '';
+    
+    const baseTitle = itemData.title;
+    const fullTitle = baseTitle + dateDisplay;
+    
+    // Store forecast-specific data in the registry
+    forecastTabDataRegistry.set(tabId, {
+      selectedWeekStartDate,
+      forecastType: itemId,
+      title: fullTitle
+    });
+    
+    console.log('[ForecastModule] Sidebar item clicked:', { itemId, tabId, selectedWeekStartDate });
     
     // Open the forecast content in the editor panel system
     openFileInPanel(tabId);
@@ -96,6 +186,10 @@ const ForecastModule = () => {
             <ForecastSidebar 
               onItemSelect={handleSidebarItemClick}
               onClose={handleCloseSidebar}
+              weekStartDates={weekStartDates}
+              selectedWeekStartDate={selectedWeekStartDate}
+              onWeekStartDateChange={handleWeekStartDateChange}
+              loadingWeekDates={loadingWeekDates}
             />
           </div>
           
@@ -108,6 +202,7 @@ const ForecastModule = () => {
       )}
       
       {/* Editor Layout */}
+      {/* add border radius */}
       <div className="flex-1 h-full overflow-hidden">
         <EditorLayout layoutNode={editorLayout} />
       </div>

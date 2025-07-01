@@ -14,11 +14,165 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 252 80% 67%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 270 70% 64%;
     --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+
+    /* Light theme sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 240 5.9% 90%;
+    --sidebar-ring: 240 5% 83.9%;
+
+    /* Light theme TopBar dropdown */
+    --topbar-dropdown-background: 0 0% 100%;
+
+    /* Light theme tooltip */
+    --tooltip-background: 0 0% 100%;
+    --tooltip-foreground: 240 10% 3.9%;
+    --tooltip-border: 240 5.9% 90%;
+    --tooltip-border-separator: 240 5.9% 90%;
+    --tooltip-icon-color: 217 91% 60%;
+    --tooltip-description-foreground: 240 3.8% 46.1%;
+    --tooltip-shadow: 220 43% 11% / 0.15;
+
+    /* Light theme splitter */
+    --splitter-background: 240 5.9% 90%;
+    --splitter-grip: 240 3.8% 70%;
+
+    /* Light theme sidepanel */
+    --sidepanel-background: 0 0% 100%;
+    --sidepanel-foreground: 240 10% 3.9%;
+    --sidepanel-muted-foreground: 240 3.8% 46.1%;
+    --sidepanel-border: 240 5.9% 90%;
+    --sidepanel-border-subtle: 240 5.9% 95%;
+    --sidepanel-hover: 240 4.8% 95.9%;
+    --sidepanel-hover-subtle: 240 4.8% 98%;
+    --sidepanel-selected: 217 91% 60% / 0.1;
+    --sidepanel-selected-border: 217 91% 60%;
+    --sidepanel-accent: 240 4.8% 95.9%;
+    --sidepanel-accent-foreground: 240 5.9% 10%;
+    --sidepanel-input-background: 0 0% 100%;
+    --sidepanel-input-border: 240 5.9% 90%;
+    --sidepanel-button-background: 240 4.8% 95.9%;
+    --sidepanel-button-hover: 240 5% 87%;
+    --sidepanel-loading-foreground: 240 3.8% 46.1%;
+    --sidepanel-error-foreground: 0 84.2% 60.2%;
+    --sidepanel-card-background: 0 0% 100%;
+    --sidepanel-card-border: 240 5.9% 90%;
+
+    /* Light theme panel */
+    --panel-background: 0 0% 100%;
+    --panel-foreground: 240 10% 3.9%;
+    --panel-muted-foreground: 240 3.8% 46.1%;
+    --panel-border: 240 5.9% 90%;
+    --panel-border-subtle: 240 5.9% 95%;
+    --panel-hover: 240 4.8% 95.9%;
+    --panel-selected: 217 91% 60% / 0.1;
+    --panel-selected-border: 217 91% 60%;
+    --panel-accent: 240 4.8% 95.9%;
+    --panel-accent-foreground: 240 5.9% 10%;
+    --panel-input-background: 0 0% 100%;
+    --panel-input-border: 240 5.9% 90%;
+    --panel-button-background: 240 4.8% 95.9%;
+    --panel-button-hover: 240 5% 87%;
+    --panel-success: 142 76% 36%;
+    --panel-warning: 38 92% 50%;
+    --panel-error: 0 84.2% 60.2%;
+
+    /* Light theme table */
+    --table-background: 0 0% 100%;
+    --table-foreground: 240 10% 3.9%;
+    --table-muted-foreground: 240 3.8% 46.1%;
+    --table-border: 240 5.9% 90%;
+    --table-border-strong: 240 5.9% 85%;
+    --table-header-background: 240 4.8% 95.9%;
+    --table-header-foreground: 240 5.9% 10%;
+    --table-row-hover: 240 4.8% 95.9%;
+    --table-row-selected: 217 91% 60% / 0.1;
+    --table-row-selected-border: 217 91% 60%;
+    --table-row-even: 240 4.8% 98%;
+    --table-cell-pinned: 240 4.8% 97%;
+    --table-input-background: 0 0% 100%;
+    --table-input-border: 240 5.9% 90%;
+    --table-button-background: 240 4.8% 95.9%;
+    --table-button-hover: 240 5% 87%;
+    --table-loading-foreground: 240 3.8% 46.1%;
+    
+    /* Light theme table card variants */
+    --table-card-store-background: 217 91% 60% / 0.05;
+    --table-card-store-border: 217 91% 60% / 0.2;
+    --table-card-product-background: 142 76% 36% / 0.05;
+    --table-card-product-border: 142 76% 36% / 0.2;
+    --table-card-group-background: 270 70% 64% / 0.05;
+    --table-card-group-border: 270 70% 64% / 0.2;
+    --table-card-forecast-background: 38 92% 50% / 0.05;
+    --table-card-forecast-border: 38 92% 50% / 0.2;
+    --table-card-adjustment-background: 25 95% 53% / 0.05;
+    --table-card-adjustment-border: 25 95% 53% / 0.2;
+
+    /* Light theme tab variables */
+    --tab-container-background: 240 4.8% 95.9%;
+    --tab-container-border: 240 5.9% 90%;
+    --tab-background-inactive: 240 4.8% 95.9%;
+    --tab-background-active: 0 0% 100%;
+    --tab-background-hover: 240 5% 87%;
+    --tab-foreground: 0 0% 3.9%;
+    --tab-foreground-muted: 240 3.8% 46.1%;
+    --tab-border: 240 5.9% 90%;
+    --tab-border-active: 217 91% 60%;
+    --tab-close-button-hover: 240 5.9% 90%;
+    --tab-indicator-code: 217 91% 60%;
+    --tab-indicator-chat: 142.1 76.2% 36.3%;
+    --tab-indicator-docs: 32.6 94.6% 43.7%;
+    --tab-indicator-task: 262.1 83.3% 57.8%;
+    --tab-indicator-default: 240 3.8% 46.1%;
+    --tab-drag-over: 217 91% 60%;
+    --tab-dragging-background: 240 5% 87%;
+
+    /* Light theme dashboard */
+    --dashboard-background: 240 4.8% 95.9%;
+    --dashboard-foreground: 240 10% 3.9%;
+    --dashboard-muted-foreground: 240 3.8% 46.1%;
+    --dashboard-card-background: 0 0% 100%;
+    --dashboard-card-foreground: 240 10% 3.9%;
+    --dashboard-card-border: 240 5.9% 90%;
+    --dashboard-card-hover: 240 4.8% 95.9%;
+    --dashboard-accent-background: 240 4.8% 97%;
+    --dashboard-primary-blue: 217 91% 60%;
+    --dashboard-primary-green: 142 76% 36%;
+    --dashboard-primary-purple: 270 70% 64%;
+    --dashboard-primary-orange: 38 92% 50%;
+    --dashboard-success: 142 76% 36%;
+    --dashboard-warning: 38 92% 50%;
+    --dashboard-error: 0 84.2% 60.2%;
+    --dashboard-gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 91% 67%) 100%);
+    --dashboard-gradient-success: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(158 64% 52%) 100%);
+    --dashboard-gradient-warning: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(45 93% 47%) 100%);
+    --dashboard-chart-background: 240 4.8% 97%;
+    --dashboard-chart-grid: 240 5.9% 90%;
+    --dashboard-regional-pink: 322 100% 75%;
+    --dashboard-regional-blue: 217 91% 76%;
+    --dashboard-regional-accent: 322 76% 87%;
   }
 
   .dark {
@@ -31,7 +185,7 @@
     --popover: 220 18% 7%;
     --popover-foreground: 220 16% 90%;
 
-    --primary: 252 80% 67%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 270 70% 64%;
@@ -50,14 +204,102 @@
     --input: 215 10% 23%;
     --ring: 215 14% 72%;
 
+    /* Dark theme sidebar */
     --sidebar-background: 240 17% 5%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 252 80% 67%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 5% 25%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 5% 17%;
     --sidebar-ring: 240 5% 83.9%;
+
+    /* Dark theme TopBar dropdown */
+    --topbar-dropdown-background: 240 10% 8%;
+
+    /* Dark theme tooltip */
+    --tooltip-background: 240 5% 19%;
+    --tooltip-foreground: 0 0% 100%;
+    --tooltip-border: 240 5% 35%;
+    --tooltip-border-separator: 240 5% 23%;
+    --tooltip-icon-color: 217 91% 60%;
+    --tooltip-description-foreground: 215 20% 65%;
+    --tooltip-shadow: 0 0% 0% / 0.25;
+
+    /* Dark theme splitter */
+    --splitter-background: 240 5% 17%;
+    --splitter-grip: 240 5% 35%;
+
+    /* Dark theme sidepanel */
+    --sidepanel-background: 220 10% 15%;
+    --sidepanel-foreground: 0 0% 95%;
+    --sidepanel-muted-foreground: 220 12% 60%;
+    --sidepanel-border: 220 10% 25%;
+    --sidepanel-border-subtle: 220 10% 20%;
+    --sidepanel-hover: 220 10% 20%;
+    --sidepanel-hover-subtle: 220 10% 17%;
+    --sidepanel-selected: 217 91% 60% / 0.2;
+    --sidepanel-selected-border: 217 91% 60%;
+    --sidepanel-accent: 220 10% 25%;
+    --sidepanel-accent-foreground: 0 0% 95%;
+    --sidepanel-input-background: 220 10% 25%;
+    --sidepanel-input-border: 220 10% 35%;
+    --sidepanel-button-background: 220 10% 20%;
+    --sidepanel-button-hover: 220 10% 25%;
+    --sidepanel-loading-foreground: 220 12% 60%;
+    --sidepanel-error-foreground: 0 84.2% 60.2%;
+    --sidepanel-card-background: 220 10% 20%;
+    --sidepanel-card-border: 220 10% 25%;
+
+    /* Dark theme panel (same as current dark styling) */
+    --panel-background: 220 10% 8%;
+    --panel-foreground: 0 0% 95%;
+    --panel-muted-foreground: 220 12% 60%;
+    --panel-border: 220 10% 25%;
+    --panel-border-subtle: 220 10% 20%;
+    --panel-hover: 220 10% 20%;
+    --panel-selected: 217 91% 60% / 0.2;
+    --panel-selected-border: 217 91% 60%;
+    --panel-accent: 220 10% 25%;
+    --panel-accent-foreground: 0 0% 95%;
+    --panel-input-background: 220 10% 25%;
+    --panel-input-border: 220 10% 35%;
+    --panel-button-background: 220 10% 20%;
+    --panel-button-hover: 220 10% 25%;
+    --panel-success: 142 76% 36%;
+    --panel-warning: 38 92% 50%;
+    --panel-error: 0 84.2% 60.2%;
+
+    /* Dark theme table (same as current dark styling) */
+    --table-background: 220 10% 8%;
+    --table-foreground: 0 0% 95%;
+    --table-muted-foreground: 220 12% 60%;
+    --table-border: 220 10% 25%;
+    --table-border-strong: 220 10% 30%;
+    --table-header-background: 220 10% 15%;
+    --table-header-foreground: 0 0% 95%;
+    --table-row-hover: 220 10% 15%;
+    --table-row-selected: 217 91% 60% / 0.2;
+    --table-row-selected-border: 217 91% 60%;
+    --table-row-even: 220 10% 10%;
+    --table-cell-pinned: 220 10% 12%;
+    --table-input-background: 220 10% 25%;
+    --table-input-border: 220 10% 35%;
+    --table-button-background: 220 10% 20%;
+    --table-button-hover: 220 10% 25%;
+    --table-loading-foreground: 220 12% 60%;
+    
+    /* Dark theme table card variants */
+    --table-card-store-background: 217 91% 60% / 0.1;
+    --table-card-store-border: 217 91% 60% / 0.3;
+    --table-card-product-background: 142 76% 36% / 0.1;
+    --table-card-product-border: 142 76% 36% / 0.3;
+    --table-card-group-background: 270 70% 64% / 0.1;
+    --table-card-group-border: 270 70% 64% / 0.3;
+    --table-card-forecast-background: 38 92% 50% / 0.1;
+    --table-card-forecast-border: 38 92% 50% / 0.3;
+    --table-card-adjustment-background: 25 95% 53% / 0.1;
+    --table-card-adjustment-border: 25 95% 53% / 0.3;
 
     /* Dark theme shades */
     --dark-1: 220 16% 90%;
@@ -76,6 +318,50 @@
     --discord-8: 235 10% 26%;
     --discord-9: 235 12% 14%;
     --discord-10: 235 14% 10%;
+
+    /* Dark theme tab variables */
+    --tab-container-background: 220 10% 15%;
+    --tab-container-border: 220 10% 25%;
+    --tab-background-inactive: 220 10% 15%;
+    --tab-background-active: 220 10% 25%;
+    --tab-background-hover: 220 10% 20%;
+    --tab-foreground: 0 0% 95%;
+    --tab-foreground-muted: 220 12% 60%;
+    --tab-border: 220 10% 25%;
+    --tab-border-active: 217 91% 60%;
+    --tab-close-button-hover: 220 10% 35%;
+    --tab-indicator-code: 217 91% 60%;
+    --tab-indicator-chat: 142 76% 36%;
+    --tab-indicator-docs: 38 92% 50%;
+    --tab-indicator-task: 270 70% 64%;
+    --tab-indicator-default: 220 12% 60%;
+    --tab-drag-over: 217 91% 60%;
+    --tab-dragging-background: 220 10% 20%;
+
+    /* Dark theme dashboard (current hardcoded colors maintained) */
+    --dashboard-background: 220 10% 10%;
+    --dashboard-foreground: 0 0% 95%;
+    --dashboard-muted-foreground: 220 12% 60%;
+    --dashboard-card-background: 220 10% 16%;
+    --dashboard-card-foreground: 0 0% 95%;
+    --dashboard-card-border: 220 10% 25%;
+    --dashboard-card-hover: 220 10% 20%;
+    --dashboard-accent-background: 220 10% 22%;
+    --dashboard-primary-blue: 217 91% 60%;
+    --dashboard-primary-green: 142 76% 36%;
+    --dashboard-primary-purple: 270 70% 64%;
+    --dashboard-primary-orange: 38 92% 50%;
+    --dashboard-success: 142 76% 36%;
+    --dashboard-warning: 38 92% 50%;
+    --dashboard-error: 0 84.2% 60.2%;
+    --dashboard-gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 91% 67%) 100%);
+    --dashboard-gradient-success: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(158 64% 52%) 100%);
+    --dashboard-gradient-warning: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(45 93% 47%) 100%);
+    --dashboard-chart-background: 220 10% 22%;
+    --dashboard-chart-grid: 220 10% 35%;
+    --dashboard-regional-pink: 322 84% 76%;
+    --dashboard-regional-blue: 217 91% 76%;
+    --dashboard-regional-accent: 322 84% 76%;
   }
 }
 

@@ -9,6 +9,7 @@ import { mockCode } from "../data/mockCode";
 import { mockOrgBots } from "../data/mockOrgBots";
 import { mockOrgConnections } from "../data/mockOrgConnections";
 import { v4 as uuidv4 } from 'uuid'; // Need uuid for unique IDs
+import { forecastTabDataRegistry } from '../components/forecast/ForecastModule';
 
 // Helper function to find a panel node by ID
 const findPanelById = (node: LayoutNode, panelId: string): EditorPanelNode | null => {
@@ -191,64 +192,60 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
   // Central function to get data for any tab ID
   const getTabData = useCallback((tabId: string): { id: string; title: string; type: ContentType } | null => {
     console.log('[getTabData] Checking ID:', tabId, 'Available chats:', chats.map(c => c.channelId));
-    
-    // Check if it's a forecast item (starts with forecast-)
-    if (tabId.startsWith('forecast-')) {
-      const forecastType = tabId.replace('forecast-', '');
-      let title = 'Forecast';
-      
-      switch (forecastType) {
-        case 'master-table':
-          title = 'Master Table';
-          break;
-        default:
-          title = forecastType.charAt(0).toUpperCase() + forecastType.slice(1).replace('-', ' ');
-      }
-      
-      console.log('[getTabData] Forecast tab detected:', { tabId, forecastType, title });
-      return { id: tabId, title, type: 'forecast' };
-    }
-    
-    // Check if it's an analytics item (starts with analytics-)
-    if (tabId.startsWith('analytics-')) {
-      const analyticsType = decodeURIComponent(tabId.replace('analytics-', ''));
-      let title = 'Analytics';
-      
-      if (analyticsType) {
-        // Handle special cases
-        switch (analyticsType.toLowerCase()) {
-          case 'master':
-            title = 'Master Analytics';
-            break;
-          default:
-            // For other cases, use the original case from analyticsType
-            // If it has spaces, use it as-is, otherwise apply title case formatting
-            if (analyticsType.includes(' ')) {
-              title = analyticsType;
-            } else {
-              title = analyticsType.charAt(0).toUpperCase() + analyticsType.slice(1).replace('-', ' ');
-            }
-        }
-      }
-      
-      console.log('[getTabData] Analytics tab detected:', { tabId, analyticsType, title });
-      return { id: tabId, title, type: 'analytics' };
-    }
-    
+
     // Check if it's a code file
     const codeFile = getFileData(tabId);
     if (codeFile) {
+      console.log('[getTabData] Code file detected:', { tabId, name: codeFile.name });
       return { id: tabId, title: codeFile.name, type: 'code' };
     }
-    
+
+    // Check if it's a document
+    const document = documents.find(doc => doc.id === tabId);
+    if (document) {
+      console.log('[getTabData] Document detected:', { tabId, name: document.name });
+      return { id: tabId, title: document.name, type: 'documentation' };
+    }
+
+    // Check if it's a task (tasks start with 'task-')
+    if (tabId.startsWith('task-')) {
+      const taskName = tabId.replace('task-', '');
+      console.log('[getTabData] Task detected:', { tabId, taskName });
+      return { id: tabId, title: `Task: ${taskName}`, type: 'task' };
+    }
+
+    // Check if it's a forecast tab (forecast tabs start with 'forecast-')
+    if (tabId.startsWith('forecast-')) {
+      const forecastType = tabId.replace('forecast-', '');
+      console.log('[getTabData] Forecast tab detected:', { tabId, forecastType });
+      
+      // Check if we have data in the registry
+      const registryData = forecastTabDataRegistry.get(tabId);
+      if (registryData) {
+        return { id: tabId, title: registryData.title, type: 'forecast' };
+      }
+      
+      // Fallback for tabs not in registry
+      if (forecastType === 'consensus-adjustment') {
+        return { id: tabId, title: 'Consensus Adjustment', type: 'forecast' };
+      }
+      
+      // Handle other forecast types
+      const title = forecastType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      return { id: tabId, title: title, type: 'forecast' };
+    }
+
+    // Check if it's an analytics tab (analytics tabs start with 'analytics-')
+    if (tabId.startsWith('analytics-')) {
+      const analyticsType = tabId.replace('analytics-', '');
+      console.log('[getTabData] Analytics tab detected:', { tabId, analyticsType });
+      const title = analyticsType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      return { id: tabId, title: title, type: 'analytics' };
+    }
+
     // Check if it's a timeline view
     if (tabId === 'timeline-view') {
       return { id: tabId, title: 'Agent Timeline', type: 'timeline' };
-    }
-    
-    // Check if it's a task (starts with task-)
-    if (tabId.startsWith('task-')) {
-      return { id: tabId, title: `Task ${tabId.split('-')[1]}`, type: 'task' };
     }
 
     // Check if it's a product item (starts with level name from product hierarchy)
@@ -307,7 +304,7 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
     // We could make this more robust by checking against a known list of channels if needed.
     console.log('[getTabData] Defaulting to chat for:', tabId);
     return { id: tabId, title: tabId, type: 'chat' };
-  }, [getFileData, chats]);
+  }, [getFileData, chats, documents]);
 
   const openFileInPanel = useCallback((contentId: string, panelId?: string) => {
     const targetPanelId = panelId || activePanelId;
@@ -340,7 +337,7 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
       return updateNodeInLayout(prevLayout, updatedPanel);
     });
     setActivePanelId(targetPanelId);
-  }, [activePanelId, getTabData]); // Depends on getTabData now
+  }, [activePanelId, getTabData]);
 
   const closeFileInPanel = useCallback((contentId: string, panelId: string) => {
     setEditorLayout(prevLayout => {

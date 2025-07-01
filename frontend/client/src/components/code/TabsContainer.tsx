@@ -127,7 +127,7 @@ const TabsContainer: React.FC<TabsContainerProps> = ({
   };
 
   return (
-    <div className="flex overflow-x-auto scrollbar-hidden border-b border-gray-700/50 bg-[hsl(var(--dark-8))] flex-shrink-0">
+    <div className="flex overflow-x-auto scrollbar-hidden border-b border-[hsl(var(--tab-container-border))] bg-[hsl(var(--tab-container-background))] flex-shrink-0">
       {openTabs.length > 0 ? (
         <div className="flex">
           {openTabs.map((tabId, index) => {
@@ -160,7 +160,7 @@ const TabsContainer: React.FC<TabsContainerProps> = ({
           })}
         </div>
       ) : (
-        <div className="px-3 py-2 text-[hsl(var(--dark-3))]">No tabs open</div>
+        <div className="px-3 py-2 text-[hsl(var(--tab-foreground-muted))]">No tabs open</div>
       )}
     </div>
   );

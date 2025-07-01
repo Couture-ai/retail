@@ -7,8 +7,8 @@ const iconButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: "hover:text-white hover:bg-dark-700 text-dark-200",
-        active: "bg-primary hover:bg-primary/90 text-white",
+        default: "text-[hsl(var(--sidebar-foreground))] hover:text-[hsl(var(--sidebar-accent-foreground))] hover:bg-[hsl(var(--sidebar-accent))]",
+        active: "bg-[hsl(var(--sidebar-primary))] hover:bg-[hsl(var(--sidebar-primary))]/90 text-[hsl(var(--sidebar-primary-foreground))]",
       },
       size: {
         default: "w-10 h-10 rounded",

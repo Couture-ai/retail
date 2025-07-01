@@ -23,7 +23,7 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({ layoutNode }) => {
         : { height: `${100 - splitPercentage}%` };
 
     return (
-      <div className={`flex ${flexDir} h-full w-full overflow-hidden`}>
+      <div className={`flex ${flexDir} h-full w-full overflow-hidden rounded-lg`}>
         <div 
           className="overflow-hidden relative" // Added relative for potential absolute positioned children
           style={firstChildStyle}

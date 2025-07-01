@@ -95,15 +95,15 @@ const ContentTab: React.FC<ContentTabProps> = ({
   const getIconColor = () => {
     switch (contentType) {
       case 'code':
-        return 'text-blue-400';
+        return 'text-[hsl(var(--tab-indicator-code))]';
       case 'chat':
-        return 'text-green-400';
+        return 'text-[hsl(var(--tab-indicator-chat))]';
       case 'docs':
-        return 'text-amber-400';
+        return 'text-[hsl(var(--tab-indicator-docs))]';
       case 'task':
-        return 'text-purple-400';
+        return 'text-[hsl(var(--tab-indicator-task))]';
       default:
-        return 'text-gray-400';
+        return 'text-[hsl(var(--tab-indicator-default))]';
     }
   };
 
@@ -111,11 +111,11 @@ const ContentTab: React.FC<ContentTabProps> = ({
     <div
       ref={tabRef}
       className={`
-        flex items-center px-2.5 py-1.5 cursor-pointer border-r border-gray-700/50 
-        select-none gap-1.5 max-w-[160px] transition-colors
+        flex items-center px-2.5 py-1.5 cursor-pointer border-r border-[hsl(var(--tab-border))] 
+        select-none gap-1.5 max-w-[320px] transition-colors text-[hsl(var(--tab-foreground))]
         ${isActive 
-          ? 'bg-[hsl(var(--dark-6))] border-t-2 border-t-[hsl(var(--primary))] border-b-0' 
-          : 'hover:bg-[hsl(var(--dark-6))/50] border-t-2 border-t-transparent'}
+          ? 'bg-[hsl(var(--tab-background-active))] border-t-2 border-t-[hsl(var(--tab-border-active))] border-b-0' 
+          : 'bg-[hsl(var(--tab-background-inactive))] hover:bg-[hsl(var(--tab-background-hover))] border-t-2 border-t-transparent'}
       `}
       onClick={() => onActivate(id, panelId)}
       draggable
@@ -129,7 +129,7 @@ const ContentTab: React.FC<ContentTabProps> = ({
       
       <span className="truncate text-xs">{title}</span>
       <button
-        className="h-4 w-4 rounded-sm hover:bg-[hsl(var(--dark-8))] flex items-center justify-center flex-shrink-0"
+        className="h-4 w-4 rounded-sm hover:bg-[hsl(var(--tab-close-button-hover))] flex items-center justify-center flex-shrink-0 text-[hsl(var(--tab-foreground-muted))] hover:text-[hsl(var(--tab-foreground))]"
         onClick={(e) => { 
           e.stopPropagation(); // Prevent triggering tab activation
           onClose(id, panelId, e);

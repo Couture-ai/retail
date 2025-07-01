@@ -11,7 +11,8 @@ import {
   AlertCircle,
   BarChart3,
   Search,
-  Plus
+  Plus,
+  X
 } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
 
@@ -300,8 +301,8 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
     return (
       <div key={node.id}>
         <div
-          className={`group flex items-center py-1 px-2 hover:bg-[hsl(var(--dark-7))] cursor-pointer rounded-sm relative ${
-            isSelected ? 'bg-[hsl(var(--primary))/20] border-l-2 border-[hsl(var(--primary))]' : ''
+          className={`group flex items-center py-1 px-2 hover:bg-[hsl(var(--sidepanel-hover))] cursor-pointer rounded-sm relative ${
+            isSelected ? 'bg-[hsl(var(--sidepanel-selected))] border-l-2 border-[hsl(var(--sidepanel-selected-border))]' : ''
           }`}
           style={{ paddingLeft: `${8 + depth * 16}px` }}
           onClick={() => handleNodeClick(node)}
@@ -311,53 +312,44 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
           {/* Expand/Collapse button */}
           <div className="w-4 h-4 flex items-center justify-center mr-1">
             {node.loading ? (
-              <Loader2 size={12} className="animate-spin text-[hsl(var(--dark-3))]" />
+              <Loader2 size={12} className="animate-spin text-[hsl(var(--sidepanel-loading-foreground))]" />
             ) : canExpand ? (
               <button
                 onClick={(e) => toggleExpanded(node, e)}
-                className="hover:bg-[hsl(var(--dark-6))] rounded p-0.5"
+                className="hover:bg-[hsl(var(--sidepanel-button-hover))] rounded p-0.5"
               >
                 {node.expanded ? (
-                  <ChevronDown size={12} className="text-[hsl(var(--dark-3))]" />
+                  <ChevronDown size={12} className="text-[hsl(var(--sidepanel-muted-foreground))]" />
                 ) : (
-                  <ChevronRight size={12} className="text-[hsl(var(--dark-3))]" />
+                  <ChevronRight size={12} className="text-[hsl(var(--sidepanel-muted-foreground))]" />
                 )}
               </button>
             ) : null}
           </div>
           
           {/* Icon - shows search icon on hover for non-leaf nodes */}
-          <div className="mr-2 relative">
-            {hasChildren ? (
-              <>
-                {/* Default icon */}
-                <div className={`transition-opacity duration-200 ${node.searchActive ? 'opacity-50' : 'group-hover:opacity-0'}`}>
-                  {getIcon(node.level)}
-                </div>
-                {/* Search icon - shows on hover or when search is active */}
-                <button
-                  onClick={(e) => handleSearchClick(node, e)}
-                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 hover:bg-[hsl(var(--dark-6))] rounded p-0.5 ${
-                    node.searchActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                  }`}
-                  title={node.searchActive ? "Close search" : "Search in this location"}
-                >
-                  <Search size={14} className={`${node.searchActive ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--dark-2))]'} hover:text-[hsl(var(--primary))]`} />
-                </button>
-              </>
-            ) : (
-              getIcon(node.level)
+          <div className="w-4 h-4 flex items-center justify-center mr-2 relative">
+            {getIcon(node.level)}
+            {hasChildren && node.expanded && (
+              <button
+                onClick={(e) => handleSearchClick(node, e)}
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 hover:bg-[hsl(var(--sidepanel-button-hover))] rounded p-0.5 ${
+                  node.searchActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                }`}
+                title="Search"
+              >
+                <Search size={12} className="text-[hsl(var(--primary))]" />
+              </button>
             )}
           </div>
           
-          {/* Name and count */}
           <div className="flex-1 flex items-center justify-between">
-            <span className="text-white text-sm truncate">
+            <span className="text-[hsl(var(--sidepanel-foreground))] text-sm truncate">
               {node.level === 'store_no' ? `Store ${node.name}` : node.name}
             </span>
             <div className="flex items-center">
               {node.count && (
-                <span className="text-[hsl(var(--dark-3))] text-xs mr-2">
+                <span className="text-[hsl(var(--sidepanel-muted-foreground))] text-xs mr-2">
                   ({node.count})
                 </span>
               )}
@@ -376,33 +368,31 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
         
         {/* Search input - appears when search is active AND node is expanded */}
         {node.searchActive && node.expanded && (
-          <div 
-            className="mx-2 mb-2 mt-1"
-            style={{ paddingLeft: `${8 + depth * 16 + 20}px` }}
-          >
-            <div className="relative">
-              <input
-                type="text"
-                placeholder={`Search ${hierarchy[hierarchy.indexOf(node.level) + 1] || 'items'}...`}
-                value={node.searchTerm || ''}
-                onChange={(e) => handleSearchTermChange(node, e.target.value)}
-                className="w-full px-2 py-1 pr-8 text-sm bg-[hsl(var(--dark-6))] text-white border border-[hsl(var(--dark-4))] rounded focus:outline-none focus:border-[hsl(var(--primary))] placeholder-[hsl(var(--dark-3))]"
-                onClick={(e) => e.stopPropagation()}
-                autoFocus
-              />
-              {node.loading && (
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                  <Loader2 size={12} className="animate-spin text-[hsl(var(--dark-3))]" />
-                </div>
-              )}
-            </div>
+          <div className="relative ml-6 mr-2 mb-2">
+            <Search size={14} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-[hsl(var(--sidepanel-muted-foreground))]" />
+            <input
+              type="text"
+              placeholder={`Search ${node.level}...`}
+              value={node.searchTerm || ''}
+              onChange={(e) => handleSearchTermChange(node, e.target.value)}
+              className="w-full px-2 py-1 pr-8 text-sm bg-[hsl(var(--sidepanel-input-background))] text-[hsl(var(--sidepanel-foreground))] border border-[hsl(var(--sidepanel-input-border))] rounded focus:outline-none focus:border-[hsl(var(--primary))] placeholder-[hsl(var(--sidepanel-muted-foreground))]"
+              onClick={(e) => e.stopPropagation()}
+              autoFocus
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSearchClick(node, e);
+              }}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-[hsl(var(--sidepanel-foreground))]"
+            >
+              <X size={12} />
+            </button>
           </div>
         )}
         
-        {/* Children */}
-        {node.expanded && node.children && node.children.map(child => 
-          renderNode(child, depth + 1)
-        )}
+        {/* Render children */}
+        {node.expanded && node.children && node.children.map(child => renderNode(child, depth + 1))}
       </div>
     );
   };
@@ -521,10 +511,10 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
   
   if (loading) {
     return (
-      <div className="h-full bg-[hsl(var(--dark-8))] p-4">
+      <div className="h-full bg-[hsl(var(--sidepanel-background))] p-4">
         <div className="flex items-center justify-center h-32">
-          <Loader2 className="animate-spin text-[hsl(var(--dark-3))]" size={24} />
-          <span className="ml-2 text-[hsl(var(--dark-3))]">Loading store hierarchy...</span>
+          <Loader2 className="animate-spin text-[hsl(var(--sidepanel-loading-foreground))]" size={24} />
+          <span className="ml-2 text-[hsl(var(--sidepanel-loading-foreground))]">Loading store hierarchy...</span>
         </div>
       </div>
     );
@@ -532,45 +522,32 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
   
   if (error) {
     return (
-      <div className="h-full bg-[hsl(var(--dark-8))] p-4">
-        <div className="flex items-center justify-center h-32 flex-col">
-          <AlertCircle className="text-red-400 mb-2" size={24} />
-          <span className="text-red-400 text-sm text-center">{error}</span>
-          <button 
-            onClick={loadMetadata}
-            className="mt-2 px-3 py-1 bg-[hsl(var(--primary))] text-white text-xs rounded hover:bg-[hsl(var(--primary))/90]"
-          >
-            Retry
-          </button>
+      <div className="h-full bg-[hsl(var(--sidepanel-background))] p-4">
+        <div className="flex items-center justify-center h-32">
+          <AlertCircle className="text-[hsl(var(--sidepanel-error-foreground))]" size={24} />
+          <span className="ml-2 text-[hsl(var(--sidepanel-error-foreground))]">{error}</span>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="h-full bg-[hsl(var(--dark-8))] flex flex-col">
+    <div className="h-full bg-[hsl(var(--sidepanel-background))] flex flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 p-3 border-b border-gray-700/50">
-        <h3 className="text-white font-medium text-sm">Store Locations</h3>
-        <p className="text-[hsl(var(--dark-3))] text-xs mt-1">
-          Browse stores by location hierarchy
-        </p>
-      </div>
-      
-      {/* Tree - scrollable content */}
-      <div className="flex-1 overflow-auto p-2">
-        {treeData.map(node => renderNode(node))}
-      </div>
-      
-      {/* Fixed Add New Store button */}
-      <div className="flex-shrink-0 p-2 border-t border-gray-700/30">
+      <div className="p-3 border-b border-[hsl(var(--sidepanel-border))] flex items-center justify-between">
+        <h3 className="text-sm font-medium text-[hsl(var(--sidepanel-foreground))]">Store Hierarchy</h3>
         <button
           onClick={onNewStoreClick}
-          className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white rounded-md transition-all duration-200 border border-gray-600/30 hover:border-gray-500/50"
+          className="p-1 rounded hover:bg-[hsl(var(--sidepanel-hover))] transition-colors duration-200 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-[hsl(var(--sidepanel-foreground))]"
+          title="Add New Store"
         >
-          <Plus size={14} />
-          <span className="text-xs font-medium">Add New Store</span>
+          <Plus size={16} />
         </button>
+      </div>
+      
+      {/* Tree content */}
+      <div className="flex-1 overflow-auto p-2">
+        {treeData.map(node => renderNode(node))}
       </div>
     </div>
   );

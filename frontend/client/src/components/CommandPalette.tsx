@@ -64,18 +64,18 @@ export function CommandPalette({ isOpen, onClose, commands = [] }: CommandPalett
       onClick={onClose}
     >
       <div 
-        className="bg-[#1e1e2e] rounded-lg w-[600px] max-w-[90%] shadow-xl overflow-hidden flex flex-col"
+        className="bg-[hsl(var(--panel-background))] rounded-lg w-[600px] max-w-[90%] shadow-xl overflow-hidden flex flex-col border border-[hsl(var(--panel-border))]"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center p-3 border-b border-[#313244]">
-          <IoSearchOutline className="text-[#cdd6f4] text-lg mr-2" />
+        <div className="flex items-center p-3 border-b border-[hsl(var(--panel-border))]">
+          <IoSearchOutline className="text-[hsl(var(--panel-foreground))] text-lg mr-2" />
           <input
             ref={inputRef}
             placeholder="Search commands..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="bg-transparent border-none text-[#cdd6f4] text-base flex-grow outline-none placeholder:text-[#6c7086]"
+            className="bg-transparent border-none text-[hsl(var(--panel-foreground))] text-base flex-grow outline-none placeholder:text-[hsl(var(--panel-muted-foreground))]"
           />
         </div>
         
@@ -83,7 +83,7 @@ export function CommandPalette({ isOpen, onClose, commands = [] }: CommandPalett
           {filteredCommands.map((command) => (
             <div 
               key={command.id}
-              className="p-4 flex items-center cursor-pointer hover:bg-[#313244]"
+              className="p-4 flex items-center cursor-pointer hover:bg-[hsl(var(--panel-hover))] transition-colors"
               onClick={() => {
                 if (command.action) {
                   command.action();
@@ -93,11 +93,11 @@ export function CommandPalette({ isOpen, onClose, commands = [] }: CommandPalett
                 onClose();
               }}
             >
-              <span className="text-[#cdd6f4] ml-2">{command.name}</span>
+              <span className="text-[hsl(var(--panel-foreground))] ml-2">{command.name}</span>
               {command.shortcut && (
                 <div className="ml-auto flex gap-1">
                   {command.shortcut.split('').map((key, i) => (
-                    <span key={i} className="bg-[#313244] text-[#a6adc8] text-xs px-2 py-1 rounded">
+                    <span key={i} className="bg-[hsl(var(--panel-accent))] text-[hsl(var(--panel-accent-foreground))] text-xs px-2 py-1 rounded">
                       {key}
                     </span>
                   ))}
@@ -108,13 +108,13 @@ export function CommandPalette({ isOpen, onClose, commands = [] }: CommandPalett
           
           {searchTerm && filteredCommands.length === 0 && (
             <div className="p-4 flex items-center">
-              <span className="text-[#cdd6f4] ml-2">No results found</span>
+              <span className="text-[hsl(var(--panel-muted-foreground))] ml-2">No results found</span>
             </div>
           )}
           
           {!searchTerm && filteredCommands.length === 0 && (
             <div className="p-4 flex items-center">
-              <span className="text-[#cdd6f4] ml-2">No commands available</span>
+              <span className="text-[hsl(var(--panel-muted-foreground))] ml-2">No commands available</span>
             </div>
           )}
         </div>
