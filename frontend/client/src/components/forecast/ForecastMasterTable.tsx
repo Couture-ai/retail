@@ -14,11 +14,16 @@ import {
   Check,
   Minus,
   Plus,
-  ChevronLeft
+  ChevronLeft,
+  Unlink,
+  PackagePlus,
+  Trash2,
+  Send
 } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
 import { ResponsiveBar } from '@nivo/bar';
 import SalesChart from './SalesChart';
+import AdjustmentDiffView, { DiffRow } from './AdjustmentDiffView';
 
 interface ForecastMetadata {
   essential_columns: string[];
@@ -152,10 +157,17 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
   // Adjustment values for consensus mode - keyed by row identifier
   const [adjustmentValues, setAdjustmentValues] = useState<{ [key: string]: number | null }>({});
   
+  // State to track which rows are in editing mode for adjustment column
+  const [adjustmentEditingRows, setAdjustmentEditingRows] = useState<Set<string>>(new Set());
+  
+  // Submit popup state
+  const [showSubmitPopup, setShowSubmitPopup] = useState(false);
+  const [submittingAdjustment, setSubmittingAdjustment] = useState(false);
+  
   // Helper function to get adjustment value for a row
   const getAdjustmentValue = (record: ForecastRecord, index: number): number | null => {
-    const key = `${record.id || index}`;
-    return adjustmentValues[key] || null;
+    const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+    return adjustmentValues[rowId] || null;
   };
   
   // Calculate the difference between Adjusted Consensus and Interim Consensus
@@ -163,7 +175,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     const adjustedValue = getAdjustmentValue(record, index);
     if (adjustedValue === null || adjustedValue === 0) return null;
     
-    const interimConsensus = record.consensus_qty || 0;
+    // Use aggregated value in group by mode
+    const consensusValue = isGroupByMode ? (record['Σconsensus_qty'] || 0) : (record.consensus_qty || 0);
+    const interimConsensus = consensusValue;
     return adjustedValue - interimConsensus;
   };
   
@@ -545,6 +559,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
         
         sqlQuery = `SELECT ${selectColumns.join(', ')} FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
         
+        // Add data quality filters to exclude invalid rows
+        sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
+        
         // Add applied filter conditions
         const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
         if (filterConditions.length > 0) {
@@ -574,6 +591,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
       } else {
         // Regular query
         sqlQuery = `SELECT * FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
+        
+        // Add data quality filters to exclude invalid rows
+        sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
         
         // Add applied filter conditions
         const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
@@ -771,6 +791,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
         
         sqlQuery = `SELECT ${selectColumns.join(', ')} FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
         
+        // Add data quality filters to exclude invalid rows
+        sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
+        
         // Add applied filter conditions
         const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
         if (filterConditions.length > 0) {
@@ -800,6 +823,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
       } else {
         // Regular query
         sqlQuery = `SELECT * FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
+        
+        // Add data quality filters to exclude invalid rows
+        sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
         
         // Add applied filter conditions
         const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
@@ -863,73 +889,48 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
   // Separate columns into pinned and scrollable sections
   const getColumnSections = () => {
     if (isGroupByMode && groupByColumns.length > 0) {
-      // In group by mode, different column layout
-      const leftPinnedColumns = [...groupByColumns];
-      const rightPinnedColumns = ['Σforecast_qty', 'Σconsensus_qty'];
+      // In group by mode, only show grouped columns and sigma columns
+      const pinnedColumns = [...groupByColumns];
       
-      // Get all columns from data (since they include aggregated columns)
-      const allDataColumns = data.length > 0 ? Object.keys(data[0]) : [];
+      // Always pin sigma columns after group columns (both in consensus and non-consensus mode)
+      pinnedColumns.push('Σforecast_qty', 'Σconsensus_qty');
       
-      // Filter columns based on visibility settings
-      const visibleDataColumns = allDataColumns.filter(col => {
-        // Always show grouped columns
-        if (leftPinnedColumns.includes(col)) return true;
-        
-        // For aggregated columns, check the original column visibility
-        if (col.startsWith('#') || col.startsWith('Σ')) {
-          const originalColumn = col.substring(1);
-          return visibleColumnSettings[originalColumn] !== false;
-        }
-        
-        // For regular columns, check visibility setting
-        return visibleColumnSettings[col] !== false;
-      });
-      
-      const scrollableColumns = visibleDataColumns.filter(col => 
-        !leftPinnedColumns.includes(col) && 
-        !rightPinnedColumns.includes(col)
-      );
-      
-      // Only include right pinned columns if they exist in data and are visible
-      const visibleRightPinnedColumns = rightPinnedColumns.filter(col => {
-        if (!allDataColumns.includes(col)) return false;
-        // For aggregated columns, check the original column visibility
-        if (col.startsWith('Σ')) {
-          const originalColumn = col.substring(1);
-          return visibleColumnSettings[originalColumn] !== false;
-        }
-        return visibleColumnSettings[col] !== false;
-      });
+      // Add adjustment column to the end of pinned columns in consensus mode
+      const finalColumns = consensusMode ? [...pinnedColumns, 'Adjustment'] : [...pinnedColumns];
       
       return {
-        leftPinnedColumns,
-        scrollableColumns,
-        rightPinnedColumns: visibleRightPinnedColumns
+        allColumns: finalColumns
       };
     } else {
       // Regular mode
       const allVisibleColumns = getAllVisibleColumns();
       
-      // Pin both forecast_qty and consensus_qty columns on the right if they're visible
-      const pinnedRightColumns = ['forecast_qty', 'consensus_qty'].filter(col => visibleColumnSettings[col] !== false);
+      // Pin both forecast_qty and consensus_qty columns at the start if they're visible
+      const pinnedColumns = ['forecast_qty', 'consensus_qty'].filter(col => visibleColumnSettings[col] !== false);
       
-      // All other columns go to the scrollable middle section
-      const scrollableColumns = allVisibleColumns.filter(col => !pinnedRightColumns.includes(col));
+      // All other columns go after the pinned columns
+      const scrollableColumns = allVisibleColumns.filter(col => !pinnedColumns.includes(col));
       
       // Only include pinned columns if they're actually visible
-      const visiblePinnedRightColumns = pinnedRightColumns.filter(col => allVisibleColumns.includes(col));
+      const visiblePinnedColumns = pinnedColumns.filter(col => allVisibleColumns.includes(col));
+      
+      // Add adjustment column to the end of pinned columns in consensus mode
+      const finalColumns = consensusMode ? [...visiblePinnedColumns, 'Adjustment', ...scrollableColumns] : [...visiblePinnedColumns, ...scrollableColumns];
       
       return {
-        leftPinnedColumns: [], // No left pinned columns in regular mode
-        scrollableColumns,
-        rightPinnedColumns: visiblePinnedRightColumns
+        allColumns: finalColumns
       };
     }
   };
   
-  const formatCellValue = (value: any) => {
+  const formatCellValue = (value: any, column?: string) => {
     if (value === null || value === undefined) return '';
     if (typeof value === 'number') {
+      // Round up forecast_qty and consensus_qty to integers
+      if (column === 'forecast_qty' || column === 'consensus_qty' || 
+          column === 'Σforecast_qty' || column === 'Σconsensus_qty') {
+        return Math.ceil(value).toLocaleString();
+      }
       return value.toLocaleString();
     }
     return String(value);
@@ -1196,6 +1197,63 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     }
   };
   
+  // Handle unlink button click (interim consensus is non-zero)
+  const handleUnlinkClick = (record: ForecastRecord, index: number) => {
+    const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+    
+    // Set the adjustment value to rounded up interim consensus
+    // Use aggregated value in group by mode
+    const consensusValue = isGroupByMode ? (record['Σconsensus_qty'] || 0) : (record.consensus_qty || 0);
+    const interimConsensus = Math.ceil(consensusValue);
+    setAdjustmentValues(prev => ({
+      ...prev,
+      [rowId]: interimConsensus
+    }));
+    
+    // Enter editing mode for this row
+    setAdjustmentEditingRows(prev => new Set(Array.from(prev).concat(rowId)));
+  };
+  
+  // Handle package-plus button click (interim consensus is zero)
+  const handlePackagePlusClick = (record: ForecastRecord, index: number) => {
+    const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+    
+    // Set the adjustment value to rounded up forecast qty
+    // Use aggregated value in group by mode
+    const forecastValue = isGroupByMode ? (record['Σforecast_qty'] || 0) : (record.forecast_qty || 0);
+    const forecastQty = Math.ceil(forecastValue);
+    setAdjustmentValues(prev => ({
+      ...prev,
+      [rowId]: forecastQty
+    }));
+    
+    // Enter editing mode for this row
+    setAdjustmentEditingRows(prev => new Set(Array.from(prev).concat(rowId)));
+  };
+  
+  // Handle delete button click (restore to icon buttons)
+  const handleDeleteAdjustmentClick = (record: ForecastRecord, index: number) => {
+    const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+    
+    // Clear the adjustment value
+    setAdjustmentValues(prev => ({
+      ...prev,
+      [rowId]: null
+    }));
+    
+    // Exit editing mode for this row
+    setAdjustmentEditingRows(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(rowId);
+      return newSet;
+    });
+  };
+  
+  // Check if a row is in editing mode
+  const isAdjustmentEditing = (record: ForecastRecord, index: number): boolean => {
+    const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
+    return adjustmentEditingRows.has(rowId);
+  };
   
   // Helper function to convert column name to proper SQL expression for sorting in group by mode
   const getSortColumnExpression = (column: string): string => {
@@ -1235,7 +1293,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     }
     
     const [primaryAttribute, ...secondaryAttributes] = attributes;
-    const primaryValue = formatCellValue(record[primaryAttribute]);
+    const primaryValue = formatCellValue(record[primaryAttribute], primaryAttribute);
     
     // Show debug info if primary value is empty
     if (!primaryValue) {
@@ -1252,7 +1310,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
           {primaryValue}{' '}
         </span>
         {secondaryAttributes.map((attr, index) => {
-          const value = formatCellValue(record[attr]);
+          const value = formatCellValue(record[attr], attr);
           return value ? (
             <span 
               key={attr} 
@@ -1589,6 +1647,58 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     }
   };
   
+  // Handle submit button click to show popup
+  const handleSubmitClick = () => {
+    setShowSubmitPopup(true);
+  };
+  
+  // Generate diff data from current adjustments
+  const generateDiffData = () => {
+    const diffRows: DiffRow[] = [];
+    
+    // Go through all loaded data and check for adjustments
+    data.forEach((record, index) => {
+      const adjustmentValue = getAdjustmentValue(record, index);
+      const originalValue = record.forecast_qty || 0;
+      
+      if (adjustmentValue !== null && adjustmentValue !== originalValue) {
+        const diff = adjustmentValue - originalValue;
+        diffRows.push({
+          storeNo: record.store_no || 'Unknown',
+          storeName: `Store ${record.store_no || 'Unknown'}`,
+          articleId: record.article_id || 'Unknown',
+          articleDescription: record.article_description || 'Unknown Product',
+          brand: record.brand || 'Unknown Brand',
+          previousQty: originalValue,
+          newQty: adjustmentValue,
+          diff: diff,
+          changeType: diff > 0 ? 'added' : diff < 0 ? 'removed' : 'modified'
+        });
+      }
+    });
+    
+    // Sort by absolute diff value (largest changes first)
+    return diffRows.sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+  };
+  
+  // Handle apply adjustment
+  const handleApplyAdjustment = () => {
+    setSubmittingAdjustment(true);
+    // Simulate API call
+    setTimeout(() => {
+      setSubmittingAdjustment(false);
+      setShowSubmitPopup(false);
+      // Reset any adjustments if needed
+      // In a real implementation, you would submit the adjustments to the backend
+      console.log('Adjustments applied successfully');
+    }, 2000);
+  };
+  
+  // Handle discard adjustment
+  const handleDiscardAdjustment = () => {
+    setShowSubmitPopup(false);
+  };
+  
   if (loading && data.length === 0) {
     return (
       <div className="h-full flex items-center justify-center bg-[hsl(var(--table-background))]">
@@ -1611,7 +1721,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
   }
   
   const visibleColumns = getAllVisibleColumns();
-  const { leftPinnedColumns, scrollableColumns, rightPinnedColumns } = getColumnSections();
+  const { allColumns } = getColumnSections();
   
   return (
     <div className="h-full flex flex-col bg-[hsl(var(--table-background))]">
@@ -1621,11 +1731,10 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
           <div>
             <h2 className="text-[hsl(var(--table-foreground))] font-semibold text-lg">
               {/* write month instead of week start date, also year */}
-              {(consensusMode ? 'Consensus Adjustment' : 'Forecast Master Table') + ' - ' + new Date(selectedWeekStartDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              {(consensusMode ? 'Adjustment' : 'Global Store-Article Forecast') + ' - ' + new Date(selectedWeekStartDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </h2>
             <p className="text-[hsl(var(--table-muted-foreground))] text-sm mt-1">
-              {data.length.toLocaleString()} records loaded
-              {hasMore && " (loading more as you scroll)"}
+              {consensusMode ? "Click on a row to proceed" : "The main table shows the global store-article forecast. You can group by and filter as per your needs."}
               {selectedRows.size > 0 && (
                 <span className="ml-2 text-[hsl(var(--primary))]">
                   • 1 row selected
@@ -1747,6 +1856,17 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                 </span>
               )}
             </button>
+
+            {/* Submit Button - Only show in consensus mode */}
+            {consensusMode && (
+              <button
+                onClick={handleSubmitClick}
+                className="px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90"
+              >
+                <Send size={14} />
+                <span>Submit</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -1892,16 +2012,15 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
         {/* Table Container with dynamic height based on consensus panel */}
         <div 
           ref={tableContainerRef}
-          className="flex-1 overflow-y-auto overflow-x-hidden relative"
+          className="flex-1 overflow-y-auto overflow-x-auto relative"
           style={{ 
             height: consensusMode && selectedRows.size > 0 ? '100%' : '100%',
             minHeight: '300px'
           }}
         >
-          <div className="flex h-fit min-h-full">
-            {/* Left Pinned Columns */}
-            <div className="flex-shrink-0 bg-[hsl(var(--table-background))] border-r border-[hsl(var(--table-border))] z-20">
-              <table className="text-sm h-full">
+          {/* Single Table */}
+          <div className="w-full">
+            <table className="w-full text-sm">
                 <thead className="sticky top-0 bg-[hsl(var(--table-header-background))] border-b border-[hsl(var(--table-border))] z-50">
                   <tr className="h-10">
                     {!isGroupByMode && (
@@ -1931,161 +2050,26 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                       </>
                     )}
                     
-                    {/* Group By Columns */}
-                    {leftPinnedColumns.map((column) => {
-                      const isSearchActive = activeSearches[column];
-                      return (
-                        <th 
-                          key={column}
-                          className="px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] bg-[hsl(var(--table-card-group-background))] border-[hsl(var(--table-card-group-border))] relative"
-                        >
-                          {!isSearchActive ? (
-                            <div className="flex items-center justify-between group">
-                              <div className="flex items-center flex-1 min-w-0">
-                                <span className="truncate cursor-pointer hover:text-[hsl(var(--primary))]" title={getDisplayColumnName(column)}>
-                                  {getDisplayColumnName(column)}
-                                </span>
-                                {sortState.column === column && (
-                                  <span className="ml-1 text-[hsl(var(--primary))]">
-                                    {getSortIcon(column)}
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex items-center ml-1">
-                                {isColumnSearchable(column) && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      const searchValue = searchValues[column];
-                                      if (searchValue?.trim()) {
-                                        handleSearchExecute(column);
-                                      } else {
-                                        setSearchValues({ ...searchValues, [column]: '' });
-                                        const searchContainer = e.currentTarget.closest('th');
-                                        const searchInput = searchContainer?.querySelector('input');
-                                        setTimeout(() => searchInput?.focus(), 0);
-                                      }
-                                    }}
-                                    className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
-                                    title="Search"
-                                  >
-                                    <Search size={12} />
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex items-center space-x-1">
-                              <input
-                                type="text"
-                                value={searchValues[column] || ''}
-                                onChange={(e) => handleSearchChange(column, e.target.value)}
-                                onKeyPress={(e) => handleSearchKeyPress(column, e)}
-                                placeholder={`Search ${getDisplayColumnName(column)}...`}
-                                className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--table-input-background))] border border-[hsl(var(--table-input-border))] rounded text-[hsl(var(--table-foreground))] placeholder-[hsl(var(--table-muted-foreground))] focus:outline-none focus:border-[hsl(var(--primary))] min-w-0"
-                                autoFocus
-                              />
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleSearchExecute(column);
-                                }}
-                                className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
-                                title="Search"
-                              >
-                                <Search size={12} />
-                              </button>
-                            </div>
-                          )}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
-                
-                <tbody>
-                  {data.map((record, index) => {
-                    const isSelected = isRowSelected(record, index);
-                    return (
-                      <tr 
-                        key={record.id || index}
-                        className={`border-b border-[hsl(var(--table-border))] transition-colors cursor-pointer ${
-                          isSelected 
-                            ? 'bg-[hsl(var(--table-row-selected))] border-t border-t-[hsl(var(--table-row-selected-border))] border-r border-r-[hsl(var(--table-row-selected-border))]' 
-                            : 'hover:bg-[hsl(var(--table-row-hover))]'
-                        }`}
-                        onClick={() => handleRowClick(record, index)}
-                      >
-                        {!isGroupByMode && (
-                          <>
-                            {/* Row number */}
-                            <td className="px-2 py-1 text-[hsl(var(--table-muted-foreground))] border-r border-[hsl(var(--table-border))] font-mono text-xs w-[60px]">
-                              {index + 1}
-                            </td>
-                            
-                            {/* Store Card */}
-                            <td className="px-2 py-1 border-r border-[hsl(var(--table-border))] w-[150px] bg-[hsl(var(--table-card-store-background))] align-top">
-                              {metadata?.store_card_attributes ? (
-                                renderCardContent(record, metadata.store_card_attributes)
-                              ) : (
-                                <div className="text-xs text-[hsl(var(--table-muted-foreground))]">No store metadata</div>
-                              )}
-                            </td>
-                            
-                            {/* Product Card */}
-                            <td className="px-2 py-1 border-r border-[hsl(var(--table-border))] w-[150px] bg-[hsl(var(--table-card-product-background))] align-top">
-                              {metadata?.product_card_attributes ? (
-                                renderCardContent(record, metadata.product_card_attributes)
-                              ) : (
-                                <div className="text-xs text-[hsl(var(--table-muted-foreground))]">No product metadata</div>
-                              )}
-                            </td>
-                          </>
-                        )}
-                        
-                        {/* Group By Columns */}
-                        {leftPinnedColumns.map((column) => (
-                          <td 
-                            key={column}
-                            className="px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[200px] bg-[hsl(var(--table-card-group-background))]"
-                          >
-                            <div className="truncate" title={formatCellValue(record[column])}>
-                              {formatCellValue(record[column])}
-                            </div>
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                  
-                  {/* Loading row for left columns */}
-                  {loadingMore && (
-                    <tr>
-                      <td colSpan={!isGroupByMode ? 3 + leftPinnedColumns.length : leftPinnedColumns.length} className="px-3 py-4 text-center">
-                        <div className="flex items-center justify-center">
-                          <Loader2 className="animate-spin text-[hsl(var(--primary))] mr-2" size={16} />
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Scrollable Middle Columns */}
-            <div className="flex-1 overflow-x-auto relative">
-              <table className="w-full text-sm h-full">
-                <thead className="sticky top-0 bg-[hsl(var(--table-header-background))] border-b border-[hsl(var(--table-border))] z-40">
-                  <tr className="h-10">
-                    {scrollableColumns.map((column) => {
+                  {/* All Data Columns */}
+                  {allColumns.map((column) => {
                       const group = columnGroups.find(g => g.columns.includes(column));
                       const isSearchActive = activeSearches[column];
+                    const isPinnedColumn = isGroupByMode ? 
+                      (groupByColumns.includes(column) || ['Σforecast_qty', 'Σconsensus_qty'].includes(column)) : 
+                      ['forecast_qty', 'consensus_qty'].includes(column);
+                    const isAdjustmentColumn = column === 'Adjustment';
                       
                       return (
                         <th 
                           key={column}
-                          className={`px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] ${group?.color || ''} relative cursor-pointer hover:bg-[hsl(var(--table-row-hover))] transition-colors`}
-                          onClick={() => handleColumnSort(column)}
+                        className={`px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] relative cursor-pointer hover:bg-[hsl(var(--table-row-hover))] transition-colors ${
+                          isPinnedColumn 
+                            ? 'bg-[hsl(var(--table-card-forecast-background))] border-[hsl(var(--table-card-forecast-border))]' 
+                            : isAdjustmentColumn
+                            ? 'bg-[hsl(var(--table-card-adjustment-background))] border-[hsl(var(--table-card-adjustment-border))]'
+                            : group?.color || ''
+                        }`}
+                        onClick={isAdjustmentColumn ? undefined : () => handleColumnSort(column)}
                         >
                           {!isSearchActive ? (
                             <div className="flex items-center justify-between group">
@@ -2116,7 +2100,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                                 )}
                               </div>
                               <div className="flex items-center ml-1">
-                                {isColumnSearchable(column) && (
+                              {isColumnSearchable(column) && !isAdjustmentColumn && (
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -2180,210 +2164,183 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                         }`}
                         onClick={() => handleRowClick(record, index)}
                       >
-                        {scrollableColumns.map((column) => (
-                          <td 
-                            key={column}
-                            className="px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[200px]"
-                          >
-                            <div className="truncate" title={formatCellValue(record[column])}>
-                              {formatCellValue(record[column])}
-                            </div>
+                      {!isGroupByMode && (
+                        <>
+                          {/* Row number */}
+                          <td className="px-2 py-1 text-[hsl(var(--table-muted-foreground))] border-r border-[hsl(var(--table-border))] font-mono text-xs w-[60px]">
+                            {index + 1}
                           </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
                   
-                  {/* Loading row for middle columns */}
-                  {loadingMore && (
-                    <tr>
-                      <td colSpan={scrollableColumns.length} className="px-3 py-4 text-center">
-                        <span className="text-[hsl(var(--table-muted-foreground))]">Loading...</span>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Right Pinned Columns (Forecast Qty) */}
-            {(rightPinnedColumns.length > 0 || consensusMode) && (
-              <div className="flex-shrink-0 bg-[hsl(var(--table-background))] border-l border-[hsl(var(--table-border))] z-20">
-                <table className="text-sm h-full">
-                  <thead className="sticky top-0 bg-[hsl(var(--table-header-background))] border-b border-[hsl(var(--table-border))] z-50">
-                    <tr className="h-10">
-                      {rightPinnedColumns.map((column) => {
-                        const isSearchActive = activeSearches[column];
+                          {/* Store Card */}
+                          <td className="px-2 py-1 border-r border-[hsl(var(--table-border))] w-[150px] bg-[hsl(var(--table-card-store-background))] align-top">
+                            {metadata?.store_card_attributes ? (
+                              renderCardContent(record, metadata.store_card_attributes)
+                            ) : (
+                              <div className="text-xs text-[hsl(var(--table-muted-foreground))]">No store metadata</div>
+                            )}
+                          </td>
+                          
+                          {/* Product Card */}
+                          <td className="px-2 py-1 border-r border-[hsl(var(--table-border))] w-[150px] bg-[hsl(var(--table-card-product-background))] align-top">
+                            {metadata?.product_card_attributes ? (
+                              renderCardContent(record, metadata.product_card_attributes)
+                            ) : (
+                              <div className="text-xs text-[hsl(var(--table-muted-foreground))]">No product metadata</div>
+                                  )}
+                          </td>
+                        </>
+                      )}
+                      
+                      {/* All Data Columns */}
+                      {allColumns.map((column) => {
+                        const isPinnedColumn = isGroupByMode ? 
+                          (groupByColumns.includes(column) || ['Σforecast_qty', 'Σconsensus_qty'].includes(column)) : 
+                          ['forecast_qty', 'consensus_qty'].includes(column);
+                        const isAdjustmentColumn = column === 'Adjustment';
                         
-                        return (
-                          <th 
-                            key={column}
-                            className="px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] bg-[hsl(var(--table-card-forecast-background))] border-[hsl(var(--table-card-forecast-border))] relative cursor-pointer hover:bg-[hsl(var(--table-row-hover))] transition-colors"
-                            onClick={() => handleColumnSort(column)}
+                      return (
+                            <td 
+                              key={column}
+                            className={`px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[200px] ${
+                              isPinnedColumn ? 'font-semibold bg-[hsl(var(--table-card-forecast-background))]' : 
+                              isAdjustmentColumn ? 'font-semibold bg-[hsl(var(--table-card-adjustment-background))]' : ''
+                            }`}
                           >
-                            {!isSearchActive ? (
-                              <div className="flex items-center justify-between group">
-                                <div className="flex items-center flex-1 min-w-0">
-                                  <span className="truncate hover:text-[hsl(var(--primary))]" title={getDisplayColumnName(column)}>
-                                    {getDisplayColumnName(column)}
-                                  </span>
-                                  {/* Show active search term inline */}
-                                  {activeSearches[column] && (
-                                    <div className="flex items-center space-x-1 ml-2">
-                                      <span className="text-xs text-[hsl(var(--primary))] bg-[hsl(var(--primary))]/20 px-1 rounded whitespace-nowrap">
-                                        "{activeSearches[column]}"
-                                      </span>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleClearSearch(column);
-                                        }}
-                                        className="text-xs text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 flex-shrink-0"
-                                        title="Clear search"
-                                      >
-                                        ×
-                                      </button>
-                                    </div>
-                                  )}
-                                  {sortState.column === column && (
-                                    <span className="ml-1 text-xs font-bold text-[hsl(var(--primary))] flex-shrink-0">{getSortIcon(column)}</span>
-                                  )}
-                                </div>
-                                <div className="flex items-center ml-1">
-                                  {isColumnSearchable(column) && (
+                            {isAdjustmentColumn ? (
+                              // Adjustment column content
+                              <div className="relative">
+                                {isAdjustmentEditing(record, index) ? (
+                                  // Editing mode: show input with add/subtract/delete buttons
+                                  <div className="flex items-center space-x-1">
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        const searchValue = searchValues[column];
-                                        if (searchValue?.trim()) {
-                                          handleSearchExecute(column);
-                                        } else {
-                                          setSearchValues({ ...searchValues, [column]: '' });
-                                          const searchContainer = e.currentTarget.closest('th');
-                                          const searchInput = searchContainer?.querySelector('input');
-                                          setTimeout(() => searchInput?.focus(), 0);
-                                        }
+                                        // Select the row first
+                                        handleRowClick(record, index);
+                                        const currentValue = getAdjustmentValue(record, index) || 0;
+                                        handleAdjustmentChange(record, index, String(currentValue - 1));
                                       }}
-                                      className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                      title="Search"
+                                      className="p-1 text-xs bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] rounded hover:bg-[hsl(var(--table-button-hover))] focus:outline-none flex-shrink-0 h-[24px] w-[24px] flex items-center justify-center border border-[hsl(var(--table-border))]"
+                                      title="Subtract 1"
                                     >
-                                      <Search size={12} />
+                                      <Minus size={12} />
                                     </button>
-                                  )}
-                                </div>
+                                    <input
+                                      type="number"
+                                      value={getAdjustmentValue(record, index) || ''}
+                                      onChange={(e) => handleAdjustmentChange(record, index, e.target.value)}
+                                      onClick={(e) => {
+                                        // Select the row when clicking on the input
+                                        handleRowClick(record, index);
+                                      }}
+                                      onMouseDown={(e) => {
+                                        // Prevent row click during actual input interaction
+                                        e.stopPropagation();
+                                      }}
+                                      onFocus={(e) => e.target.select()}
+                                      className={`flex-1 px-2 py-1 text-xs border rounded-md focus:outline-none transition-all duration-200 text-center font-medium min-w-0 ${
+                                        (() => {
+                                          const difference = getAdjustmentDifference(record, index);
+                                          if (difference === null) return 'bg-[hsl(var(--table-input-background))] border-[hsl(var(--table-input-border))] text-[hsl(var(--table-foreground))] focus:border-[hsl(var(--primary))] focus:bg-[hsl(var(--table-input-background))]';
+                                          if (difference > 0) return 'bg-[hsl(var(--panel-success))]/20 border-[hsl(var(--panel-success))]/50 text-[hsl(var(--panel-success))] focus:border-[hsl(var(--panel-success))] focus:bg-[hsl(var(--panel-success))]/30';
+                                          if (difference < 0) return 'bg-[hsl(var(--panel-error))]/20 border-[hsl(var(--panel-error))]/50 text-[hsl(var(--panel-error))] focus:border-[hsl(var(--panel-error))] focus:bg-[hsl(var(--panel-error))]/30';
+                                          return 'bg-[hsl(var(--table-input-background))] border-[hsl(var(--table-input-border))] text-[hsl(var(--table-foreground))] focus:border-[hsl(var(--primary))] focus:bg-[hsl(var(--table-input-background))]';
+                                        })()
+                                      }`}
+                                      placeholder="0"
+                                      step="1"
+                                    />
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        // Select the row first
+                                        handleRowClick(record, index);
+                                        const currentValue = getAdjustmentValue(record, index) || 0;
+                                        handleAdjustmentChange(record, index, String(currentValue + 1));
+                                      }}
+                                      className="p-1 text-xs bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] rounded hover:bg-[hsl(var(--table-button-hover))] focus:outline-none flex-shrink-0 h-[24px] w-[24px] flex items-center justify-center border border-[hsl(var(--table-border))]"
+                                      title="Add 1"
+                                    >
+                                      <Plus size={12} />
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        // Select the row first
+                                        handleRowClick(record, index);
+                                        handleDeleteAdjustmentClick(record, index);
+                                      }}
+                                      className="p-1 text-xs bg-[hsl(var(--panel-muted))] text-[hsl(var(--panel-muted-foreground))] rounded hover:bg-[hsl(var(--panel-muted))]/90 focus:outline-none flex-shrink-0 h-[24px] w-[24px] flex items-center justify-center"
+                                      title="Cancel"
+                                    >
+                                      <Trash2 size={12} />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  // Default mode: show icon buttons
+                                  <div className="flex items-center justify-center">
+                                    {(() => {
+                                      // Use aggregated value in group by mode
+                                      const consensusValue = isGroupByMode ? (record['Σconsensus_qty'] || 0) : (record.consensus_qty || 0);
+                                      return consensusValue !== 0 ? (
+                                        // Show unlink button when interim consensus is non-zero
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Select the row first
+                                            handleRowClick(record, index);
+                                            handleUnlinkClick(record, index);
+                                          }}
+                                          className="p-1 text-xs bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] rounded hover:bg-[hsl(var(--table-button-hover))] focus:outline-none flex-shrink-0 h-[28px] w-[28px] flex items-center justify-center border border-[hsl(var(--table-border))]"
+                                          title="Adjust from Interim Consensus"
+                                        >
+                                          <Unlink size={14} />
+                                        </button>
+                                      ) : (
+                                        // Show package-plus button when interim consensus is zero
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Select the row first
+                                            handleRowClick(record, index);
+                                            handlePackagePlusClick(record, index);
+                                          }}
+                                          className="p-1 text-xs bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] rounded hover:bg-[hsl(var(--table-button-hover))] focus:outline-none flex-shrink-0 h-[28px] w-[28px] flex items-center justify-center border border-[hsl(var(--table-border))]"
+                                          title="Adjust from Forecast Qty"
+                                        >
+                                          <PackagePlus size={14} />
+                                        </button>
+                                      );
+                                    })()}
+                                  </div>
+                                )}
                               </div>
                             ) : (
-                              <div className="flex items-center space-x-1">
-                                <input
-                                  type="text"
-                                  placeholder={`Search ${getDisplayColumnName(column)}...`}
-                                  value={searchValues[column] || ''}
-                                  onChange={(e) => handleSearchChange(column, e.target.value)}
-                                  onKeyPress={(e) => handleSearchKeyPress(column, e)}
-                                  className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--table-input-background))] border border-[hsl(var(--table-input-border))] rounded text-[hsl(var(--table-foreground))] placeholder-[hsl(var(--table-muted-foreground))] focus:outline-none focus:border-[hsl(var(--primary))] min-w-0"
-                                  autoFocus
-                                />
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleSearchExecute(column);
-                                  }}
-                                  className="px-2 py-1 text-xs bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90 focus:outline-none flex-shrink-0 h-[26px] flex items-center justify-center"
-                                  title="Search"
-                                >
-                                  <Search size={12} />
-                                </button>
+                              // Regular column content
+                              <div className="truncate" title={formatCellValue(record[column], column)}>
+                                {formatCellValue(record[column], column)}
                               </div>
                             )}
-                          </th>
+                            </td>
                         );
                       })}
-                      
-                      {/* Adjustment Column - Only in consensus mode */}
-                      {consensusMode && (
-                        <th className="px-2 py-2 text-left text-[hsl(var(--table-header-foreground))] font-medium min-w-[120px] border-r border-[hsl(var(--table-border))] bg-[hsl(var(--table-card-adjustment-background))] border-[hsl(var(--table-card-adjustment-border))]">
-                          <div className="flex items-center">
-                            <span className="truncate" title="Adjustment">
-                              {getDisplayColumnName('Adjustment')}
-                            </span>
-                          </div>
-                        </th>
-                      )}
-                    </tr>
-                  </thead>
-                  
-                  <tbody>
-                    {data.map((record, index) => {
-                      const isSelected = isRowSelected(record, index);
-                      return (
-                        <tr 
-                          key={record.id || index}
-                          className={`border-b border-[hsl(var(--table-border))] transition-colors cursor-pointer ${
-                            isSelected 
-                              ? 'bg-[hsl(var(--table-row-selected))] border-t border-t-[hsl(var(--table-row-selected-border))] border-r border-r-[hsl(var(--table-row-selected-border))]' 
-                              : 'hover:bg-[hsl(var(--table-row-hover))]'
-                          }`}
-                          onClick={() => handleRowClick(record, index)}
-                        >
-                          {rightPinnedColumns.map((column) => (
-                            <td 
-                              key={column}
-                              className="px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[200px] font-semibold bg-[hsl(var(--table-card-forecast-background))]"
-                            >
-                              <div className="truncate" title={formatCellValue(record[column])}>
-                                {formatCellValue(record[column])}
-                              </div>
-                            </td>
-                          ))}
-                          
-                          {/* Adjustment Column - Only in consensus mode */}
-                          {consensusMode && (
-                            <td className="px-2 py-1 text-[hsl(var(--table-foreground))] border-r border-[hsl(var(--table-border))] max-w-[120px] font-semibold bg-[hsl(var(--table-card-adjustment-background))] relative">
-                              <div className="relative">
-                                <input
-                                  type="number"
-                                  value={getAdjustmentValue(record, index) || ''}
-                                  onChange={(e) => handleAdjustmentChange(record, index, e.target.value)}
-                                  onClick={(e) => {
-                                    // Select the row when clicking on the input
-                                    handleRowClick(record, index);
-                                  }}
-                                  onMouseDown={(e) => {
-                                    // Prevent row click during actual input interaction
-                                    e.stopPropagation();
-                                  }}
-                                  onFocus={(e) => e.target.select()}
-                                  className={`w-full px-3 py-1.5 text-sm border rounded-md focus:outline-none transition-all duration-200 text-center font-medium ${
-                                    (() => {
-                                      const difference = getAdjustmentDifference(record, index);
-                                      if (difference === null) return 'bg-[hsl(var(--table-input-background))] border-[hsl(var(--table-input-border))] text-[hsl(var(--table-foreground))] focus:border-[hsl(var(--primary))] focus:bg-[hsl(var(--table-input-background))]';
-                                      if (difference > 0) return 'bg-[hsl(var(--panel-success))]/20 border-[hsl(var(--panel-success))]/50 text-[hsl(var(--panel-success))] focus:border-[hsl(var(--panel-success))] focus:bg-[hsl(var(--panel-success))]/30';
-                                      if (difference < 0) return 'bg-[hsl(var(--panel-error))]/20 border-[hsl(var(--panel-error))]/50 text-[hsl(var(--panel-error))] focus:border-[hsl(var(--panel-error))] focus:bg-[hsl(var(--panel-error))]/30';
-                                      return 'bg-[hsl(var(--table-input-background))] border-[hsl(var(--table-input-border))] text-[hsl(var(--table-foreground))] focus:border-[hsl(var(--primary))] focus:bg-[hsl(var(--table-input-background))]';
-                                    })()
-                                  }`}
-                                  placeholder="0"
-                                  step="1"
-                                />
-                              </div>
-                            </td>
-                          )}
                         </tr>
                       );
                     })}
                     
-                    {/* Loading row for right columns */}
+                {/* Loading row */}
                     {loadingMore && (
                       <tr>
-                        <td colSpan={rightPinnedColumns.length + (consensusMode ? 1 : 0)} className="px-3 py-4 text-center">
+                    <td colSpan={(!isGroupByMode ? 3 : 0) + allColumns.length} className="px-3 py-4 text-center">
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="animate-spin text-[hsl(var(--primary))] mr-2" size={16} />
                           <span className="text-[hsl(var(--table-muted-foreground))]">Loading...</span>
+                      </div>
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </table>
-              </div>
-            )}
           </div>
         </div>
         
@@ -2397,7 +2354,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                 </span>
               ) : (
                 <span>
-                  Showing {visibleColumns.length + 2 + (consensusMode ? 1 : 0)} columns ({scrollableColumns.length} scrollable + {rightPinnedColumns.length + (consensusMode ? 1 : 0)} pinned + 2 cards) of {(metadata?.essential_columns.length || 0) + 2 + (consensusMode ? 1 : 0)} total
+                  Showing {allColumns.length + (!isGroupByMode ? 2 : 0)} columns of {(metadata?.essential_columns.length || 0) + (!isGroupByMode ? 2 : 0) + (consensusMode ? 1 : 0)} total
                 </span>
               )}
               {selectedWeekStartDate && (
@@ -2829,6 +2786,60 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                   Close
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Submit Popup */}
+      {showSubmitPopup && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-[hsl(var(--table-background))] rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden mx-4">
+            {/* Popup Header */}
+            <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--table-border))]">
+              <div>
+                <h2 className="text-[hsl(var(--table-foreground))] font-semibold text-lg">
+                  Adjustment Preview
+                </h2>
+                <p className="text-[hsl(var(--table-muted-foreground))] text-sm mt-1">
+                  Review changes before submitting
+                </p>
+              </div>
+              <button
+                onClick={handleDiscardAdjustment}
+                className="text-[hsl(var(--table-muted-foreground))] hover:text-[hsl(var(--table-foreground))] transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            {/* Popup Content */}
+            <div className="flex-1 overflow-auto max-h-[70vh]">
+              <AdjustmentDiffView
+                adjustmentId="consensus-preview"
+                adjustmentTitle="Adjustment Preview"
+                selectedWeekStartDate={selectedWeekStartDate}
+                manualDiffData={generateDiffData()}
+              />
+            </div>
+            
+            {/* Popup Actions */}
+            <div className="flex items-center justify-end space-x-3 p-4 border-t border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
+              <button
+                onClick={handleDiscardAdjustment}
+                disabled={submittingAdjustment}
+                className="px-4 py-2 text-sm border border-[hsl(var(--table-border))] text-[hsl(var(--table-foreground))] hover:bg-[hsl(var(--table-button-hover))] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Discard
+              </button>
+              <button
+                onClick={handleApplyAdjustment}
+                disabled={submittingAdjustment}
+                className="px-4 py-2 text-sm bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90 rounded transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submittingAdjustment && <Loader2 size={16} className="animate-spin" />}
+                <span>{submittingAdjustment ? 'Applying...' : 'Apply Adjustment'}</span>
+              </button>
             </div>
           </div>
         </div>

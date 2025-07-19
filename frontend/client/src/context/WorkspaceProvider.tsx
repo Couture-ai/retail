@@ -204,7 +204,7 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
     const document = documents.find(doc => doc.id === tabId);
     if (document) {
       console.log('[getTabData] Document detected:', { tabId, name: document.name });
-      return { id: tabId, title: document.name, type: 'documentation' };
+      return { id: tabId, title: document.name, type: 'docs' };
     }
 
     // Check if it's a task (tasks start with 'task-')
@@ -227,7 +227,12 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
       
       // Fallback for tabs not in registry
       if (forecastType === 'consensus-adjustment') {
-        return { id: tabId, title: 'Consensus Adjustment', type: 'forecast' };
+        return { id: tabId, title: 'Adjustment', type: 'forecast' };
+      }
+      
+      // Handle master-table specifically
+      if (forecastType === 'master-table') {
+        return { id: tabId, title: 'Global Store-Article Forecast', type: 'forecast' };
       }
       
       // Handle other forecast types
@@ -297,6 +302,19 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
     if (tabId === 'new-product-form') {
       console.log('[getTabData] New product form detected:', { tabId });
       return { id: tabId, title: 'Add New Product', type: 'product' };
+    }
+
+    // Check if it's the create purchase order form
+    if (tabId === 'create-purchase-order') {
+      console.log('[getTabData] Create purchase order form detected:', { tabId });
+      return { id: tabId, title: 'Create Purchase Order', type: 'inventory' };
+    }
+
+    // Check if it's an order tab (format: order-001, order-002, etc.)
+    if (tabId.startsWith('order-')) {
+      console.log('[getTabData] Order tab detected:', { tabId });
+      const orderNumber = tabId.replace('order-', '#');
+      return { id: tabId, title: `Order ${orderNumber}`, type: 'inventory' };
     }
 
     // If not a code file or document, assume it's a chat channel ID

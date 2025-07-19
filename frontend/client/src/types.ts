@@ -5,7 +5,7 @@ export type SidebarItem = {
   active?: boolean;
 };
 
-export type Module = 'home' | 'chat' | 'docs' | 'code' | 'chart' | 'organization' | 'budget' | 'settings' | 'task' | 'store' | 'product' | 'forecast' | 'analytics';
+export type Module = 'home' | 'chat' | 'docs' | 'code' | 'chart' | 'organization' | 'budget' | 'settings' | 'task' | 'store' | 'product' | 'forecast' | 'analytics' | 'inventory';
 
 export type Bot = {
   id: string;
@@ -94,7 +94,7 @@ interface BaseLayoutNode {
 }
 
 // Content type for what can be displayed in editor panels
-export type ContentType = 'code' | 'chat' | 'docs' | 'organization' | 'timeline' | 'task' | 'store' | 'forecast' | 'analytics' | 'product' | 'article';
+export type ContentType = 'code' | 'chat' | 'docs' | 'organization' | 'timeline' | 'task' | 'store' | 'forecast' | 'analytics' | 'product' | 'article' | 'inventory';
 
 // Content item interface for the new generalized tabs
 export interface TabContentItem {

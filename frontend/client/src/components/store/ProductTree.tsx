@@ -536,18 +536,23 @@ const ProductTree = ({ onProductSelect, selectedProductId, onNewProductClick }: 
       {/* Header */}
       <div className="p-3 border-b border-[hsl(var(--sidepanel-border))] flex items-center justify-between">
         <h3 className="text-sm font-medium text-[hsl(var(--sidepanel-foreground))]">Product Hierarchy</h3>
-        <button
-          onClick={onNewProductClick}
-          className="p-1 rounded hover:bg-[hsl(var(--sidepanel-hover))] transition-colors duration-200 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-[hsl(var(--sidepanel-foreground))]"
-          title="Add New Product"
-        >
-          <Plus size={16} />
-        </button>
       </div>
       
       {/* Tree content */}
       <div className="flex-1 overflow-auto p-2">
         {treeData.map(node => renderNode(node))}
+      </div>
+      
+      {/* New Product Button at bottom */}
+      <div className="p-3 border-t border-[hsl(var(--sidepanel-border))]">
+        <button
+          onClick={onNewProductClick}
+          className="w-full flex items-center justify-center gap-2 p-2 rounded bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90 transition-colors duration-200 text-sm font-medium"
+          title="Add New Product"
+        >
+          <Plus size={16} />
+          New Product
+        </button>
       </div>
     </div>
   );

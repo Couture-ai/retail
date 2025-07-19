@@ -96,8 +96,10 @@
     --panel-button-background: 240 4.8% 95.9%;
     --panel-button-hover: 240 5% 87%;
     --panel-success: 142 76% 36%;
+    --panel-success-foreground: 0 0% 98%;
     --panel-warning: 38 92% 50%;
     --panel-error: 0 84.2% 60.2%;
+    --panel-error-foreground: 0 0% 98%;
 
     /* Light theme table */
     --table-background: 0 0% 100%;
@@ -251,7 +253,7 @@
     --sidepanel-card-background: 220 10% 20%;
     --sidepanel-card-border: 220 10% 25%;
 
-    /* Dark theme panel (same as current dark styling) */
+    /* Dark theme panel */
     --panel-background: 220 10% 8%;
     --panel-foreground: 0 0% 95%;
     --panel-muted-foreground: 220 12% 60%;
@@ -267,10 +269,12 @@
     --panel-button-background: 220 10% 20%;
     --panel-button-hover: 220 10% 25%;
     --panel-success: 142 76% 36%;
+    --panel-success-foreground: 0 0% 98%;
     --panel-warning: 38 92% 50%;
     --panel-error: 0 84.2% 60.2%;
+    --panel-error-foreground: 0 0% 98%;
 
-    /* Dark theme table (same as current dark styling) */
+    /* Dark theme table */
     --table-background: 220 10% 8%;
     --table-foreground: 0 0% 95%;
     --table-muted-foreground: 220 12% 60%;
@@ -338,7 +342,7 @@
     --tab-drag-over: 217 91% 60%;
     --tab-dragging-background: 220 10% 20%;
 
-    /* Dark theme dashboard (current hardcoded colors maintained) */
+    /* Dark theme dashboard */
     --dashboard-background: 220 10% 10%;
     --dashboard-foreground: 0 0% 95%;
     --dashboard-muted-foreground: 220 12% 60%;

@@ -16,6 +16,8 @@ import ArticleTab from '../store/ArticleTab';
 import ForecastContent from '../forecast/ForecastContent';
 import AnalyticsContent from '../analytics/AnalyticsContent';
 import NewProductTab from '../store/NewProductTab';
+import CreatePurchaseOrderTab from '../inventory/CreatePurchaseOrderTab';
+import OrderTab from '../inventory/OrderTab';
 import { v4 as uuidv4 } from 'uuid';
 import { X, ExternalLink, Copy, Maximize2 } from 'lucide-react';
 
@@ -351,6 +353,58 @@ const ContentPanel: React.FC<ContentPanelProps> = ({ panelNode }) => {
           ? decodeURIComponent(activeTabId.replace('analytics-', ''))
           : undefined;
         return <AnalyticsContent analyticsType={analyticsType} />;
+        
+      case 'inventory':
+        // Handle inventory-related tabs
+        if (activeTabId === 'create-purchase-order') {
+          return (
+            <CreatePurchaseOrderTab 
+              onClose={() => closeFileInPanel('create-purchase-order', panelNode.id)}
+              onSave={(orderData) => {
+                // Handle purchase order creation here - you can add API call
+                console.log('New purchase order data:', orderData);
+                // Close the form after successful save
+                closeFileInPanel('create-purchase-order', panelNode.id);
+              }}
+              selectedDate={new Date().toISOString().split('T')[0]} // Pass current date
+            />
+          );
+        }
+        
+        // Handle order tabs (format: order-001, order-002, etc.)
+        if (activeTabId && activeTabId.startsWith('order-')) {
+          // Extract order info from the tab ID
+          // This would typically come from your data store/context
+          const mockOrderInfo = {
+            orderNumber: activeTabId.replace('order-', '#'),
+            date: '2024-01-15T10:30:00Z',
+            storeManager: 'John Smith',
+            storeName: 'Downtown Store',
+            status: 'pending' as const
+          };
+          
+          return (
+            <OrderTab 
+              orderId={activeTabId}
+              orderInfo={mockOrderInfo}
+              panelId={panelNode.id}
+            />
+          );
+        }
+        
+        // Default inventory content (for other inventory tabs that might be added later)
+        return (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="text-[hsl(var(--panel-foreground))] text-lg mb-2">
+                Inventory & Orders
+              </div>
+              <div className="text-[hsl(var(--panel-muted-foreground))] text-sm">
+                Select an inventory item from the sidebar to view details
+              </div>
+            </div>
+          </div>
+        );
         
       default:
         return (

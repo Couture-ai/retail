@@ -105,12 +105,12 @@ const ProductTab: React.FC<ProductTabProps> = ({ productId, panelId }) => {
 
   const getIcon = (level: string) => {
     const iconMap: Record<string, React.ReactNode> = {
-      'vertical': <Layers size={20} className="text-blue-400" />,
-      'super_category': <Package size={20} className="text-green-400" />,
-      'segment': <Tag size={20} className="text-yellow-400" />,
-      'article_id': <ShoppingBag size={20} className="text-orange-400" />
+      'vertical': <Layers size={20} className="text-[hsl(var(--dashboard-primary-blue))]" />,
+      'super_category': <Package size={20} className="text-[hsl(var(--dashboard-primary-green))]" />,
+      'segment': <Tag size={20} className="text-[hsl(var(--dashboard-primary-orange))]" />,
+      'article_id': <ShoppingBag size={20} className="text-[hsl(var(--dashboard-primary-purple))]" />
     };
-    return iconMap[level] || <Box size={20} className="text-gray-400" />;
+    return iconMap[level] || <Box size={20} className="text-[hsl(var(--panel-muted-foreground))]" />;
   };
 
   const getLevelDisplayName = (level: string) => {
@@ -134,10 +134,10 @@ const ProductTab: React.FC<ProductTabProps> = ({ productId, panelId }) => {
 
   if (loading) {
     return (
-      <div className="h-full bg-[hsl(var(--dark-9))] flex items-center justify-center">
+      <div className="h-full bg-[hsl(var(--panel-background))] flex items-center justify-center">
         <div className="flex items-center">
-          <Loader2 className="animate-spin text-[hsl(var(--dark-3))] mr-2" size={20} />
-          <span className="text-[hsl(var(--dark-3))]">Loading product information...</span>
+          <Loader2 className="animate-spin text-[hsl(var(--panel-muted-foreground))] mr-2" size={20} />
+          <span className="text-[hsl(var(--panel-muted-foreground))]">Loading product information...</span>
         </div>
       </div>
     );
@@ -145,13 +145,13 @@ const ProductTab: React.FC<ProductTabProps> = ({ productId, panelId }) => {
 
   if (error) {
     return (
-      <div className="h-full bg-[hsl(var(--dark-9))] flex items-center justify-center">
+      <div className="h-full bg-[hsl(var(--panel-background))] flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <AlertCircle className="text-red-400 mb-2" size={24} />
-          <span className="text-red-400 text-sm text-center">{error}</span>
+          <AlertCircle className="text-[hsl(var(--panel-error))] mb-2" size={24} />
+          <span className="text-[hsl(var(--panel-error))] text-sm text-center">{error}</span>
           <button 
             onClick={loadProductInfo}
-            className="mt-2 px-3 py-1 bg-[hsl(var(--primary))] text-white text-xs rounded hover:bg-[hsl(var(--primary))/90]"
+            className="mt-2 px-3 py-1 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-xs rounded hover:bg-[hsl(var(--primary))]/90 transition-colors"
           >
             Retry
           </button>
@@ -162,23 +162,23 @@ const ProductTab: React.FC<ProductTabProps> = ({ productId, panelId }) => {
 
   if (!productInfo) {
     return (
-      <div className="h-full bg-[hsl(var(--dark-9))] flex items-center justify-center">
-        <span className="text-[hsl(var(--dark-3))]">Product not found</span>
+      <div className="h-full bg-[hsl(var(--panel-background))] flex items-center justify-center">
+        <span className="text-[hsl(var(--panel-muted-foreground))]">Product not found</span>
       </div>
     );
   }
 
   return (
-    <div className="h-full bg-[hsl(var(--dark-9))] overflow-auto">
+    <div className="h-full bg-[hsl(var(--panel-background))] overflow-auto">
       {/* Header */}
-      <div className="p-6 border-b border-gray-700/50">
+      <div className="p-6 border-b border-[hsl(var(--panel-border))]">
         <div className="flex items-center">
           {getIcon(productInfo.level)}
           <div className="ml-4">
-            <h1 className="text-white text-xl font-semibold">
+            <h1 className="text-[hsl(var(--panel-foreground))] text-xl font-semibold">
               {productInfo.level === 'article_id' ? `Article ${productInfo.name}` : productInfo.name}
             </h1>
-            <p className="text-[hsl(var(--dark-3))] text-sm mt-1">
+            <p className="text-[hsl(var(--panel-muted-foreground))] text-sm mt-1">
               {getLevelDisplayName(productInfo.level)} • {productInfo.stats?.recordCount || 0} records
             </p>
           </div>
@@ -190,82 +190,82 @@ const ProductTab: React.FC<ProductTabProps> = ({ productId, panelId }) => {
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {/* Total Forecasted */}
-            <div className="bg-[hsl(var(--dark-8))] border border-gray-700/50 rounded-lg p-4">
+            <div className="bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] rounded-lg p-4 hover:bg-[hsl(var(--dashboard-card-hover))] transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[hsl(var(--dark-3))] text-sm">Total Forecasted</p>
-                  <p className="text-white text-xl font-semibold">
+                  <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Total Forecasted</p>
+                  <p className="text-[hsl(var(--dashboard-foreground))] text-xl font-semibold">
                     {formatNumber(productInfo.stats.totalForecasted)}
                   </p>
                 </div>
-                <TrendingUp className="text-blue-400" size={20} />
+                <TrendingUp className="text-[hsl(var(--dashboard-primary-blue))]" size={20} />
               </div>
             </div>
 
             {/* Total Sold */}
-            <div className="bg-[hsl(var(--dark-8))] border border-gray-700/50 rounded-lg p-4">
+            <div className="bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] rounded-lg p-4 hover:bg-[hsl(var(--dashboard-card-hover))] transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[hsl(var(--dark-3))] text-sm">Total Sold</p>
-                  <p className="text-white text-xl font-semibold">
+                  <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Total Sold</p>
+                  <p className="text-[hsl(var(--dashboard-foreground))] text-xl font-semibold">
                     {formatNumber(productInfo.stats.totalSold)}
                   </p>
                 </div>
-                <DollarSign className="text-green-400" size={20} />
+                <DollarSign className="text-[hsl(var(--dashboard-success))]" size={20} />
               </div>
             </div>
 
             {/* Forecast Accuracy */}
-            <div className="bg-[hsl(var(--dark-8))] border border-gray-700/50 rounded-lg p-4">
+            <div className="bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] rounded-lg p-4 hover:bg-[hsl(var(--dashboard-card-hover))] transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[hsl(var(--dark-3))] text-sm">Accuracy</p>
-                  <p className="text-white text-xl font-semibold">
+                  <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Accuracy</p>
+                  <p className="text-[hsl(var(--dashboard-foreground))] text-xl font-semibold">
                     {productInfo.stats.accuracy.toFixed(1)}%
                   </p>
                 </div>
-                <BarChart3 className="text-purple-400" size={20} />
+                <BarChart3 className="text-[hsl(var(--dashboard-primary-purple))]" size={20} />
               </div>
             </div>
 
             {/* Average Forecast */}
-            <div className="bg-[hsl(var(--dark-8))] border border-gray-700/50 rounded-lg p-4">
+            <div className="bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] rounded-lg p-4 hover:bg-[hsl(var(--dashboard-card-hover))] transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[hsl(var(--dark-3))] text-sm">Avg Forecast</p>
-                  <p className="text-white text-xl font-semibold">
+                  <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Avg Forecast</p>
+                  <p className="text-[hsl(var(--dashboard-foreground))] text-xl font-semibold">
                     {formatNumber(productInfo.stats.avgForecast)}
                   </p>
                 </div>
-                <Package className="text-orange-400" size={20} />
+                <Package className="text-[hsl(var(--dashboard-primary-orange))]" size={20} />
               </div>
             </div>
           </div>
 
           {/* Product Details */}
-          <div className="bg-[hsl(var(--dark-8))] border border-gray-700/50 rounded-lg p-4">
-            <h3 className="text-white font-semibold mb-4">Product Details</h3>
+          <div className="bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] rounded-lg p-4">
+            <h3 className="text-[hsl(var(--dashboard-foreground))] font-semibold mb-4">Product Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="text-[hsl(var(--dark-3))] text-sm">Level</p>
-                <p className="text-white">{getLevelDisplayName(productInfo.level)}</p>
+                <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Level</p>
+                <p className="text-[hsl(var(--dashboard-foreground))]">{getLevelDisplayName(productInfo.level)}</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--dark-3))] text-sm">Identifier</p>
-                <p className="text-white font-mono text-sm">{productInfo.name}</p>
+                <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Identifier</p>
+                <p className="text-[hsl(var(--dashboard-foreground))] font-mono text-sm">{productInfo.name}</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--dark-3))] text-sm">Records</p>
-                <p className="text-white">{productInfo.stats.recordCount.toLocaleString()}</p>
+                <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Records</p>
+                <p className="text-[hsl(var(--dashboard-foreground))]">{productInfo.stats.recordCount.toLocaleString()}</p>
               </div>
               <div>
-                <p className="text-[hsl(var(--dark-3))] text-sm">Performance</p>
+                <p className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Performance</p>
                 <div className="flex items-center">
                   <div className={`w-2 h-2 rounded-full mr-2 ${
-                    productInfo.stats.accuracy >= 80 ? 'bg-green-400' :
-                    productInfo.stats.accuracy >= 60 ? 'bg-yellow-400' : 'bg-red-400'
+                    productInfo.stats.accuracy >= 80 ? 'bg-[hsl(var(--dashboard-success))]' :
+                    productInfo.stats.accuracy >= 60 ? 'bg-[hsl(var(--dashboard-warning))]' : 'bg-[hsl(var(--dashboard-error))]'
                   }`}></div>
-                  <span className="text-white text-sm">
+                  <span className="text-[hsl(var(--dashboard-foreground))] text-sm">
                     {productInfo.stats.accuracy >= 80 ? 'High' :
                      productInfo.stats.accuracy >= 60 ? 'Medium' : 'Low'} Accuracy
                   </span>

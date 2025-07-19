@@ -12,7 +12,8 @@ import {
   ChevronUp,
   Save,
   AlertTriangle,
-  Move
+  Move,
+  Filter
 } from "lucide-react";
 import { ResponsiveLine } from '@nivo/line';
 import { ResponsiveBar } from '@nivo/bar';
@@ -20,9 +21,13 @@ import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBoxPlot } from '@nivo/boxplot';
 import { ForecastRepository } from '../../repository/forecast_repository';
 import { AnalyticsRepository } from '../../repository/analytics_repository';
+import { useWorkspace } from '../../context/WorkspaceProvider';
 
 interface AnalyticsContentProps {
   analyticsType?: string;
+  embedded?: boolean; // New prop for embedded mode
+  embeddedArticleId?: string; // New prop to pass article_id directly in embedded mode
+  embeddedStoreValue?: string; // New prop to pass store value directly in embedded mode
 }
 
 interface GridCell {
@@ -80,12 +85,22 @@ interface TableState {
   totalCount?: number;
 }
 
+// New interfaces for column filtering
+interface ColumnFilter {
+  column: string;
+  value: string | null;
+  options: string[];
+  loading: boolean;
+  error: string | null;
+}
+
 type DragMode = 'move' | 'resize-nw' | 'resize-ne' | 'resize-sw' | 'resize-se' | 'resize-n' | 'resize-s' | 'resize-w' | 'resize-e';
 
 const GRID_COLS = 16;
 const GRID_ROWS = 1000;
 
-const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) => {
+const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType, embedded = false, embeddedArticleId, embeddedStoreValue }) => {
+  const { openFileInPanel } = useWorkspace();
   const [isEditMode, setIsEditMode] = useState(false);
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [selectedStart, setSelectedStart] = useState<GridCell | null>(null);
@@ -123,6 +138,10 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  // Column filtering state
+  const [columnFilters, setColumnFilters] = useState<Record<string, ColumnFilter>>({});
+  const [requiredColumns, setRequiredColumns] = useState<string[]>([]);
+
   // Initialize repositories
   const getApiBaseUrl = () => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -144,6 +163,202 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     return pageName;
   };
 
+  // Parse required columns from page title
+  const parseRequiredColumns = (title: string): string[] => {
+    const columnPattern = /\$([a-zA-Z_][a-zA-Z0-9_]*)/g;
+    const matches = title.match(columnPattern);
+    if (!matches) return [];
+    
+    // Extract column names without the $ prefix
+    const columns = matches.map(match => match.substring(1));
+    console.log('[AnalyticsContent] Parsed columns from title:', title, '->', columns);
+    return columns;
+  };
+
+  // Get the current parameter value from props or URL for embedded mode
+  const getCurrentParameterValue = (): string | null => {
+    if (embedded && analyticsType) {
+      // First, check if value is passed directly as a prop
+      if (embeddedArticleId) {
+        console.log('[AnalyticsContent] Using embeddedArticleId prop:', embeddedArticleId);
+        return embeddedArticleId;
+      }
+      
+      if (embeddedStoreValue) {
+        console.log('[AnalyticsContent] Using embeddedStoreValue prop:', embeddedStoreValue);
+        return embeddedStoreValue;
+      }
+      
+      // Extract parameter value from the current URL or context
+      // This assumes the parameter value is available in the URL or we can get it from the parent component
+      // For now, we'll try to get it from the URL path
+      const pathParts = window.location.pathname.split('/');
+      const paramIndex = pathParts.findIndex(part => part.startsWith('article_id-') || part.startsWith('store_id-'));
+      if (paramIndex !== -1) {
+        const paramPart = pathParts[paramIndex];
+        const paramValue = paramPart.replace('article_id-', '').replace('store_id-', '');
+        console.log('[AnalyticsContent] Extracted parameter value from URL:', paramValue);
+        return paramValue;
+      }
+      
+      // Fallback: try to get from URL search params
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramValue = urlParams.get('article_id') || urlParams.get('store_id');
+      if (paramValue) {
+        console.log('[AnalyticsContent] Extracted parameter value from URL params:', paramValue);
+        return paramValue;
+      }
+    }
+    return null;
+  };
+
+  // Load column options for a specific column
+  const loadColumnOptions = async (column: string) => {
+    try {
+      setColumnFilters(prev => ({
+        ...prev,
+        [column]: {
+          ...prev[column],
+          loading: true,
+          error: null
+        }
+      }));
+
+      const query = `SELECT DISTINCT ${column} FROM forecast WHERE ${column} IS NOT NULL ORDER BY ${column} LIMIT 1000`;
+      
+      await forecastRepository.executeSqlQuery(
+        { sql_query: query },
+        {
+          setLoading: () => {},
+          setError: (error: string | null) => {
+            setColumnFilters(prev => ({
+              ...prev,
+              [column]: {
+                ...prev[column],
+                error: error || null,
+                loading: false
+              }
+            }));
+          },
+          setData: (data: any) => {
+            if (data && data.data) {
+              const options = data.data.map((row: any) => String(row[column])).filter(Boolean);
+              setColumnFilters(prev => ({
+                ...prev,
+                [column]: {
+                  ...prev[column],
+                  options,
+                  loading: false,
+                  error: null
+                }
+              }));
+            }
+          }
+        }
+      );
+    } catch (error) {
+      console.error(`Error loading options for column ${column}:`, error);
+      setColumnFilters(prev => ({
+        ...prev,
+        [column]: {
+          ...prev[column],
+          error: 'Failed to load options',
+          loading: false
+        }
+      }));
+    }
+  };
+
+  // Initialize column filters when page loads
+  useEffect(() => {
+    const pageName = getPageName();
+    const columns = parseRequiredColumns(pageName);
+    setRequiredColumns(columns);
+    
+    console.log('[AnalyticsContent] Initializing filters for columns:', columns);
+    
+    // Initialize filter state for each required column
+    const initialFilters: Record<string, ColumnFilter> = {};
+    columns.forEach(column => {
+      // For embedded mode, automatically set the parameter value
+      if (embedded && analyticsType && analyticsType.includes(`$${column}`)) {
+        const currentValue = getCurrentParameterValue();
+        if (currentValue) {
+          initialFilters[column] = {
+            column,
+            value: currentValue,
+            options: [currentValue], // Set the current value as the only option
+            loading: false,
+            error: null
+          };
+          console.log(`[AnalyticsContent] Auto-set ${column} filter to:`, currentValue);
+        } else {
+          initialFilters[column] = {
+            column,
+            value: null,
+            options: [],
+            loading: false,
+            error: null
+          };
+        }
+      } else {
+        initialFilters[column] = {
+          column,
+          value: null,
+          options: [],
+          loading: false,
+          error: null
+        };
+      }
+    });
+    setColumnFilters(initialFilters);
+    
+    // Load options for each column (except auto-set parameters in embedded mode)
+    columns.forEach(column => {
+      if (!(embedded && analyticsType && analyticsType.includes(`$${column}`))) {
+        loadColumnOptions(column);
+      }
+    });
+  }, [analyticsType, embedded]);
+
+  // Check if all required filters are selected
+  const areAllFiltersSelected = (): boolean => {
+    return requiredColumns.every(column => {
+      const filter = columnFilters[column];
+      return filter && filter.value !== null && filter.value !== '';
+    });
+  };
+
+  // Substitute variables in SQL query
+  const substituteVariables = (sqlQuery: string): string => {
+    let substitutedQuery = sqlQuery;
+    
+    requiredColumns.forEach(column => {
+      const filter = columnFilters[column];
+      if (filter && filter.value) {
+        const placeholder = `$${column}`;
+        // Always wrap string values in quotes for SQL
+        const value = `'${filter.value}'`;
+        // Use global regex to replace all occurrences, escaping special regex characters
+        const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        substitutedQuery = substitutedQuery.replace(regex, value);
+        
+        // Log the substitution for debugging
+        console.log(`[AnalyticsContent] Substituting ${placeholder} with ${value}`);
+      }
+    });
+    
+    // Validate that all required variables have been substituted
+    const remainingVariables = substitutedQuery.match(/\$[a-zA-Z_][a-zA-Z0-9_]*/g);
+    if (remainingVariables && remainingVariables.length > 0) {
+      console.warn('[AnalyticsContent] Warning: Some variables were not substituted:', remainingVariables);
+    }
+    
+    return substitutedQuery;
+  };
+
+
+
   // Load grid configuration on mount
   useEffect(() => {
     loadGridConfiguration();
@@ -155,6 +370,21 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
       saveGridConfiguration();
     }
   }, [widgets]);
+
+  // Re-execute queries when filters change
+  useEffect(() => {
+    if (areAllFiltersSelected()) {
+      widgets.forEach(widget => {
+        if ((widget.widgetType === 'chart' || widget.widgetType === 'card') && widget.sqlQuery) {
+          executeQuery(widget.id, widget.sqlQuery);
+        }
+        if (widget.widgetType === 'table' && widget.sqlQuery) {
+          initializeTableState(widget.id);
+          executeTableQuery(widget.id, widget.sqlQuery, 0, widget.pageSize || 50, widget.enablePagination || true);
+        }
+      });
+    }
+  }, [columnFilters, widgets]);
 
   const loadGridConfiguration = async () => {
     try {
@@ -172,12 +402,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
       if (config && config.widgets) {
         console.log('[AnalyticsContent] Setting widgets:', config.widgets);
         setWidgets(config.widgets);
-        // Load chart data for existing widgets
-        config.widgets.forEach((widget: Widget) => {
-          if ((widget.widgetType === 'chart' || widget.widgetType === 'card') && widget.sqlQuery) {
-            executeQuery(widget.id, widget.sqlQuery);
-          }
-        });
+        // Don't execute queries here - they will be executed when filters are selected
       } else {
         console.log('[AnalyticsContent] No config found, using empty widgets array');
         setWidgets([]);
@@ -240,13 +465,24 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     }
   };
 
-  // Execute SQL query against forecast API
+  // Execute SQL query against forecast API with variable substitution
   const executeQuery = async (widgetId: string, sqlQuery: string) => {
     if (!sqlQuery.trim()) return;
     
+    // Check if all required filters are selected
+    if (!areAllFiltersSelected()) {
+      console.log('[AnalyticsContent] Skipping query execution - not all filters selected');
+      return;
+    }
+    
     try {
+      const substitutedQuery = substituteVariables(sqlQuery);
+      console.log('[AnalyticsContent] Original query:', sqlQuery);
+      console.log('[AnalyticsContent] Substituted query:', substitutedQuery);
+      console.log('[AnalyticsContent] Current filters:', columnFilters);
+      
       await forecastRepository.executeSqlQuery(
-        { sql_query: sqlQuery },
+        { sql_query: substitutedQuery },
         {
           setLoading: (loading: boolean) => {
             setLoadingCharts(prev => ({ ...prev, [widgetId]: loading }));
@@ -266,13 +502,21 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     }
   };
 
-  // Execute SQL query for table widget with pagination
+  // Execute SQL query for table widget with pagination and variable substitution
   const executeTableQuery = async (widgetId: string, sqlQuery: string, page: number = 0, pageSize: number = 50, enablePagination: boolean = true) => {
     if (!sqlQuery.trim()) return;
     
+    // Check if all required filters are selected
+    if (!areAllFiltersSelected()) {
+      console.log('[AnalyticsContent] Skipping table query execution - not all filters selected');
+      return;
+    }
+    
     try {
+      // Substitute variables first
+      let finalQuery = substituteVariables(sqlQuery.trim());
+      
       // Modify query to add LIMIT and OFFSET if pagination is enabled
-      let finalQuery = sqlQuery.trim();
       if (enablePagination) {
         // Remove existing LIMIT/OFFSET if present
         finalQuery = finalQuery.replace(/\s+LIMIT\s+\d+(\s+OFFSET\s+\d+)?$/i, '');
@@ -280,6 +524,10 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
         const offset = page * pageSize;
         finalQuery += ` LIMIT ${pageSize} OFFSET ${offset}`;
       }
+
+      console.log('[AnalyticsContent] Original table query:', sqlQuery);
+      console.log('[AnalyticsContent] Substituted table query:', finalQuery);
+      console.log('[AnalyticsContent] Current filters for table:', columnFilters);
 
       await forecastRepository.executeSqlQuery(
         { sql_query: finalQuery },
@@ -350,6 +598,74 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
         }
       }));
     }
+  };
+
+  // Handle filter change
+  const handleFilterChange = (column: string, value: string | null) => {
+    console.log(`[AnalyticsContent] Filter changed: ${column} = ${value}`);
+    setColumnFilters(prev => ({
+      ...prev,
+      [column]: {
+        ...prev[column],
+        value
+      }
+    }));
+  };
+
+  // Render filter dropdowns
+  const renderFilterDropdowns = () => {
+    if (requiredColumns.length === 0) return null;
+
+    return (
+      <div className="flex items-center space-x-4 px-4 py-2 bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))]">
+        <div className="flex items-center space-x-2">
+          <Filter size={14} className="text-[hsl(var(--dashboard-muted-foreground))]" />
+          <span className="text-xs text-[hsl(var(--dashboard-muted-foreground))] font-medium">Parameters:</span>
+        </div>
+        
+        {requiredColumns.map(column => {
+          const filter = columnFilters[column];
+          if (!filter) return null;
+          
+          return (
+            <div key={column} className="flex items-center space-x-2">
+              <label className="text-xs text-[hsl(var(--dashboard-muted-foreground))] font-medium">
+                {column.replace(/_/g, ' ')}:
+              </label>
+              <select
+                value={filter.value || ''}
+                onChange={(e) => handleFilterChange(column, e.target.value || null)}
+                className="px-2 py-1 text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] rounded text-[hsl(var(--dashboard-card-foreground))] focus:outline-none focus:border-[hsl(var(--dashboard-primary-blue))] min-w-[120px]"
+                disabled={filter.loading}
+              >
+                <option value="">Select {column.replace(/_/g, ' ')}</option>
+                {filter.options.map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              {filter.loading && (
+                <div className="w-3 h-3 border border-[hsl(var(--dashboard-primary-blue))] border-t-transparent rounded-full animate-spin"></div>
+              )}
+              {filter.error && (
+                <div className="text-xs text-[hsl(var(--dashboard-error))]">
+                  {filter.error}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        
+        {!areAllFiltersSelected() && (
+          <div className="text-xs text-[hsl(var(--dashboard-warning))] bg-[hsl(var(--dashboard-warning))]/10 px-2 py-1 rounded border border-[hsl(var(--dashboard-warning))]/20">
+            Please select all required parameters to view charts
+          </div>
+        )}
+        
+
+      </div>
+    );
   };
 
   // Load more data for table widget
@@ -478,6 +794,13 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
   };
 
   const handleEnterEditMode = () => {
+    // If in embedded mode, open a new analytics tab in non-embedded mode
+    if (embedded && analyticsType) {
+      // Create a new analytics tab with the same type but in non-embedded mode
+      openFileInPanel(`analytics-${encodeURIComponent(analyticsType)}`);
+      return;
+    }
+    
     setIsEditMode(true);
   };
 
@@ -1327,7 +1650,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             padding={0.3}
             valueScale={{ type: 'linear' }}
             indexScale={{ type: 'band', round: true }}
-            colors={chartColors}
+            
             borderRadius={4}
             borderColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
             axisTop={null}
@@ -1366,7 +1689,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             activeOuterRadiusOffset={8}
             borderWidth={2}
             borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-            colors={chartColors}
+            
             arcLinkLabelsSkipAngle={10}
             arcLinkLabelsTextColor="hsl(var(--dashboard-card-foreground))"
             arcLinkLabelsThickness={2}
@@ -1409,7 +1732,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             pointBorderColor={{ from: 'serieColor' }}
             pointLabelYOffset={-12}
             useMesh={true}
-            colors={chartColors}
+            
             animate={true}
             {...commonProps}
           />
@@ -1441,7 +1764,7 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
               legendPosition: 'middle',
               legendOffset: -60
             }}
-            colors={chartColors}
+            
             borderRadius={2}
             borderWidth={2}
             borderColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
@@ -1450,7 +1773,6 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             whiskerEndSize={0.6}
             whiskerColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
             animate={true}
-            {...commonProps}
           />
         );
 
@@ -1667,30 +1989,35 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
     if (widgets.length > 0) {
       return (
         <div className="flex-1 flex flex-col h-full bg-[hsl(var(--dashboard-background))]">
-          {/* View Mode Header */}
-          <div className="h-12 bg-[hsl(var(--dashboard-card-background))] border-b border-[hsl(var(--dashboard-card-border))] flex items-center justify-between px-4 flex-shrink-0">
-            <div className="flex items-center">
-              <div className="w-6 h-6 bg-[hsl(var(--dashboard-primary-blue))] rounded flex items-center justify-center mr-3">
-                <span className="text-white text-xs font-bold">#</span>
+          {/* View Mode Header - only show if not embedded */}
+          {!embedded && (
+            <div className="h-12 bg-[hsl(var(--dashboard-card-background))] border-b border-[hsl(var(--dashboard-card-border))] flex items-center justify-between px-4 flex-shrink-0">
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-[hsl(var(--dashboard-primary-blue))] rounded flex items-center justify-center mr-3">
+                  <span className="text-white text-xs font-bold">#</span>
+                </div>
+                <h1 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-base">{getAnalyticsTitle()}</h1>
               </div>
-              <h1 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-base">{getAnalyticsTitle()}</h1>
+              <div className="flex items-center space-x-2">
+                {/* Save Status Indicator */}
+                {saving && (
+                  <div className="w-1.5 h-1.5 bg-[hsl(var(--dashboard-primary-blue))] rounded-full animate-pulse"></div>
+                )}
+                {saveError && (
+                  <div className="w-1.5 h-1.5 bg-[hsl(var(--dashboard-error))] rounded-full"></div>
+                )}
+                <button
+                  onClick={handleEnterEditMode}
+                  className="w-7 h-7 bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] text-[hsl(var(--dashboard-muted-foreground))] hover:text-[hsl(var(--dashboard-card-foreground))] rounded transition-all duration-200 flex items-center justify-center border border-[hsl(var(--dashboard-card-border))]"
+                >
+                  <Edit size={14} />
+                </button>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              {/* Save Status Indicator */}
-              {saving && (
-                <div className="w-1.5 h-1.5 bg-[hsl(var(--dashboard-primary-blue))] rounded-full animate-pulse"></div>
-              )}
-              {saveError && (
-                <div className="w-1.5 h-1.5 bg-[hsl(var(--dashboard-error))] rounded-full"></div>
-              )}
-              <button
-                onClick={handleEnterEditMode}
-                className="w-7 h-7 bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] text-[hsl(var(--dashboard-muted-foreground))] hover:text-[hsl(var(--dashboard-card-foreground))] rounded transition-all duration-200 flex items-center justify-center border border-[hsl(var(--dashboard-card-border))]"
-              >
-                <Edit size={14} />
-              </button>
-            </div>
-          </div>
+          )}
+
+          {/* Filter Dropdowns - only show if not embedded */}
+          {!embedded && renderFilterDropdowns()}
 
           {/* Widgets Container - View Mode */}
           <div className="flex-1 overflow-auto p-6">
@@ -1703,6 +2030,41 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
             >
               {widgets.map(widget => {
                 const isHeading = widget.widgetType === 'heading';
+                
+                // Check if widget should be rendered based on filter requirements
+                const shouldRenderWidget = () => {
+                  // Always render heading widgets
+                  if (isHeading) return true;
+                  
+                  // For embedded mode, always render widgets (filters are auto-set)
+                  if (embedded) return true;
+                  
+                  // For other widgets, only render if all required filters are selected
+                  return areAllFiltersSelected();
+                };
+                
+                if (!shouldRenderWidget()) {
+                  return (
+                    <div
+                      key={widget.id}
+                      className="bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] rounded-xl relative overflow-hidden"
+                      style={{
+                        gridColumn: `${widget.startCol + 1} / ${widget.endCol + 2}`,
+                        gridRow: `${widget.startRow + 1} / ${widget.endRow + 2}`,
+                        minHeight: '24px'
+                      }}
+                    >
+                      <div className="w-full h-full flex items-center justify-center">
+                                              <div className="text-center">
+                        <Filter size={48} className="text-[hsl(var(--dashboard-muted-foreground))] mx-auto mb-3" />
+                        <div className="text-[hsl(var(--dashboard-muted-foreground))] text-sm">Select parameters to view chart</div>
+                        <div className="text-[hsl(var(--dashboard-muted-foreground))]/70 text-xs mt-1">Required: {requiredColumns.join(', ')}</div>
+                      </div>
+                      </div>
+                    </div>
+                  );
+                }
+                
                 return (
                   <div
                     key={widget.id}
@@ -1756,41 +2118,50 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[hsl(var(--dashboard-background))]">
-      {/* Edit Mode Header */}
-      <div className="h-12 bg-[hsl(var(--dashboard-card-background))] border-b border-[hsl(var(--dashboard-card-border))] flex items-center justify-between px-4 flex-shrink-0">
-        <div className="flex items-center">
-          <div className="w-6 h-6 bg-[hsl(var(--dashboard-warning))] rounded flex items-center justify-center mr-3">
-            <span className="text-white text-xs font-bold">#</span>
+      {/* Edit Mode Header - only show if not embedded */}
+      {!embedded && (
+        <div className="h-12 bg-[hsl(var(--dashboard-card-background))] border-b border-[hsl(var(--dashboard-card-border))] flex items-center justify-between px-4 flex-shrink-0">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-[hsl(var(--dashboard-warning))] rounded flex items-center justify-center mr-3">
+              <span className="text-white text-xs font-bold">#</span>
+            </div>
+            <h1 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-base">{getAnalyticsTitle()}</h1>
+            <span className="ml-2 px-2 py-0.5 bg-[hsl(var(--dashboard-warning))]/20 text-[hsl(var(--dashboard-warning))] text-xs rounded-full border border-[hsl(var(--dashboard-warning))]/30">Edit</span>
           </div>
-          <h1 className="text-[hsl(var(--dashboard-card-foreground))] font-medium text-base">{getAnalyticsTitle()}</h1>
-          <span className="ml-2 px-2 py-0.5 bg-[hsl(var(--dashboard-warning))]/20 text-[hsl(var(--dashboard-warning))] text-xs rounded-full border border-[hsl(var(--dashboard-warning))]/30">Edit</span>
+          <button
+            onClick={handleExitEditMode}
+            className="px-3 py-1.5 bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] text-[hsl(var(--dashboard-muted-foreground))] hover:text-[hsl(var(--dashboard-card-foreground))] rounded text-sm transition-all duration-200 flex items-center border border-[hsl(var(--dashboard-card-border))]"
+          >
+            <X size={14} className="mr-1" />
+            Done
+          </button>
         </div>
-        <button
-          onClick={handleExitEditMode}
-          className="px-3 py-1.5 bg-[hsl(var(--dashboard-accent-background))] hover:bg-[hsl(var(--dashboard-card-hover))] text-[hsl(var(--dashboard-muted-foreground))] hover:text-[hsl(var(--dashboard-card-foreground))] rounded text-sm transition-all duration-200 flex items-center border border-[hsl(var(--dashboard-card-border))]"
-        >
-          <X size={14} className="mr-1" />
-          Done
-        </button>
-      </div>
+      )}
 
-      {/* Minimal Instructions */}
-      {selectedWidget ? (
-        <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
-          Move with arrow keys or drag • Resize with handles • Delete with backspace
-        </div>
-      ) : !selectedStart ? (
-        <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
-          Select area to create widget • Click existing widgets to edit
-        </div>
-      ) : isSelectionValid() ? (
-        <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
-          Click to complete selection
-        </div>
-      ) : (
-        <div className="bg-[hsl(var(--dashboard-error))]/10 border-b border-[hsl(var(--dashboard-error))]/20 px-4 py-2 text-xs text-[hsl(var(--dashboard-error))] flex-shrink-0">
-          Selection overlaps • Choose different area
-        </div>
+      {/* Filter Dropdowns - only show if not embedded */}
+      {!embedded && renderFilterDropdowns()}
+
+      {/* Minimal Instructions - only show if not embedded */}
+      {!embedded && (
+        <>
+          {selectedWidget ? (
+            <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
+              Move with arrow keys or drag • Resize with handles • Delete with backspace
+            </div>
+          ) : !selectedStart ? (
+            <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
+              Select area to create widget • Click existing widgets to edit
+            </div>
+          ) : isSelectionValid() ? (
+            <div className="bg-[hsl(var(--dashboard-accent-background))] border-b border-[hsl(var(--dashboard-card-border))] px-4 py-2 text-xs text-[hsl(var(--dashboard-muted-foreground))] flex-shrink-0">
+              Click to complete selection
+            </div>
+          ) : (
+            <div className="bg-[hsl(var(--dashboard-error))]/10 border-b border-[hsl(var(--dashboard-error))]/20 px-4 py-2 text-xs text-[hsl(var(--dashboard-error))] flex-shrink-0">
+              Selection overlaps • Choose different area
+            </div>
+          )}
+        </>
       )}
 
       {/* Grid Container */}
@@ -1944,6 +2315,29 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
               
               {/* Scrollable container for examples */}
               <div className="flex-1 overflow-y-auto pr-2 space-y-6" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+                {/* Variable Usage Info */}
+                <div>
+                  <h5 className="text-[hsl(var(--dashboard-success))] font-medium text-sm mb-3 sticky top-0 bg-[hsl(var(--dashboard-accent-background))] py-1">Variable Usage</h5>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Page Title with Variables</p>
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Use $column_name in page title to create filters</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
+                        Page Title: "$brand;$store_no"<br/>
+                        Creates dropdowns for brand and store_no
+                      </code>
+                    </div>
+                                         <div>
+                       <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">SQL Query Variables</p>
+                       <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Use $column_name in SQL queries for dynamic filtering</p>
+                       <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
+                         SELECT * FROM forecast WHERE brand = $brand AND store_no = $store_no<br/>
+                         <span className="text-[hsl(var(--dashboard-muted-foreground))]">Becomes: SELECT * FROM forecast WHERE brand = 'Nike' AND store_no = '12345'</span>
+                       </code>
+                     </div>
+                  </div>
+                </div>
+
                 {/* Bar Chart Examples */}
                 <div>
                   <h5 className="text-[hsl(var(--dashboard-primary-blue))] font-medium text-sm mb-3 sticky top-0 bg-[hsl(var(--dashboard-accent-background))] py-1">Bar Chart</h5>
@@ -1955,9 +2349,15 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                       </code>
                     </div>
                     <div>
-                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Sales by Super Category</p>
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Sales by Super Category (with filter)</p>
                       <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
-                        SELECT super_category, SUM(sold_qty) as total_sales FROM forecast GROUP BY super_category ORDER BY total_sales DESC
+                        SELECT super_category, SUM(sold_qty) as total_sales FROM forecast WHERE brand = $brand GROUP BY super_category ORDER BY total_sales DESC
+                      </code>
+                    </div>
+                    <div>
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Store Performance (with multiple filters)</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
+                        SELECT state, COUNT(DISTINCT store_no) as store_count, AVG(forecast_qty) as avg_forecast FROM forecast WHERE brand = $brand AND region = $region GROUP BY state ORDER BY avg_forecast DESC
                       </code>
                     </div>
                     <div>
@@ -1967,9 +2367,9 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                       </code>
                     </div>
                     <div>
-                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Top Brands by Sales Volume</p>
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Top Brands by Sales Volume (with filters)</p>
                       <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
-                        SELECT brand, SUM(sold_qty) as total_sales FROM forecast WHERE brand IS NOT NULL GROUP BY brand ORDER BY total_sales DESC LIMIT 10
+                        SELECT brand, SUM(sold_qty) as total_sales FROM forecast WHERE brand IS NOT NULL AND region = $region AND store_no = $store_no GROUP BY brand ORDER BY total_sales DESC LIMIT 10
                       </code>
                     </div>
                   </div>
@@ -1986,9 +2386,9 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                       </code>
                     </div>
                     <div>
-                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Revenue Distribution by Vertical</p>
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Revenue Distribution by Vertical (with filter)</p>
                       <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
-                        SELECT vertical, SUM(forecast_qty) as total_forecast FROM forecast WHERE vertical IS NOT NULL GROUP BY vertical
+                        SELECT vertical, SUM(forecast_qty) as total_forecast FROM forecast WHERE vertical IS NOT NULL AND brand = $brand GROUP BY vertical
                       </code>
                     </div>
                     <div>
@@ -2008,6 +2408,12 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                       <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Monthly Sales Trend</p>
                       <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT month_year, SUM(sold_qty) as total_sales, 'Actual Sales' as series FROM forecast GROUP BY month_year ORDER BY month_year
+                      </code>
+                    </div>
+                    <div>
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Brand Performance Trend (with filter)</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
+                        SELECT month_year, SUM(sold_qty) as total_sales, 'Brand Sales' as series FROM forecast WHERE brand = $brand GROUP BY month_year ORDER BY month_year
                       </code>
                     </div>
                     <div>
@@ -2064,6 +2470,12 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType }) =>
                       <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Key Business Metrics</p>
                       <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
                         SELECT COUNT(DISTINCT store_no) as total_stores, COUNT(DISTINCT article_id) as total_products, SUM(sold_qty) as total_sales FROM forecast
+                      </code>
+                    </div>
+                    <div>
+                      <p className="text-[hsl(var(--dashboard-muted-foreground))] text-xs mb-2">Brand-Specific Metrics (with filter)</p>
+                      <code className="block text-xs bg-[hsl(var(--dashboard-card-background))] border border-[hsl(var(--dashboard-card-border))] p-3 rounded text-[hsl(var(--dashboard-success))] leading-relaxed">
+                        SELECT COUNT(DISTINCT store_no) as total_stores, COUNT(DISTINCT article_id) as total_products, SUM(sold_qty) as total_sales FROM forecast WHERE brand = $brand
                       </code>
                     </div>
                     <div>

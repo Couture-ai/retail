@@ -1,5 +1,6 @@
 import { useWorkspace } from "@/context/WorkspaceProvider";
 import { useTheme } from "@/context/ThemeProvider";
+import { useAgent } from "@/context/AgentProvider";
 import { IconButton } from "../ui/icon-button";
 import { Module } from "@/types";
 import { 
@@ -29,14 +30,19 @@ import {
   Store,
   Package,
   TrendingUpDown,
-  BarChart3
+  BarChart3,
+  Rabbit,
+  Boxes
 } from "lucide-react";
 import { EnhancedTooltip } from "@/components/ui/enhanced-tooltip";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { MovingBorderButton } from "@/components/ui/moving-border";
+import { useState, useEffect } from "react";
 
 const Sidebar = () => {
   const { activeModule, setActiveModule } = useWorkspace();
   const { theme, toggleTheme } = useTheme();
+  const { toggleAgentPanel, isAgentPanelOpen } = useAgent();
 
   // Get the app prefix from environment variables
   const APP_PREFIX = import.meta.env.VITE_APP_PREFIX || '';
@@ -62,7 +68,7 @@ const Sidebar = () => {
     //   name: "Channels",
     //   icon: <BotMessageSquare size={17} />, 
     //   module: "chat" as Module,
-    //   description: "Chat with AI assistants and view conversations between bots" 
+    //   description: "Chat with Business Intelligence Agents and view conversations between bots" 
     // },
     // { 
     //   id: "docs", 
@@ -79,32 +85,40 @@ const Sidebar = () => {
     //   description: "View and edit code files with syntax highlighting" 
     // },
     { 
-      id: "store", 
-      name: "Store Master",
-      icon: <Store size={17} />, 
-      module: "store" as Module,
-      description: "Browse and manage store locations with hierarchical data view" 
+      id: "forecast", 
+      name: "Forecast Center",
+      icon: <TrendingUpDown size={18} />, 
+      module: "forecast" as Module,
+      description: "Advanced AI-powered demand forecasting and trend analysis for optimized inventory planning." 
+    },
+    { 
+      id: "inventory", 
+      name: "Inventory & Orders",
+      icon: <Boxes size={18} />, 
+      module: "inventory" as Module,
+      description: "Manage inventory levels, purchase orders, and supplier relationships across your retail network.",
+      hasAttention: true
     },
     { 
       id: "product", 
-      name: "Product Master",
-      icon: <Package size={17} />, 
+      name: "Products & Categories",
+      icon: <Package size={18} />, 
       module: "product" as Module,
-      description: "Browse and manage products by category hierarchy" 
+      description: "Organize product catalogs, categories, and inventory details across all locations." 
     },
     { 
-      id: "forecast", 
-      name: "Forecast",
-      icon: <TrendingUpDown size={17} />, 
-      module: "forecast" as Module,
-      description: "View and analyze forecast data with comprehensive table views" 
+      id: "store", 
+      name: "Stores & Regions",
+      icon: <Store size={18} />, 
+      module: "store" as Module,
+      description: "Manage store locations, configurations, and regional settings for your retail network." 
     },
     { 
       id: "analytics", 
-      name: "Analytics",
-      icon: <BarChart3 size={17} />, 
+      name: "Analytics Hub",
+      icon: <BarChart3 size={18} />, 
       module: "analytics" as Module,
-      description: "Comprehensive analytics dashboard and data insights" 
+      description: "Deep insights and comprehensive reporting on sales performance, trends, and business metrics." 
     },
     // { 
     //   id: "task", 
@@ -134,13 +148,7 @@ const Sidebar = () => {
     //   module: "budget" as Module,
     //   description: "Track and manage project budget and expenses" 
     // },
-    // { 
-    //   id: "creator", 
-    //   name: "Creator's Studio",
-    //   icon: <CreatorStudioIcon />, 
-    //   module: "creator" as Module,
-    //   description: "Generate images, banners, and create ads with AI assistance" 
-    // },
+
   ];
 
   return (
@@ -177,6 +185,12 @@ const Sidebar = () => {
                   aria-label={item.id}
                 >
                   {item.icon}
+                  {/* Red warning indicator */}
+                  {item.hasAttention && (
+                    <div className="absolute top-1 left-1 text-red-500 text-sm font-bold">
+                      !
+                    </div>
+                  )}
                   {/* a circle if active */}
                   {activeModule === item.module && (
                     <div className="absolute right-0 w-1 h-1 bg-[hsl(var(--sidebar-primary))] rounded-full"></div>
@@ -186,9 +200,36 @@ const Sidebar = () => {
               title={item.name}
               icon={item.id === "creator" ? <CreatorStudioIcon /> : item.icon}
               description={item.description}
-            />
+            >
+              {item.hasAttention && (
+                <div className="px-3 py-2 border-t border-[hsl(var(--tooltip-border-separator))] bg-red-50 dark:bg-red-950/20">
+                  <div className="text-xs text-red-600 dark:text-red-400 font-medium">
+                    ⚠️ Needs Attention
+                  </div>
+                </div>
+              )}
+            </EnhancedTooltip>
           ))}
         </div>
+
+        {/* Agent toggle button */}
+        <EnhancedTooltip
+          trigger={
+            <MovingBorderButton
+              asChild
+              containerClassName="w-10 h-10"
+              duration={4000}
+              className="mb-6"
+            >
+              <button onClick={toggleAgentPanel} aria-label="Business Intelligence Agent">
+                <Sparkles size={18} />
+              </button>
+            </MovingBorderButton>
+          }
+          title="Business Intelligence Agent"
+          icon={<Sparkles size={18} />}
+          description="💭 Try the advanced agent"
+        />
 
         {/* Theme toggle button */}
         <EnhancedTooltip
@@ -196,7 +237,7 @@ const Sidebar = () => {
             <IconButton
               variant="default"
               onClick={toggleTheme}
-              className="mt-auto mb-3"
+              className="mb-3 mt-3"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}

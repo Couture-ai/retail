@@ -46,10 +46,8 @@ const TopBar: React.FC = () => {
           alt="Couture Demand Icon" 
           className="w-5 h-5"
         />
-      </div>
-      
-      {/* Minimalist Dropdown in the middle */}
-      <div className="flex-1 flex justify-center">
+        
+        {/* Dropdown moved to left side */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -67,7 +65,7 @@ const TopBar: React.FC = () => {
           </button>
           
           {isDropdownOpen && (
-            <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-[hsl(var(--topbar-dropdown-background))] border border-[hsl(var(--sidebar-border))] rounded-lg shadow-2xl backdrop-blur-sm min-w-[140px] z-50 animate-in fade-in-0 zoom-in-95 duration-200">
+            <div className="absolute top-full mt-2 left-0 bg-[hsl(var(--topbar-dropdown-background))] border border-[hsl(var(--sidebar-border))] rounded-lg shadow-2xl backdrop-blur-sm min-w-[140px] z-50 animate-in fade-in-0 zoom-in-95 duration-200">
               <div className="py-1">
                 <button
                   onClick={() => handleOptionSelect('Reliance Digital')}
@@ -80,6 +78,9 @@ const TopBar: React.FC = () => {
           )}
         </div>
       </div>
+      
+      {/* Spacer to push right side icons to the right */}
+      <div className="flex-1"></div>
 
       {/* Right side icons */}
       <div className="flex items-center space-x-2">

@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useWorkspace } from "@/context/WorkspaceProvider";
-import { BarChart3, Plus, Edit, Trash2, Loader2 } from "lucide-react";
+import { BarChart3, Plus, Edit, Trash2, Loader2, Settings } from "lucide-react";
 import SidebarSplitter from "../ui/SidebarSplitter";
 import EditorLayout from "../code/EditorLayout";
 import { AnalyticsRepository } from "../../repository/analytics_repository";
@@ -10,6 +10,11 @@ interface AnalyticsPageConfiguration {
   page_name: string;
   attributes?: Record<string, any>;
   page_config?: Record<string, any>;
+}
+
+interface GroupedPages {
+  normal: AnalyticsPageConfiguration[];
+  parameterized: AnalyticsPageConfiguration[];
 }
 
 const AnalyticsModule = () => {
@@ -43,6 +48,35 @@ const AnalyticsModule = () => {
   
   const analyticsRepository = new AnalyticsRepository(getApiBaseUrl());
   
+  // Parse required columns from page title (same logic as AnalyticsContent)
+  const parseRequiredColumns = (title: string): string[] => {
+    const columnPattern = /\$([a-zA-Z_][a-zA-Z0-9_]*)/g;
+    const matches = title.match(columnPattern);
+    if (!matches) return [];
+    
+    // Extract column names without the $ prefix
+    return matches.map(match => match.substring(1));
+  };
+
+  // Group pages into normal and parameterized categories
+  const groupPages = (pages: AnalyticsPageConfiguration[]): GroupedPages => {
+    const grouped: GroupedPages = {
+      normal: [],
+      parameterized: []
+    };
+
+    pages.forEach(page => {
+      const hasParameters = parseRequiredColumns(page.page_name).length > 0;
+      if (hasParameters) {
+        grouped.parameterized.push(page);
+      } else {
+        grouped.normal.push(page);
+      }
+    });
+
+    return grouped;
+  };
+
   // Load analytics pages on mount
   useEffect(() => {
     loadAnalyticsPages();
@@ -125,6 +159,89 @@ const AnalyticsModule = () => {
     // Preserve original case by URL encoding the page name
     openFileInPanel(`analytics-${encodeURIComponent(pageName)}`);
   };
+
+  // Render a single page item
+  const renderPageItem = (page: AnalyticsPageConfiguration) => (
+    <div key={page.id} className="group">
+      {editingPage && editingPage.id === page.id ? (
+        <div className="flex items-center space-x-1 p-1">
+          <input
+            type="text"
+            value={editingPage.page_name}
+            onChange={(e) => setEditingPage({ ...editingPage, page_name: e.target.value })}
+            className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--sidepanel-input-background))] border border-[hsl(var(--sidepanel-input-border))] rounded text-[hsl(var(--sidepanel-foreground))] focus:outline-none focus:border-[hsl(var(--primary))]"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleUpdatePage();
+              if (e.key === 'Escape') setEditingPage(null);
+            }}
+            autoFocus
+          />
+          <button
+            onClick={handleUpdatePage}
+            className="p-1 text-green-400 hover:bg-green-500/20 rounded"
+          >
+            <Edit size={12} />
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between p-2 hover:bg-[hsl(var(--sidepanel-hover))] rounded cursor-pointer">
+          <div
+            onClick={() => handlePageClick(page.page_name)}
+            className="flex-1 min-w-0"
+          >
+            <div className="text-[hsl(var(--sidepanel-foreground))] text-sm font-medium truncate">
+              # {page.page_name}
+            </div>
+            {/* Show parameters if page has them */}
+            {parseRequiredColumns(page.page_name).length > 0 && (
+              <div className="text-[hsl(var(--sidepanel-muted-foreground))] text-xs mt-1">
+                Parameters: {parseRequiredColumns(page.page_name).join(', ')}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditPage(page);
+              }}
+              className="p-1 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-blue-400 hover:bg-blue-500/20 rounded"
+            >
+              <Edit size={12} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeletePage(page.id);
+              }}
+              className="p-1 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-red-400 hover:bg-red-500/20 rounded"
+            >
+              <Trash2 size={12} />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // Render a group of pages
+  const renderPageGroup = (title: string, pages: AnalyticsPageConfiguration[], icon: React.ReactNode) => {
+    if (pages.length === 0) return null;
+
+    return (
+      <div className="mb-4">
+        <div className="flex items-center space-x-2 px-2 py-1 mb-2">
+          {icon}
+          <h4 className="text-xs font-medium text-[hsl(var(--sidepanel-muted-foreground))] uppercase tracking-wider">
+            {title}
+          </h4>
+        </div>
+        <div className="space-y-1">
+          {pages.map(renderPageItem)}
+        </div>
+      </div>
+    );
+  };
   
   // Sidebar resize handlers
   const handleSidebarResizeStart = useCallback((e: React.MouseEvent) => {
@@ -163,6 +280,9 @@ const AnalyticsModule = () => {
       document.removeEventListener('mouseup', handleSidebarResizeEnd);
     };
   }, [isResizingSidebar, handleSidebarResizeMove, handleSidebarResizeEnd]);
+
+  // Group the pages
+  const groupedPages = groupPages(analyticsPages);
   
   return (
     <div className="flex-1 flex overflow-hidden" ref={containerRef}>
@@ -191,7 +311,7 @@ const AnalyticsModule = () => {
                   type="text"
                   value={newPageName}
                   onChange={(e) => setNewPageName(e.target.value)}
-                  placeholder="Page name"
+                  placeholder="Page name (use $param for parameters)"
                   className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--sidepanel-input-background))] border border-[hsl(var(--sidepanel-input-border))] rounded text-[hsl(var(--sidepanel-foreground))] placeholder-[hsl(var(--sidepanel-muted-foreground))] focus:outline-none focus:border-[hsl(var(--primary))]"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleCreatePage();
@@ -224,63 +344,12 @@ const AnalyticsModule = () => {
               </div>
             )}
             
-            <div className="p-2 space-y-1">
-              {analyticsPages.map((page) => (
-                <div key={page.id} className="group">
-                  {editingPage && editingPage.id === page.id ? (
-                    <div className="flex items-center space-x-1 p-1">
-                      <input
-                        type="text"
-                        value={editingPage.page_name}
-                        onChange={(e) => setEditingPage({ ...editingPage, page_name: e.target.value })}
-                        className="flex-1 px-2 py-1 text-xs bg-[hsl(var(--sidepanel-input-background))] border border-[hsl(var(--sidepanel-input-border))] rounded text-[hsl(var(--sidepanel-foreground))] focus:outline-none focus:border-[hsl(var(--primary))]"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleUpdatePage();
-                          if (e.key === 'Escape') setEditingPage(null);
-                        }}
-                        autoFocus
-                      />
-                      <button
-                        onClick={handleUpdatePage}
-                        className="p-1 text-green-400 hover:bg-green-500/20 rounded"
-                      >
-                        <Edit size={12} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between p-2 hover:bg-[hsl(var(--sidepanel-hover))] rounded cursor-pointer">
-                      <div
-                        onClick={() => handlePageClick(page.page_name)}
-                        className="flex-1 min-w-0"
-                      >
-                        <div className="text-[hsl(var(--sidepanel-foreground))] text-sm font-medium truncate">
-                          # {page.page_name}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditPage(page);
-                          }}
-                          className="p-1 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-blue-400 hover:bg-blue-500/20 rounded"
-                        >
-                          <Edit size={12} />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeletePage(page.id);
-                          }}
-                          className="p-1 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-red-400 hover:bg-red-500/20 rounded"
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+            <div className="p-2">
+              {/* Normal Pages */}
+              {renderPageGroup("Normal", groupedPages.normal, <BarChart3 size={12} className="text-[hsl(var(--sidepanel-muted-foreground))]" />)}
+              
+              {/* Parameterized Pages */}
+              {renderPageGroup("Parameterized", groupedPages.parameterized, <Settings size={12} className="text-[hsl(var(--sidepanel-muted-foreground))]" />)}
               
               {analyticsPages.length === 0 && !loading && (
                 <div className="p-3 text-xs text-[hsl(var(--sidepanel-muted-foreground))] text-center">

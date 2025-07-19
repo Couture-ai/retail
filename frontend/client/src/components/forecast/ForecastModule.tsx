@@ -31,6 +31,9 @@ const ForecastModule = () => {
   const [selectedWeekStartDate, setSelectedWeekStartDate] = useState<string>('');
   const [loadingWeekDates, setLoadingWeekDates] = useState(false);
 
+  // Track if we've auto-opened the default tab
+  const [hasAutoOpenedDefault, setHasAutoOpenedDefault] = useState(false);
+
   // Initialize forecast repository
   const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
 
@@ -38,6 +41,21 @@ const ForecastModule = () => {
   useEffect(() => {
     loadWeekStartDates();
   }, []);
+
+  // Auto-open the default "Global Store-Article Forecast" tab when data is ready
+  useEffect(() => {
+    if (!hasAutoOpenedDefault && selectedWeekStartDate && weekStartDates.length > 0) {
+      // Auto-open the master-table tab
+      const itemId = "master-table";
+      const itemData = {
+        title: "Global Store-Article Forecast",
+        type: 'master-table'
+      };
+      
+      handleSidebarItemClick(itemId, itemData);
+      setHasAutoOpenedDefault(true);
+    }
+  }, [selectedWeekStartDate, weekStartDates, hasAutoOpenedDefault]);
 
   const loadWeekStartDates = async () => {
     try {
@@ -79,7 +97,7 @@ const ForecastModule = () => {
           day: 'numeric'
         })})` : '';
       
-      const baseTitle = data.forecastType === 'consensus-adjustment' ? 'Consensus Adjustment' : 
+      const baseTitle = data.forecastType === 'consensus-adjustment' ? 'Adjustment' : 
                         data.forecastType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       
       forecastTabDataRegistry.set(tabId, {
@@ -94,16 +112,23 @@ const ForecastModule = () => {
     // Create tab for forecast content
     const tabId = `forecast-${itemId}`;
     
-    // Add selected date to the title if available
-    const dateDisplay = selectedWeekStartDate ? 
-      ` (${new Date(selectedWeekStartDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      })})` : '';
+    // Handle different content types
+    let baseTitle = itemData.title;
+    let fullTitle = baseTitle;
     
-    const baseTitle = itemData.title;
-    const fullTitle = baseTitle + dateDisplay;
+    // For adjustment diff views, use the exact title and don't add date
+    if (itemData.type === 'adjustment-diff') {
+      fullTitle = baseTitle; // Keep adjustment title as is
+    } else {
+      // For other forecast views, add date display
+      const dateDisplay = selectedWeekStartDate ? 
+        ` (${new Date(selectedWeekStartDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })})` : '';
+      fullTitle = baseTitle + dateDisplay;
+    }
     
     // Store forecast-specific data in the registry
     forecastTabDataRegistry.set(tabId, {
@@ -112,7 +137,7 @@ const ForecastModule = () => {
       title: fullTitle
     });
     
-    console.log('[ForecastModule] Sidebar item clicked:', { itemId, tabId, selectedWeekStartDate });
+    console.log('[ForecastModule] Sidebar item clicked:', { itemId, tabId, selectedWeekStartDate, itemData });
     
     // Open the forecast content in the editor panel system
     openFileInPanel(tabId);

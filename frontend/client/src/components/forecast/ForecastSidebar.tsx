@@ -20,7 +20,7 @@ const ForecastSidebar = ({
   const sidebarItems = [
     {
       id: "master-table",
-      title: "Master Table",
+      title: "Global Store-Article Forecast",
       description: "View comprehensive forecast data in table format",
       icon: <Table size={16} className="text-blue-400" />
     }
@@ -43,7 +43,7 @@ const ForecastSidebar = ({
       })})` : '';
     
     onItemSelect("consensus-adjustment", {
-      title: "Consensus Adjustment" + dateDisplay,
+      title: "Adjustment" + dateDisplay,
       type: 'consensus-adjustment'
     });
   };
@@ -165,7 +165,7 @@ const ForecastSidebar = ({
         <div className="p-4 flex-shrink-0">
           <h4 className="text-[hsl(var(--sidepanel-foreground))] font-medium text-sm flex items-center">
             <Users size={14} className="text-amber-400 mr-2" />
-            Consensus
+            Adjustments
           </h4>
           <p className="text-[hsl(var(--sidepanel-muted-foreground))] text-xs mt-1">
             Collaborative forecast adjustments
@@ -180,7 +180,7 @@ const ForecastSidebar = ({
                 key={adjustment.id}
                 onClick={() => onItemSelect(adjustment.id, {
                   title: adjustment.title,
-                  type: 'consensus-adjustment'
+                  type: 'adjustment-diff'
                 })}
                 className="w-full text-left p-2 rounded hover:bg-[hsl(var(--sidepanel-hover))] transition-colors duration-200 group"
               >
@@ -213,7 +213,7 @@ const ForecastSidebar = ({
             onClick={handleConsensusAdjustmentClick}
             className="w-full px-3 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-medium rounded-lg hover:bg-[hsl(var(--primary))]/90 transition-colors duration-200 flex items-center justify-center"
           >
-            Draft a consensus adjustment
+            Draft an adjustment
           </button>
         </div>
       </div>
