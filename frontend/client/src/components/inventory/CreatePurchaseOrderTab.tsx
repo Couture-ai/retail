@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { X, Save, Download, Package, AlertCircle, Loader2, Edit2, Check, Minus, Filter, Calendar } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
+import { useProject } from "@/context/ProjectProvider";
 
 interface CreatePurchaseOrderTabProps {
   onClose?: () => void;
@@ -44,7 +45,7 @@ const CreatePurchaseOrderTab: React.FC<CreatePurchaseOrderTabProps> = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingTriggerRef = useRef<HTMLDivElement>(null);
 
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
 
   useEffect(() => {
     loadInitialData();
@@ -504,7 +505,7 @@ const CreatePurchaseOrderTab: React.FC<CreatePurchaseOrderTabProps> = ({
                     Forecast Qty
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-medium text-[hsl(var(--panel-muted-foreground))] uppercase tracking-wider">
-                    Interim Consensus
+                    Running Adjustment
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-medium text-[hsl(var(--panel-muted-foreground))] uppercase tracking-wider">
                     Inventory

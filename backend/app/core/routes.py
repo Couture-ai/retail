@@ -696,7 +696,11 @@ async def execute_forecast_sql_query(
                 status_code=400, 
                 detail="Query contains forbidden operations. Only SELECT queries are allowed."
             )
-        
+        # replace forecast with forecast_fnl only if forecast does not contain in character or underscore using regex
+        # e.g. forecast_qty should not be replaced with forecast_fnl_qty
+        # import re
+        # sql_query = re.sub(r'(?<!_)(forecast)(?!_)', 'forecast_fnl', sql_query)
+
         # Execute the SQL query
         query_obj = text(sql_query)
         results = await postgres_db.fetch_all(query_obj)

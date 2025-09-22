@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, User, MapPin, Calendar, Package, CheckCircle, Clock, AlertCircle, Hash, Loader2 } from 'lucide-react';
 import { ForecastRepository } from "@/repository/forecast_repository";
+import { useProject } from '@/context/ProjectProvider';
 
 interface OrderTabProps {
   orderId: string;
@@ -29,7 +30,7 @@ const OrderTab: React.FC<OrderTabProps> = ({ orderId, orderInfo, panelId }) => {
   const [error, setError] = useState<string | null>(null);
 
   // Initialize forecast repository
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
 
   useEffect(() => {
     loadOrderItems();

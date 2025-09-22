@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingBag, BarChart3, TrendingUp, DollarSign, Loader2, AlertCircle, Package, Info, Database, FileText, Calendar, MapPin, Tag } from 'lucide-react';
 import { ForecastRepository } from "@/repository/forecast_repository";
 import AnalyticsContent from '../analytics/AnalyticsContent';
+import { useProject } from '@/context/ProjectProvider';
 
 interface ArticleTabProps {
   articleId: string;
@@ -42,7 +43,7 @@ const ArticleTab: React.FC<ArticleTabProps> = ({ articleId, panelId }) => {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
 
   // Initialize forecast repository
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
 
   useEffect(() => {
     loadArticleInfo();

@@ -22,6 +22,8 @@ import { ResponsiveBoxPlot } from '@nivo/boxplot';
 import { ForecastRepository } from '../../repository/forecast_repository';
 import { AnalyticsRepository } from '../../repository/analytics_repository';
 import { useWorkspace } from '../../context/WorkspaceProvider';
+import { useProject } from '@/context/ProjectProvider';
+import MonthOnMonthComparison from './MonthOnMonthComparison';
 
 interface AnalyticsContentProps {
   analyticsType?: string;
@@ -152,8 +154,13 @@ const AnalyticsContent: React.FC<AnalyticsContentProps> = ({ analyticsType, embe
     return baseUrl;
   };
   
-  const forecastRepository = new ForecastRepository(getApiBaseUrl());
+  const {forecastRepository} = useProject();
   const analyticsRepository = new AnalyticsRepository(getApiBaseUrl());
+
+  // Handle special pages that should render custom components instead of the dashboard grid
+  if (analyticsType === 'Month-on-Month Comparison') {
+    return <MonthOnMonthComparison />;
+  }
 
   // Get page name for saving configuration
   const getPageName = () => {

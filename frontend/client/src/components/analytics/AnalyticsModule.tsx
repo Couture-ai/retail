@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useWorkspace } from "@/context/WorkspaceProvider";
-import { BarChart3, Plus, Edit, Trash2, Loader2, Settings } from "lucide-react";
+import { BarChart3, Plus, Edit, Trash2, Loader2, Settings, TrendingUp } from "lucide-react";
 import SidebarSplitter from "../ui/SidebarSplitter";
 import EditorLayout from "../code/EditorLayout";
 import { AnalyticsRepository } from "../../repository/analytics_repository";
@@ -345,6 +345,30 @@ const AnalyticsModule = () => {
             )}
             
             <div className="p-2">
+              {/* Month-on-Month Comparison */}
+              <div className="mb-4">
+                <div className="flex items-center space-x-2 px-2 py-1 mb-2">
+                  <TrendingUp size={12} className="text-[hsl(var(--sidepanel-muted-foreground))]" />
+                  <h4 className="text-xs font-medium text-[hsl(var(--sidepanel-muted-foreground))] uppercase tracking-wider">
+                    Comparison
+                  </h4>
+                </div>
+                <div className="space-y-1">
+                  <div className="group">
+                    <div className="flex items-center justify-between p-2 hover:bg-[hsl(var(--sidepanel-hover))] rounded cursor-pointer">
+                      <div
+                        onClick={() => handlePageClick('Month-on-Month Comparison')}
+                        className="flex-1 min-w-0"
+                      >
+                        <div className="text-[hsl(var(--sidepanel-foreground))] text-sm font-medium truncate">
+                          # Month-on-Month Comparison
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               {/* Normal Pages */}
               {renderPageGroup("Normal", groupedPages.normal, <BarChart3 size={12} className="text-[hsl(var(--sidepanel-muted-foreground))]" />)}
               

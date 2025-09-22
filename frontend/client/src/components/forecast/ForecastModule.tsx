@@ -5,6 +5,7 @@ import EditorLayout from "../code/EditorLayout";
 import SidebarSplitter from "../ui/SidebarSplitter";
 import { ChevronRight } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
+import { useProject } from "@/context/ProjectProvider";
 
 // Global registry to store forecast tab data
 export const forecastTabDataRegistry = new Map<string, {
@@ -35,7 +36,7 @@ const ForecastModule = () => {
   const [hasAutoOpenedDefault, setHasAutoOpenedDefault] = useState(false);
 
   // Initialize forecast repository
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
 
   // Load week start dates on mount
   useEffect(() => {

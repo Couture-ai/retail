@@ -26,10 +26,12 @@ interface ApiError {
 
 class ForecastRepository {
     private apiEndpoint: string;
+    private project: string;
     private axiosInstance: AxiosInstance;
 
-    constructor(apiEndpoint: string) {
+    constructor(apiEndpoint: string, project: string = '') {
         this.apiEndpoint = apiEndpoint;
+        this.project = project;
         this.axiosInstance = axios.create({
             baseURL: apiEndpoint,
             timeout: 30000, // 30 seconds timeout
@@ -37,6 +39,33 @@ class ForecastRepository {
                 'Content-Type': 'application/json',
             }
         });
+    }
+
+    /**
+     * Transform SQL query based on project
+     * For Fashion & Lifestyle, replace 'forecast' table name with 'forecast_fnl'
+     * @param {string} sqlQuery - Original SQL query
+     * @returns {string} - Transformed SQL query
+     */
+    private transformSqlForProject(sqlQuery: string): string {
+        if (this.project === 'Fashion & Lifestyle') {
+            // Replace 'forecast' with 'forecast_fnl' only when it's an independent word
+            // This regex matches 'forecast' when it's not surrounded by alphanumeric or underscore characters
+            return sqlQuery.replace(/\bforecast\b/g, 'forecast_fnl');
+        }
+        return sqlQuery;
+    }
+
+    /**
+     * Transform SQL query to use forecast_new table
+     * This replaces 'forecast' with 'forecast_new' when specifically requested
+     * @param {string} sqlQuery - Original SQL query
+     * @returns {string} - Transformed SQL query
+     */
+    private transformSqlForForecastNew(sqlQuery: string): string {
+        // Replace 'forecast' with 'forecast_new' only when it's an independent word
+        // This regex matches 'forecast' when it's not surrounded by alphanumeric or underscore characters
+        return sqlQuery.replace(/\bforecast\b/g, 'forecast_new');
     }
 
     /**
@@ -60,10 +89,64 @@ class ForecastRepository {
                 throw new Error('SQL query is required');
             }
 
+            // Transform SQL query based on project
+            const transformedQuery = this.transformSqlForProject(sql_query);
+
             // Make API call
             const response: AxiosResponse = await this.axiosInstance.get('/core/forecast-table-sql', {
                 params: {
-                    sql_query: sql_query
+                    sql_query: transformedQuery
+                }
+            });
+
+            // Set success data
+            if (setData) setData(response.data);
+            
+            return response.data;
+
+        } catch (error) {
+            // Handle errors
+            const apiError = error as ApiError;
+            const errorMessage = apiError.response?.data?.detail || apiError.message || 'An error occurred';
+            
+            if (setError) setError(errorMessage);
+            if (setData) setData(null);
+            
+            throw error;
+        } finally {
+            // Clear loading state
+            if (setLoading) setLoading(false);
+        }
+    }
+
+    /**
+     * Execute SQL query against forecast_new table (forecast variants)
+     * @param {SqlQueryData} data - Contains sql_query string
+     * @param {StateSetters} stateSetters - Contains setLoading, setError, setData methods
+     * @returns {Promise<any>} - API response data
+     */
+    async executeForecastNewSqlQuery(data: SqlQueryData, stateSetters: StateSetters): Promise<any> {
+        const { setLoading, setError, setData } = stateSetters;
+        
+        try {
+            // Set loading state
+            if (setLoading) setLoading(true);
+            if (setError) setError(null);
+
+            // Extract sql_query from data
+            const { sql_query } = data;
+            
+            if (!sql_query) {
+                throw new Error('SQL query is required');
+            }
+
+            // Transform SQL query to use forecast_new table
+            const transformedQuery = this.transformSqlForForecastNew(sql_query);
+
+            // Make API call
+            const response: AxiosResponse = await this.axiosInstance.get('/core/forecast-table-sql', {
+                params: {
+                    sql_query: transformedQuery
                 }
             });
 

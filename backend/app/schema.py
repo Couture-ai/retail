@@ -132,3 +132,95 @@ class AnalyticsPageConfiguration(Base):
     page_name = Column(String)
     attributes = Column(JSON)
     page_config = Column(JSON)
+
+
+class ForecastFnl(Base):
+    __tablename__ = "forecast_fnl"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    p1_dc = Column(String)
+    format = Column(String)
+    city = Column(String)
+    state = Column(String)
+    segment_code = Column(String)
+    consensus_qty = Column(Float)
+    brick_description = Column(String)
+    forecast_qty = Column(Float)
+    brand = Column(String)
+    segment = Column(String)
+    division = Column(String)
+    brick_code = Column(String)
+    class_code = Column(String)
+    division_code = Column(String)
+    vertical = Column(String)
+    store_no = Column(String)
+    batchno = Column(String)
+    status = Column(String)
+    article_id = Column(String)
+    month_year = Column(String)
+    pin_code = Column(String)
+    region = Column(String)
+    wom = Column(Integer)
+    family_code = Column(String)
+    class_description = Column(String, name="class")
+    sd = Column(String)
+    article_description = Column(String)
+    kvi = Column(String)
+    npi = Column(String)
+    sold_qty = Column(Float)
+    
+    # Additional columns
+    week_start_date = Column(Date)
+    super_category = Column(String)
+    store_type = Column(String)  # online/offline
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    attributes = Column(JSON)
+
+class ForecastVariants(Base):
+    __tablename__ = "forecast_new"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    p1_dc = Column(String)
+    format = Column(String)
+    city = Column(String)
+    state = Column(String)
+    segment_code = Column(String)
+    consensus_qty = Column(Float)
+    brick_description = Column(String)
+    forecast_qty = Column(JSON)
+    brand = Column(String)
+    segment = Column(String)
+    division = Column(String)
+    brick_code = Column(String)
+    class_code = Column(String)
+    division_code = Column(String)
+    vertical = Column(String)
+    store_no = Column(String)
+    batchno = Column(String)
+    status = Column(String)
+    article_id = Column(String)
+    month_year = Column(String)
+    pin_code = Column(String)
+    region = Column(String)
+    wom = Column(Integer)
+    family_code = Column(String)
+    class_description = Column(String, name="class")
+    sd = Column(String)
+    article_description = Column(String)
+    kvi = Column(String)
+    npi = Column(String)
+    sold_qty = Column(Float)
+    
+    # Additional columns
+    week_start_date = Column(Date)
+    super_category = Column(String)
+    store_type = Column(String)  # online/offline
+    # channel is Character varying 255
+    channel = Column(String)
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+

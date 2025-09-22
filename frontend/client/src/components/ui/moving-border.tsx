@@ -1,11 +1,5 @@
 "use client";
 import React from "react";
-import {
-  motion,
-  useAnimationFrame,
-  useMotionValue,
-} from "framer-motion";
-import { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 
@@ -50,14 +44,6 @@ export const MovingBorderButton = React.forwardRef<
           className="absolute inset-1 border border-purple-300/20 dark:border-purple-400/20"
           style={{ borderRadius: `calc(${borderRadius} * 0.8)` }}
         />
-        
-        {/* Moving border container */}
-        <div
-          className="absolute inset-1"
-          style={{ borderRadius: `calc(${borderRadius} * 0.8)` }}
-        >
-          <MovingBorder duration={duration} rx="15%" ry="15%" />
-        </div>
 
         <Slot
           ref={ref}
@@ -96,14 +82,6 @@ export const MovingBorderButton = React.forwardRef<
         className="absolute inset-1 border border-purple-300/20 dark:border-purple-400/20"
         style={{ borderRadius: `calc(${borderRadius} * 0.8)` }}
       />
-      
-      {/* Moving border container */}
-      <div
-        className="absolute inset-1"
-        style={{ borderRadius: `calc(${borderRadius} * 0.8)` }}
-      >
-        <MovingBorder duration={duration} rx="15%" ry="15%" />
-      </div>
 
       <div
         className={cn(
@@ -120,59 +98,4 @@ export const MovingBorderButton = React.forwardRef<
   );
 });
 
-MovingBorderButton.displayName = "MovingBorderButton";
-
-export const MovingBorder = ({
-  duration = 3000,
-  rx,
-  ry,
-  ...otherProps
-}: {
-  duration?: number;
-  rx?: string;
-  ry?: string;
-  [key: string]: any;
-}) => {
-  const pathRef = useRef<SVGRectElement>(null);
-  const progress = useMotionValue<number>(0);
-
-  useAnimationFrame((time) => {
-    const length = pathRef.current?.getTotalLength();
-    if (length) {
-      const pxPerMillisecond = length / duration;
-      progress.set((time * pxPerMillisecond) % length);
-    }
-  });
-
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="none"
-      className="absolute h-full w-full"
-      width="100%"
-      height="100%"
-      {...otherProps}
-    >
-      <motion.rect
-        fill="none"
-        width="100%"
-        height="100%"
-        rx={rx}
-        ry={ry}
-        ref={pathRef}
-        stroke="#a855f7"
-        strokeWidth="1"
-        strokeLinecap="round"
-        strokeDasharray="20 80"
-        animate={{
-          strokeDashoffset: [0, -100],
-        }}
-        transition={{
-          duration: duration / 1000,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      />
-    </svg>
-  );
-}; 
+MovingBorderButton.displayName = "MovingBorderButton"; 

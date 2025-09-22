@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
 import AnalyticsContent from '../analytics/AnalyticsContent';
+import { useProject } from "@/context/ProjectProvider";
 
 interface StoreTabProps {
   storeId: string;
@@ -27,7 +28,7 @@ const StoreTab = ({ storeId, panelId }: StoreTabProps) => {
   const [hierarchy, setHierarchy] = useState<string[]>([]);
   
   // Initialize forecast repository
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
   
   // Load hierarchy metadata first
   useEffect(() => {

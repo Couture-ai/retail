@@ -18,3 +18,4 @@ class RedisDatabase:
     #     )
     def get_redis_db(self):
         return self.redis_db
+

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ForecastRepository } from '@/repository/forecast_repository';
 import { Minus, Plus, GitBranch, Clock, User } from 'lucide-react';
+import { useProject } from '@/context/ProjectProvider';
 
 export interface DiffRow {
   storeNo: string;
@@ -31,7 +32,7 @@ const AdjustmentDiffView: React.FC<AdjustmentDiffViewProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
 
   // Generate random adjustment data based on adjustment ID
   const generateRandomAdjustment = (data: any[], adjustmentId: string): DiffRow[] => {

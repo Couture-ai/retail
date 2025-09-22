@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Tag, Layers, Box, ShoppingBag, BarChart3, TrendingUp, DollarSign, Loader2, AlertCircle } from 'lucide-react';
 import { ForecastRepository } from "@/repository/forecast_repository";
+import { useProject } from '@/context/ProjectProvider';
 
 interface ProductTabProps {
   productId: string;
@@ -27,7 +28,7 @@ const ProductTab: React.FC<ProductTabProps> = ({ productId, panelId }) => {
   const [error, setError] = useState<string | null>(null);
 
   // Initialize forecast repository
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
 
   useEffect(() => {
     loadProductInfo();

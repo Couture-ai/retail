@@ -24,6 +24,7 @@ import { ForecastRepository } from "@/repository/forecast_repository";
 import { ResponsiveBar } from '@nivo/bar';
 import SalesChart from './SalesChart';
 import AdjustmentDiffView, { DiffRow } from './AdjustmentDiffView';
+import { useProject } from "@/context/ProjectProvider";
 
 interface ForecastMetadata {
   essential_columns: string[];
@@ -170,7 +171,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     return adjustmentValues[rowId] || null;
   };
   
-  // Calculate the difference between Adjusted Consensus and Interim Consensus
+  // Calculate the difference between Your Adjustment and Running Adjustment
   const getAdjustmentDifference = (record: ForecastRecord, index: number): number | null => {
     const adjustedValue = getAdjustmentValue(record, index);
     if (adjustedValue === null || adjustedValue === 0) return null;
@@ -416,24 +417,30 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
         return 'Forecasted Qty';
       }
       if (column === 'consensus_qty') {
-        return 'Interim Consensus';
+        return 'Running Adjustment';
       }
       if (column === 'Adjustment') {
-        return 'Adjusted Consensus';
+        return 'Your Adjustment';
       }
       // Handle sigma columns for consensus mode
       if (column.startsWith('σ_forecast_qty')) {
         return column.replace('σ_forecast_qty', 'Σ Forecasted Qty');
       }
       if (column.startsWith('σ_consensus_qty')) {
-        return column.replace('σ_consensus_qty', 'Σ Interim Consensus');
+        return column.replace('σ_consensus_qty', 'Σ Running Adjustment');
       }
-      if (column.startsWith('Σforecast_qty')) {
-        return column.replace('Σforecast_qty', 'Σ Forecasted Qty');
-      }
-      if (column.startsWith('Σconsensus_qty')) {
-        return column.replace('Σconsensus_qty', 'Σ Interim Consensus');
-      }
+          if (column.startsWith('Σforecast_qty')) {
+      return column.replace('Σforecast_qty', 'Σ Forecasted Qty');
+    }
+    if (column.startsWith('Σconsensus_qty')) {
+      return column.replace('Σconsensus_qty', 'Σ Running Adjustment');
+    }
+    if (column.startsWith('Σtrigger_qty')) {
+      return column.replace('Σtrigger_qty', 'Σ Trigger Qty');
+    }
+    if (column.startsWith('Σmax_qty')) {
+      return column.replace('Σmax_qty', 'Σ Max Qty');
+    }
     }
     
     // Handle general sigma prefixes for group by mode (non-consensus)
@@ -443,7 +450,15 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     
     // Handle consensus_qty in non-consensus mode (shouldn't normally appear but just in case)
     if (column === 'consensus_qty') {
-      return 'Interim Consensus';
+      return 'Running Adjustment';
+    }
+    
+    // Handle trigger_qty and max_qty regular columns
+    if (column === 'trigger_qty') {
+      return 'Trigger Qty';
+    }
+    if (column === 'max_qty') {
+      return 'Max Qty';
     }
     
     return column;
@@ -465,10 +480,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
   const tableContainerRef = useRef<HTMLDivElement>(null);
   
   // Initialize forecast repository - use useMemo to prevent recreation on every render
-  const forecastRepo = useMemo(() => 
-    new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'),
-    []
-  );
+  const {forecastRepository: forecastRepo} = useProject();
   
   // Load metadata and week dates on component mount
   useEffect(() => {
@@ -629,7 +641,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
           console.log('[ForecastMasterTable] Received response:', response);
           if (response && response.data) {
             console.log('[ForecastMasterTable] Adding data:', response.data.length, 'records');
-            setData(prevData => [...prevData, ...response.data]);
+            // Apply random generation for trigger_qty and max_qty
+            const enhancedData = response.data.map((record: ForecastRecord) => generateRandomQtyValues(record));
+            setData(prevData => [...prevData, ...enhancedData]);
             setHasMore(response.data.length === 100);
             setPage(prevPage => prevPage + 1);
           } else {
@@ -723,6 +737,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
   };
   
   const setupColumnGroups = (metadata: ForecastMetadata) => {
+    // Add trigger_qty and max_qty as client-side columns (not from database)
+    const clientSideColumns = ['trigger_qty', 'max_qty'];
+    
     // Don't exclude card attributes - keep them in regular columns too
     const groups: ColumnGroup[] = [
       {
@@ -739,10 +756,13 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
       },
       {
         name: "Forecast Parameters",
-        columns: metadata.essential_columns.filter(col => 
-          !metadata.store_attributes.includes(col) && 
-          !metadata.product_attributes.includes(col)
-        ),
+        columns: [
+          ...metadata.essential_columns.filter(col => 
+            !metadata.store_attributes.includes(col) && 
+            !metadata.product_attributes.includes(col)
+          ),
+          ...clientSideColumns
+        ],
         color: "bg-purple-500/10 border-purple-500/30",
         expanded: true
       }
@@ -753,6 +773,10 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     // Initialize column visibility settings - all columns visible by default
     const initialVisibility: { [key: string]: boolean } = {};
     metadata.essential_columns.forEach(col => {
+      initialVisibility[col] = true;
+    });
+    // Add client-side columns to visibility settings
+    clientSideColumns.forEach(col => {
       initialVisibility[col] = true;
     });
     setVisibleColumnSettings(initialVisibility);
@@ -857,7 +881,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
           if (response && response.data) {
-            setData(response.data);
+            // Apply random generation for trigger_qty and max_qty
+            const enhancedData = response.data.map((record: ForecastRecord) => generateRandomQtyValues(record));
+            setData(enhancedData);
             setHasMore(response.data.length === 100);
             setPage(1);
           }
@@ -893,7 +919,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
       const pinnedColumns = [...groupByColumns];
       
       // Always pin sigma columns after group columns (both in consensus and non-consensus mode)
-      pinnedColumns.push('Σforecast_qty', 'Σconsensus_qty');
+      pinnedColumns.push('Σforecast_qty', 'Σconsensus_qty', 'Σtrigger_qty', 'Σmax_qty');
       
       // Add adjustment column to the end of pinned columns in consensus mode
       const finalColumns = consensusMode ? [...pinnedColumns, 'Adjustment'] : [...pinnedColumns];
@@ -905,17 +931,28 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
       // Regular mode
       const allVisibleColumns = getAllVisibleColumns();
       
-      // Pin both forecast_qty and consensus_qty columns at the start if they're visible
-      const pinnedColumns = ['forecast_qty', 'consensus_qty'].filter(col => visibleColumnSettings[col] !== false);
+      // Pin forecast_qty and consensus_qty columns at the start if they're visible
+      const basePinnedColumns = ['forecast_qty', 'consensus_qty'].filter(col => visibleColumnSettings[col] !== false);
       
-      // All other columns go after the pinned columns
-      const scrollableColumns = allVisibleColumns.filter(col => !pinnedColumns.includes(col));
+      // Add trigger_qty and max_qty to pinned columns if they're visible
+      const additionalPinnedColumns = ['trigger_qty', 'max_qty'].filter(col => visibleColumnSettings[col] !== false);
+      
+      // All pinned columns combined
+      const allPinnedColumns = [...basePinnedColumns, ...additionalPinnedColumns];
+      
+      // All other columns go after the pinned columns (excluding pinned columns and adjustment)
+      const scrollableColumns = allVisibleColumns.filter(col => 
+        !allPinnedColumns.includes(col) && col !== 'Adjustment'
+      );
       
       // Only include pinned columns if they're actually visible
-      const visiblePinnedColumns = pinnedColumns.filter(col => allVisibleColumns.includes(col));
+      const visibleBasePinnedColumns = basePinnedColumns.filter(col => allVisibleColumns.includes(col));
+      const visibleAdditionalPinnedColumns = additionalPinnedColumns.filter(col => allVisibleColumns.includes(col));
       
-      // Add adjustment column to the end of pinned columns in consensus mode
-      const finalColumns = consensusMode ? [...visiblePinnedColumns, 'Adjustment', ...scrollableColumns] : [...visiblePinnedColumns, ...scrollableColumns];
+      // Build final column order: base pinned columns, adjustment (if consensus), additional pinned columns, scrollable columns
+      const finalColumns = consensusMode 
+        ? [...visibleBasePinnedColumns, 'Adjustment', ...visibleAdditionalPinnedColumns, ...scrollableColumns]
+        : [...visibleBasePinnedColumns, ...visibleAdditionalPinnedColumns, ...scrollableColumns];
       
       return {
         allColumns: finalColumns
@@ -928,7 +965,9 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     if (typeof value === 'number') {
       // Round up forecast_qty and consensus_qty to integers
       if (column === 'forecast_qty' || column === 'consensus_qty' || 
-          column === 'Σforecast_qty' || column === 'Σconsensus_qty') {
+          column === 'Σforecast_qty' || column === 'Σconsensus_qty' || 
+          column === 'trigger_qty' || column === 'max_qty' || 
+          column === 'Σtrigger_qty' || column === 'Σmax_qty') {
         return Math.ceil(value).toLocaleString();
       }
       return value.toLocaleString();
@@ -1197,11 +1236,11 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     }
   };
   
-  // Handle unlink button click (interim consensus is non-zero)
+  // Handle unlink button click (Running Adjustment is non-zero)
   const handleUnlinkClick = (record: ForecastRecord, index: number) => {
     const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
     
-    // Set the adjustment value to rounded up interim consensus
+    // Set the adjustment value to rounded up Running Adjustment
     // Use aggregated value in group by mode
     const consensusValue = isGroupByMode ? (record['Σconsensus_qty'] || 0) : (record.consensus_qty || 0);
     const interimConsensus = Math.ceil(consensusValue);
@@ -1214,7 +1253,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     setAdjustmentEditingRows(prev => new Set(Array.from(prev).concat(rowId)));
   };
   
-  // Handle package-plus button click (interim consensus is zero)
+  // Handle package-plus button click (Running Adjustment is zero)
   const handlePackagePlusClick = (record: ForecastRecord, index: number) => {
     const rowId = record.id || `${record.store_no || ''}-${record.article_id || ''}-${index}`;
     
@@ -1284,6 +1323,32 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     }
     
     return column;
+  };
+
+  // Function to generate random trigger_qty and max_qty values (always generated client-side)
+  const generateRandomQtyValues = (record: ForecastRecord): ForecastRecord => {
+    const enhancedRecord = { ...record };
+    
+    // Get forecast_qty value (handle both regular and group-by modes)
+    const forecastQty = isGroupByMode ? (record['Σforecast_qty'] || 0) : (record.forecast_qty || 0);
+    
+    // Always generate trigger_qty (random between forecast_qty/2 and forecast_qty)
+    const triggerMin = forecastQty / 2;
+    const triggerMax = forecastQty;
+    enhancedRecord.trigger_qty = triggerMin + Math.random() * (triggerMax - triggerMin);
+    
+    // Always generate max_qty (random between forecast_qty+10 and forecast_qty*1.5)
+    const maxMin = forecastQty + 10;
+    const maxMax = forecastQty * 1.5;
+    enhancedRecord.max_qty = maxMin + Math.random() * (maxMax - maxMin);
+    
+    // For group-by mode, also generate Σtrigger_qty and Σmax_qty
+    if (isGroupByMode) {
+      enhancedRecord['Σtrigger_qty'] = triggerMin + Math.random() * (triggerMax - triggerMin);
+      enhancedRecord['Σmax_qty'] = maxMin + Math.random() * (maxMax - maxMin);
+    }
+    
+    return enhancedRecord;
   };
   
   // Helper function to render card content
@@ -2055,8 +2120,8 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                       const group = columnGroups.find(g => g.columns.includes(column));
                       const isSearchActive = activeSearches[column];
                     const isPinnedColumn = isGroupByMode ? 
-                      (groupByColumns.includes(column) || ['Σforecast_qty', 'Σconsensus_qty'].includes(column)) : 
-                      ['forecast_qty', 'consensus_qty'].includes(column);
+                      (groupByColumns.includes(column) || ['Σforecast_qty', 'Σconsensus_qty', 'Σtrigger_qty', 'Σmax_qty'].includes(column)) : 
+                      ['forecast_qty', 'consensus_qty', 'trigger_qty', 'max_qty'].includes(column);
                     const isAdjustmentColumn = column === 'Adjustment';
                       
                       return (
@@ -2194,8 +2259,8 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                       {/* All Data Columns */}
                       {allColumns.map((column) => {
                         const isPinnedColumn = isGroupByMode ? 
-                          (groupByColumns.includes(column) || ['Σforecast_qty', 'Σconsensus_qty'].includes(column)) : 
-                          ['forecast_qty', 'consensus_qty'].includes(column);
+                          (groupByColumns.includes(column) || ['Σforecast_qty', 'Σconsensus_qty', 'Σtrigger_qty', 'Σmax_qty'].includes(column)) : 
+                          ['forecast_qty', 'consensus_qty', 'trigger_qty', 'max_qty'].includes(column);
                         const isAdjustmentColumn = column === 'Adjustment';
                         
                       return (
@@ -2283,7 +2348,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                                       // Use aggregated value in group by mode
                                       const consensusValue = isGroupByMode ? (record['Σconsensus_qty'] || 0) : (record.consensus_qty || 0);
                                       return consensusValue !== 0 ? (
-                                        // Show unlink button when interim consensus is non-zero
+                                        // Show unlink button when Running Adjustment is non-zero
                                         <button
                                           onClick={(e) => {
                                             e.stopPropagation();
@@ -2292,12 +2357,12 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                                             handleUnlinkClick(record, index);
                                           }}
                                           className="p-1 text-xs bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] rounded hover:bg-[hsl(var(--table-button-hover))] focus:outline-none flex-shrink-0 h-[28px] w-[28px] flex items-center justify-center border border-[hsl(var(--table-border))]"
-                                          title="Adjust from Interim Consensus"
+                                          title="Adjust from Running Adjustment"
                                         >
                                           <Unlink size={14} />
                                         </button>
                                       ) : (
-                                        // Show package-plus button when interim consensus is zero
+                                        // Show package-plus button when Running Adjustment is zero
                                         <button
                                           onClick={(e) => {
                                             e.stopPropagation();
@@ -2398,7 +2463,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                     : 'text-[hsl(var(--table-muted-foreground))] hover:text-[hsl(var(--table-foreground))] hover:bg-[hsl(var(--table-row-hover))]'
                 }`}
               >
-                Consensus Waterfall
+                Adjusted Waterfall
               </button>
             </div>
             
@@ -2427,7 +2492,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
               ) : (
                 <div className="h-full flex flex-col">
                   <div className="mb-4">
-                    <h3 className="text-[hsl(var(--table-foreground))] font-medium text-lg mb-1">Consensus Waterfall</h3>
+                    <h3 className="text-[hsl(var(--table-foreground))] font-medium text-lg mb-1">Adjusted Waterfall</h3>
                     <p className="text-[hsl(var(--table-muted-foreground))] text-sm">
                       Forecast adjustments breakdown showing cumulative impact
                     </p>

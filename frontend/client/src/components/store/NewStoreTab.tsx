@@ -10,6 +10,7 @@ import {
   Package
 } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
+import { useProject } from "@/context/ProjectProvider";
 
 interface NewStoreTabProps {
   onClose: () => void;
@@ -191,7 +192,7 @@ const NewStoreTab = ({ onClose, onSave }: NewStoreTabProps) => {
   const [loadingAssortment, setLoadingAssortment] = useState(false);
   const [assortmentError, setAssortmentError] = useState<string | null>(null);
 
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
 
   // Store attributes and location hierarchy
   const storeAttributes = ["region", "state", "city", "pin_code", "p1_dc", "store_no", "store_type", "format"];

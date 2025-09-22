@@ -10,6 +10,7 @@ import {
   Building2
 } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
+import { useProject } from "@/context/ProjectProvider";
 
 interface ProductFormData {
   // Category hierarchy attributes
@@ -209,7 +210,7 @@ const NewProductTab = ({ onClose, onSave }: NewProductTabProps) => {
   const [loadingAssortment, setLoadingAssortment] = useState(false);
   const [assortmentError, setAssortmentError] = useState<string | null>(null);
 
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  const {forecastRepository: forecastRepo} = useProject();
 
   // Product hierarchy - order matters for dependency loading
   const productHierarchy = ["super_category", "vertical", "division", "segment", "brick_description", "brand", "article_description", "article_id"];

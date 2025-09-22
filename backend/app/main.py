@@ -13,6 +13,7 @@ from auth.routes import auth_router, user_router
 from core.routes import router as core_router
 from settings import Settings
 from auth.routes.init_script import init_router
+from utils.upload import router as utils_router
 from db import AsyncClickHouseConnection, RedisDatabase
 
 
@@ -128,6 +129,7 @@ async def home():
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(core_router)
+app.include_router(utils_router)
 
 app.include_router(init_router)
 

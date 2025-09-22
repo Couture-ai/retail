@@ -1,6 +1,7 @@
 import { useWorkspace } from "@/context/WorkspaceProvider";
 import { useTheme } from "@/context/ThemeProvider";
 import { useAgent } from "@/context/AgentProvider";
+import { useProject } from "@/context/ProjectProvider";
 import { IconButton } from "../ui/icon-button";
 import { Module } from "@/types";
 import { 
@@ -11,6 +12,7 @@ import {
   PieChart, 
   DollarSign, 
   Settings,
+  Settings2,
   Users,
   Sun,
   Moon,
@@ -32,14 +34,23 @@ import {
   TrendingUpDown,
   BarChart3,
   Rabbit,
-  Boxes
+  Boxes,
+  Rocket
 } from "lucide-react";
 import { EnhancedTooltip } from "@/components/ui/enhanced-tooltip";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MovingBorderButton } from "@/components/ui/moving-border";
 import { useState, useEffect } from "react";
 
+// --- Project config logic ---
+const projectConfigs: Record<string, { stage: 'get-started' | 'post-get-started' }> = {
+  'Reliance Digital': { stage: 'post-get-started' },
+  'Reliance Jewels': { stage: 'get-started' },
+  'Fashion & Lifestyle': { stage: 'post-get-started' },
+};
+
 const Sidebar = () => {
+  const { selectedProject, projectToSlug } = useProject();
   const { activeModule, setActiveModule } = useWorkspace();
   const { theme, toggleTheme } = useTheme();
   const { toggleAgentPanel, isAgentPanelOpen } = useAgent();
@@ -50,9 +61,10 @@ const Sidebar = () => {
 
   const handleModuleClick = (module: Module) => {
     setActiveModule(module);
-    // Update the URL to reflect the active module with prefix
-    const modulePath = module === "home" ? "" : module;
-    window.history.pushState({}, "", prefixedPath(`/${modulePath}`));
+    // Update the URL to reflect the active module with slug-based routing
+    const slug = projectToSlug(selectedProject);
+    const modulePath = module === "home" ? "" : `/${module}`;
+    window.history.pushState({}, "", prefixedPath(`/${slug}${modulePath}`));
   };
 
   // Creator's Studio icon with beta indicator
@@ -62,28 +74,8 @@ const Sidebar = () => {
     </div>
   );
 
+  // Only show navItems if not in get-started stage
   const navItems = [
-    // { 
-    //   id: "chat", 
-    //   name: "Channels",
-    //   icon: <BotMessageSquare size={17} />, 
-    //   module: "chat" as Module,
-    //   description: "Chat with Business Intelligence Agents and view conversations between bots" 
-    // },
-    // { 
-    //   id: "docs", 
-    //   name: "Plan & Document",
-    //   icon: <Library size={17} />, 
-    //   module: "docs" as Module,
-    //   description: "Create and manage project documentation and notes" 
-    // },
-    // { 
-    //   id: "code", 
-    //   name: "Code",
-    //   icon: <Code size={17} />, 
-    //   module: "code" as Module,
-    //   description: "View and edit code files with syntax highlighting" 
-    // },
     { 
       id: "forecast", 
       name: "Forecast Center",
@@ -114,55 +106,57 @@ const Sidebar = () => {
       description: "Manage store locations, configurations, and regional settings for your retail network." 
     },
     { 
+      id: "rules", 
+      name: "Business Rules",
+      icon: <Settings2 size={18} />, 
+      module: "rules" as Module,
+      description: "Configure business rules, policies, and automated workflows for your operations." 
+    },
+    { 
       id: "analytics", 
       name: "Analytics Hub",
       icon: <BarChart3 size={18} />, 
       module: "analytics" as Module,
       description: "Deep insights and comprehensive reporting on sales performance, trends, and business metrics." 
     },
-    // { 
-    //   id: "task", 
-    //   name: "Tasks",
-    //   icon: <CheckSquare size={17} />, 
-    //   module: "task" as Module,
-    //   description: "Manage and track tasks and project progress" 
-    // },
-    // { 
-    //   id: "chart", 
-    //   name: "Monitor",
-    //   icon: <Activity size={17} />, 
-    //   module: "chart" as Module,
-    //   description: "Visualize metrics and data with interactive charts" 
-    // },
-    // { 
-    //   id: "organization", 
-    //   name: "Orchestration",
-    //   icon: <BrainCircuit size={17} />, 
-    //   module: "organization" as Module,
-    //   description: "View the organization structure and bot hierarchy" 
-    // },
-    // { 
-    //   id: "budget", 
-    //   name: "Budget",
-    //   icon: <PiggyBank size={17} />, 
-    //   module: "budget" as Module,
-    //   description: "Track and manage project budget and expenses" 
-    // },
-
   ];
+
+  const projectConfig = projectConfigs[selectedProject] || { stage: 'post-get-started' };
+  const showGetStarted = projectConfig.stage === 'get-started';
+  const showNavItems = true; // Always show nav items, but disable if in get-started
+  const disableNavItems = projectConfig.stage === 'get-started';
 
   return (
     <TooltipProvider>
       <div className="w-10 bg-[hsl(var(--sidebar-background))] flex flex-col items-center py-4 border-r border-[hsl(var(--sidebar-border))]">
+        {/* Get Started button above Home, only if in get-started stage */}
+        {showGetStarted && (
+          <EnhancedTooltip 
+            trigger={
+              <IconButton
+                key="get-started"
+                variant={activeModule === "get-started" ? "active" : "default"}
+                onClick={() => handleModuleClick("get-started" as Module)}
+                aria-label="get-started"
+                className="mb-3"
+              >
+                <Rocket size={18} />
+              </IconButton>
+            }
+            title="Get Started"
+            icon={<Rocket size={18} />}
+            description="Begin onboarding and setup for your project"
+          />
+        )}
         {/* Home button at top */}
         <EnhancedTooltip 
           trigger={
             <IconButton
               key="home"
               variant={activeModule === "home" ? "active" : "default"}
-              onClick={() => handleModuleClick("home")}
+              onClick={disableNavItems ? undefined : () => handleModuleClick("home")}
               aria-label="home"
-              className="mb-6"
+              className={`mb-6 ${disableNavItems ? 'opacity-50 pointer-events-none' : ''}`}
             >
               <Home size={18} />
             </IconButton>
@@ -171,47 +165,55 @@ const Sidebar = () => {
           icon={<Home size={18} />}
           description="Return to the home dashboard view"
         />
-        
         {/* Center the main navigation items */}
         <div className="flex flex-col items-center space-y-2 flex-1 justify-center">
-          {navItems.map((item) => (
-            <EnhancedTooltip
-              key={item.id}
-              trigger={
-                <IconButton
-                  variant={"default"}
-                  className={`relative`}
-                  onClick={() => handleModuleClick(item.module)}
-                  aria-label={item.id}
-                >
-                  {item.icon}
-                  {/* Red warning indicator */}
-                  {item.hasAttention && (
-                    <div className="absolute top-1 left-1 text-red-500 text-sm font-bold">
-                      !
+          {navItems.map((item) => {
+            const isDisabled = disableNavItems;
+            return (
+              <EnhancedTooltip
+                key={item.id}
+                trigger={
+                  <span className={isDisabled ? 'opacity-50' : ''}>
+                    <IconButton
+                      variant={"default"}
+                      className={`relative${isDisabled ? ' pointer-events-none' : ''}`}
+                      onClick={isDisabled ? undefined : () => handleModuleClick(item.module)}
+                      aria-label={item.id}
+                    >
+                      {item.icon}
+                      {/* Red warning indicator */}
+                      {item.hasAttention && (
+                        <div className="absolute top-1 left-1 text-red-500 text-sm font-bold">
+                          !
+                        </div>
+                      )}
+                      {/* a circle if active */}
+                      {activeModule === item.module && (
+                        <div className="absolute right-0 w-1 h-1 bg-[hsl(var(--sidebar-primary))] rounded-full"></div>
+                      )}
+                    </IconButton>
+                  </span>
+                }
+                title={item.name}
+                icon={item.id === "creator" ? <CreatorStudioIcon /> : item.icon}
+                description={isDisabled ? (
+                  <>
+                    <div>{item.description}</div>
+                    <div className="text-xs text-red-500 mt-1">Complete the onboarding first.</div>
+                  </>
+                ) : item.description}
+              >
+                {item.hasAttention && (
+                  <div className="px-3 py-2 border-t border-[hsl(var(--tooltip-border-separator))] bg-red-50 dark:bg-red-950/20">
+                    <div className="text-xs text-red-600 dark:text-red-400 font-medium">
+                      ⚠️ Needs Attention
                     </div>
-                  )}
-                  {/* a circle if active */}
-                  {activeModule === item.module && (
-                    <div className="absolute right-0 w-1 h-1 bg-[hsl(var(--sidebar-primary))] rounded-full"></div>
-                  )}
-                </IconButton>
-              }
-              title={item.name}
-              icon={item.id === "creator" ? <CreatorStudioIcon /> : item.icon}
-              description={item.description}
-            >
-              {item.hasAttention && (
-                <div className="px-3 py-2 border-t border-[hsl(var(--tooltip-border-separator))] bg-red-50 dark:bg-red-950/20">
-                  <div className="text-xs text-red-600 dark:text-red-400 font-medium">
-                    ⚠️ Needs Attention
                   </div>
-                </div>
-              )}
-            </EnhancedTooltip>
-          ))}
+                )}
+              </EnhancedTooltip>
+            );
+          })}
         </div>
-
         {/* Agent toggle button */}
         <EnhancedTooltip
           trigger={
@@ -230,7 +232,6 @@ const Sidebar = () => {
           icon={<Sparkles size={18} />}
           description="💭 Try the advanced agent"
         />
-
         {/* Theme toggle button */}
         <EnhancedTooltip
           trigger={
@@ -247,7 +248,6 @@ const Sidebar = () => {
           icon={theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           description={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
         />
-        
         {/* Settings button at bottom */}
         <EnhancedTooltip
           trigger={

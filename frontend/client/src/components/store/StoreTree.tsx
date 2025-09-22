@@ -15,6 +15,7 @@ import {
   X
 } from "lucide-react";
 import { ForecastRepository } from "@/repository/forecast_repository";
+import { useProject } from "@/context/ProjectProvider";
 
 interface StoreNode {
   id: string;
@@ -30,7 +31,10 @@ interface StoreNode {
   // Search-related properties
   searchActive?: boolean;
   searchTerm?: string;
-  allChildren?: StoreNode[]; // Store all children for filtering
+  allChildren?: StoreNode[]; // Store all children for search filtering
+  // Global search properties
+  searchMatch?: boolean;
+  searchPath?: string; // Full path from root for display
 }
 
 interface StoreTreeProps {
@@ -45,11 +49,17 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
   const [error, setError] = useState<string | null>(null);
   const [hierarchy, setHierarchy] = useState<string[]>([]);
   
-  // Initialize forecast repository
-  const forecastRepo = new ForecastRepository(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000');
+  // Global search state
+  const [globalSearchTerm, setGlobalSearchTerm] = useState('');
+  const [globalSearchResults, setGlobalSearchResults] = useState<StoreNode[]>([]);
+  const [isGlobalSearching, setIsGlobalSearching] = useState(false);
+  const [showGlobalSearchResults, setShowGlobalSearchResults] = useState(false);
   
+  // Initialize forecast repository
+  const {forecastRepository: forecastRepo} = useProject();
   // Debounce ref for search
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const globalSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Load forecast metadata to get hierarchy
   useEffect(() => {
@@ -62,8 +72,43 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
+      if (globalSearchTimeoutRef.current) {
+        clearTimeout(globalSearchTimeoutRef.current);
+      }
     };
   }, []);
+  
+  // Global search effect
+  useEffect(() => {
+    if (globalSearchTerm.trim()) {
+      // Clear existing timeout
+      if (globalSearchTimeoutRef.current) {
+        clearTimeout(globalSearchTimeoutRef.current);
+      }
+      
+      // Set new timeout for debounced search
+      globalSearchTimeoutRef.current = setTimeout(() => {
+        performGlobalSearch(globalSearchTerm);
+      }, 300); // 300ms debounce
+    } else {
+      setGlobalSearchResults([]);
+      setShowGlobalSearchResults(false);
+    }
+  }, [globalSearchTerm]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showGlobalSearchResults) {
+        setGlobalSearchTerm('');
+        setShowGlobalSearchResults(false);
+        setGlobalSearchResults([]);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showGlobalSearchResults]);
   
   const loadMetadata = async () => {
     try {
@@ -508,6 +553,180 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
       setTreeData(prevData => updateNodeInTree(prevData, node.id, { loading: false }));
     }
   };
+
+  const performGlobalSearch = async (searchTerm: string) => {
+    setIsGlobalSearching(true);
+    setShowGlobalSearchResults(true);
+    setGlobalSearchResults([]);
+
+    try {
+      // Search through the existing tree data to find matches
+      const results: StoreNode[] = [];
+      const searchTermLower = searchTerm.toLowerCase();
+      
+      // Recursive function to search through tree nodes
+      const searchInNode = (node: StoreNode, path: string[] = []): void => {
+        const currentPath = [...path, node.name];
+        
+        // Check if current node matches search term
+        if (node.name.toLowerCase().includes(searchTermLower)) {
+          // For store_no nodes, ensure the name is formatted as "Store $store_no"
+          const displayName = node.level === 'store_no' ? `Store ${node.name}` : node.name;
+          
+          results.push({
+            ...node,
+            name: displayName,
+            searchMatch: true,
+            searchPath: currentPath.join(' > '),
+            expanded: false
+          });
+        }
+        
+        // Recursively search children
+        if (node.children) {
+          node.children.forEach(child => searchInNode(child, currentPath));
+        }
+      };
+      
+      // Search through all top-level nodes
+      treeData.forEach(node => searchInNode(node));
+      
+      // If we have results, show them
+      if (results.length > 0) {
+        setGlobalSearchResults(results);
+      } else {
+        // If no results in existing tree, try to load more data and search
+        await searchInDatabase(searchTerm);
+      }
+    } catch (err) {
+      console.error('Error performing global search:', err);
+      setError('Failed to search stores');
+    } finally {
+      setIsGlobalSearching(false);
+    }
+  };
+
+  const searchInDatabase = async (searchTerm: string) => {
+    try {
+      // Build a comprehensive search query across all hierarchy levels
+      const searchConditions = hierarchy.map(level => 
+        `${level} ILIKE '%${searchTerm}%'`
+      ).join(' OR ');
+      
+      const sqlQuery = `
+        SELECT DISTINCT
+          store_no,
+          ${hierarchy.join(', ')}
+        FROM forecast 
+        WHERE (${searchConditions})
+        AND store_no IS NOT NULL
+        ORDER BY store_no
+        LIMIT 100
+      `;
+      
+      const stateSetters = {
+        setLoading: () => {},
+        setError: (err: string | null) => setError(err),
+        setData: (data: any) => {
+          if (data && data.data) {
+            const results: StoreNode[] = data.data.map((row: any) => {
+              // Build the full path from hierarchy data
+              const path = hierarchy.map(level => row[level]).filter(Boolean);
+              const pathString = path.join(' > ');
+              
+              return {
+                id: `store_no-search-${row.store_no}`,
+                name: `Store ${row.store_no}`,
+                level: 'store_no',
+                count: 1,
+                searchMatch: true,
+                searchPath: pathString,
+                expanded: false,
+                searchActive: false,
+                searchTerm: '',
+                children: [],
+                allChildren: [],
+                context: hierarchy.reduce((acc, level) => {
+                  if (row[level]) acc[level] = row[level];
+                  return acc;
+                }, {} as Record<string, string>)
+              };
+            });
+            
+            setGlobalSearchResults(results);
+          }
+        }
+      };
+      
+      await forecastRepo.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+    } catch (err) {
+      console.error('Error searching database:', err);
+      setError('Failed to search database');
+    }
+  };
+
+  // Function to expand a node to show its stores without refreshing the tree
+  const expandNodeToShowStore = async (node: StoreNode) => {
+    try {
+      // Find the node in the existing tree data
+      const findNodeInTree = (nodes: StoreNode[], targetId: string): StoreNode | null => {
+        for (const n of nodes) {
+          if (n.id === targetId) return n;
+          if (n.children) {
+            const found = findNodeInTree(n.children, targetId);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      // Find the node in the tree
+      const treeNode = findNodeInTree(treeData, node.id);
+      if (treeNode) {
+        // If node is already expanded, just navigate to it
+        if (treeNode.expanded) {
+          onStoreSelect(treeNode.id, treeNode);
+          return;
+        }
+        
+        // Load children for this node
+        await loadChildren(treeNode);
+        
+        // Navigate to the expanded node
+        onStoreSelect(treeNode.id, treeNode);
+      } else {
+        // If node not found in tree, try to load it
+        await loadChildren(node);
+        onStoreSelect(node.id, node);
+      }
+    } catch (err) {
+      console.error('Error expanding node:', err);
+      setError('Failed to expand node');
+    }
+  };
+
+  // Function to handle search result clicks without affecting tree state
+  const handleSearchResultClick = (node: StoreNode) => {
+    if (node.level === 'store_no') {
+      // For store_no nodes, open directly
+      onStoreSelect(node.id, node);
+    } else {
+      // For non-store nodes, expand to show stores
+      expandNodeToShowStore(node);
+    }
+  };
+
+  // Function to get the previous category from a search path
+  const getPreviousCategory = (searchPath: string): string => {
+    if (!searchPath) return '';
+    
+    const pathParts = searchPath.split(' > ');
+    if (pathParts.length >= 2) {
+      // Return the second-to-last part (previous category before store_no)
+      return pathParts[pathParts.length - 2];
+    }
+    return '';
+  };
   
   if (loading) {
     return (
@@ -538,9 +757,142 @@ const StoreTree = ({ onStoreSelect, selectedStoreId, onNewStoreClick }: StoreTre
         <h3 className="text-sm font-medium text-[hsl(var(--sidepanel-foreground))]">Store Hierarchy</h3>
       </div>
       
+      {/* Global Search Bar */}
+      <div className="p-3 border-b border-[hsl(var(--sidepanel-border))]">
+        <div className="relative">
+          <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[hsl(var(--sidepanel-muted-foreground))]" />
+          <input
+            type="text"
+            placeholder="Search stores across all levels..."
+            value={globalSearchTerm}
+            onChange={(e) => setGlobalSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-8 py-2 text-sm bg-[hsl(var(--sidepanel-input-background))] text-[hsl(var(--sidepanel-foreground))] border border-[hsl(var(--sidepanel-input-border))] rounded focus:outline-none focus:border-[hsl(var(--primary))] placeholder-[hsl(var(--sidepanel-muted-foreground))]"
+            onClick={(e) => e.stopPropagation()}
+          />
+          {globalSearchTerm && (
+            <button
+              onClick={() => {
+                setGlobalSearchTerm('');
+                setShowGlobalSearchResults(false);
+                setGlobalSearchResults([]);
+              }}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[hsl(var(--sidepanel-muted-foreground))] hover:text-[hsl(var(--sidepanel-foreground))] p-1"
+            >
+              <X size={14} />
+            </button>
+          )}
+          {isGlobalSearching && (
+            <Loader2 size={16} className="absolute right-8 top-1/2 transform -translate-y-1/2 text-[hsl(var(--sidepanel-loading-foreground))] animate-spin" />
+          )}
+        </div>
+      </div>
+      
       {/* Tree content */}
       <div className="flex-1 overflow-auto p-2">
-        {treeData.map(node => renderNode(node))}
+        {showGlobalSearchResults ? (
+          <>
+            {/* Search Results Header */}
+            <div className="mb-3 px-3 py-2 bg-[hsl(var(--sidepanel-accent-background))] rounded-lg border border-[hsl(var(--sidepanel-border))]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Search size={14} className="text-[hsl(var(--sidepanel-muted-foreground))]" />
+                  <span className="text-sm font-medium text-[hsl(var(--sidepanel-foreground))]">
+                    Search Results
+                  </span>
+                </div>
+                <span className="text-xs text-[hsl(var(--sidepanel-muted-foreground))] bg-[hsl(var(--sidepanel-background))] px-2 py-1 rounded">
+                  {globalSearchResults.length} found
+                </span>
+              </div>
+              <div className="text-xs text-[hsl(var(--sidepanel-muted-foreground))] mt-1">
+                Searching for "{globalSearchTerm}" across all store levels
+              </div>
+            </div>
+            
+            {/* Search Results */}
+            {globalSearchResults.length === 0 ? (
+              <div className="text-center py-8 text-[hsl(var(--sidepanel-muted-foreground))]">
+                <Search size={24} className="mx-auto mb-2 opacity-50" />
+                <div>No stores found for "{globalSearchTerm}"</div>
+                <div className="text-xs mt-1">Try a different search term</div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {globalSearchResults.map((node, index) => (
+                  <div
+                    key={node.id}
+                    className={`group flex items-center py-2 px-3 hover:bg-[hsl(var(--sidepanel-hover))] cursor-pointer rounded-sm relative ${
+                      selectedStoreId === node.id ? 'bg-[hsl(var(--sidepanel-selected))] border-l-2 border-[hsl(var(--sidepanel-selected-border))]' : ''
+                    }`}
+                    onClick={() => handleSearchResultClick(node)}
+                    draggable
+                    onDragStart={(e) => handleStoreDragStart(e, node)}
+                  >
+                    <div className="w-4 h-4 flex items-center justify-center mr-3">
+                      {getIcon(node.level)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[hsl(var(--sidepanel-foreground))] text-sm font-medium truncate">
+                        {node.name}
+                      </div>
+                      {node.level === 'store_no' && node.searchPath && (
+                        <div className="text-[hsl(var(--sidepanel-accent-foreground))] text-xs truncate font-medium">
+                          {getPreviousCategory(node.searchPath)}
+                        </div>
+                      )}
+                      {node.level !== 'store_no' && node.searchPath && (
+                        <div className="text-[hsl(var(--sidepanel-accent-foreground))] text-xs truncate font-medium">
+                          {node.level} level
+                        </div>
+                      )}
+                      <div className="text-[hsl(var(--sidepanel-muted-foreground))] text-xs truncate opacity-75">
+                        {node.searchPath}
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {node.count && (
+                        <span className="text-[hsl(var(--sidepanel-muted-foreground))] text-xs bg-[hsl(var(--sidepanel-accent-background))] px-2 py-1 rounded">
+                          {node.count}
+                        </span>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSearchResultClick(node);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-[hsl(var(--primary))/20] rounded"
+                        title={node.level === 'store_no' ? "View Store Details" : "Expand to Show Stores"}
+                      >
+                        {node.level === 'store_no' ? (
+                          <BarChart3 size={14} className="text-[hsl(var(--primary))]" />
+                        ) : (
+                          <ChevronRight size={14} className="text-[hsl(var(--primary))]" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Back to Tree Button */}
+            <div className="mt-4 px-2">
+              <button
+                onClick={() => {
+                  setShowGlobalSearchResults(false);
+                  setGlobalSearchTerm('');
+                  setGlobalSearchResults([]);
+                }}
+                className="w-full text-center py-2 px-3 text-sm text-[hsl(var(--sidepanel-muted-foreground))] hover:text-[hsl(var(--sidepanel-foreground))] hover:bg-[hsl(var(--sidepanel-hover))] rounded transition-colors duration-200"
+              >
+                ← Back to Store Tree
+              </button>
+            </div>
+          </>
+        ) : (
+          /* Regular Tree View */
+          treeData.map(node => renderNode(node))
+        )}
       </div>
       
       {/* New Store Button at bottom */}

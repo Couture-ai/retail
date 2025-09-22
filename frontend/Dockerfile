@@ -1,4 +1,4 @@
-FROM node:22-alpine AS builder-new
+FROM retailops-ui-with-agent:base AS builder-new
 
 WORKDIR /app
 

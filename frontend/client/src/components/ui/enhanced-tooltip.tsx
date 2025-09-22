@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 type EnhancedTooltipProps = React.ComponentPropsWithoutRef<typeof Tooltip> & {
   trigger: React.ReactNode;
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   icon?: React.ReactNode;
   side?: "top" | "right" | "bottom" | "left";
   children?: React.ReactNode;
