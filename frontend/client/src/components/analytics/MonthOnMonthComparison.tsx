@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { TrendingUp, Calendar, BarChart3, Loader2, AlertCircle, RefreshCw, Search, X } from 'lucide-react';
+import { TrendingUp, Calendar, BarChart3, Loader2, AlertCircle, RefreshCw, Search, X, Group, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useProject } from '@/context/ProjectProvider';
 
 interface MonthData {
@@ -34,6 +34,55 @@ interface GroupedForecastRecord {
   months: MonthData[];
 }
 
+interface ForecastMetadata {
+  essential_columns: string[];
+  essential_columns_datatypes: { [key: string]: string };
+  essential_columns_filtertypes: { [key: string]: string };
+  store_location_hierarchy: string[];
+  product_category_hierarchy: string[];
+  store_attributes: string[];
+  product_attributes: string[];
+  store_card_attributes: string[];
+  product_card_attributes: string[];
+}
+
+interface ColumnGroup {
+  name: string;
+  columns: string[];
+  color: string;
+  expanded: boolean;
+}
+
+interface FilterOption {
+  value: string;
+  count: number;
+}
+
+interface RangeFilter {
+  min: number | null;
+  max: number | null;
+}
+
+interface DiscreteFilter {
+  selectedValues: string[];
+  availableOptions: FilterOption[];
+  loading: boolean;
+  hasMore: boolean;
+  page: number;
+  searchTerm: string;
+}
+
+interface SearchFilter {
+  value: string;
+}
+
+interface AppliedFilter {
+  column: string;
+  type: 'discrete' | 'range' | 'search';
+  displayValue: string;
+  sqlCondition: string;
+}
+
 const MonthOnMonthComparison: React.FC = () => {
   const [data, setData] = useState<GroupedForecastRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,9 +103,49 @@ const MonthOnMonthComparison: React.FC = () => {
   
   const { forecastRepository } = useProject();
 
+  // Group by state
+  const [isGroupByMode, setIsGroupByMode] = useState(false);
+  const [showGroupByModal, setShowGroupByModal] = useState(false);
+  const [selectedGroupByColumns, setSelectedGroupByColumns] = useState<string[]>([]);
+  const [groupByColumns, setGroupByColumns] = useState<string[]>([]);
+    
+  // field required for columns, dropdowns
+  const [metadata, setMetadata] = useState<ForecastMetadata | null>(null);
+  const [columnGroups, setColumnGroups] = useState<ColumnGroup[]>([]);
+
+  // Column selector state
+  const [showColumnSelector, setShowColumnSelector] = useState(false);
+  const [visibleColumnSettings, setVisibleColumnSettings] = useState<{ [key: string]: boolean }>({});
+  
+  // Row selection state
+  const [selectedRows, setSelectedRows] = useState<Set<string | number>>(new Set());
+  
+  // Filter state
+  const [showFilters, setShowFilters] = useState(false);
+  const [discreteFilters, setDiscreteFilters] = useState<{ [key: string]: DiscreteFilter }>({});
+  const [rangeFilters, setRangeFilters] = useState<{ [key: string]: RangeFilter }>({});
+  const [searchFilters, setSearchFilters] = useState<{ [key: string]: SearchFilter }>({});
+  const [appliedFilters, setAppliedFilters] = useState<AppliedFilter[]>([]);
+  const [filterRanges, setFilterRanges] = useState<{ [key: string]: { min: number; max: number } }>({});
+  
+  // Week start date state - use prop if provided, otherwise use local state
+  const [weekStartDates, setWeekStartDates] = useState<string[]>([]);
+  const [localSelectedWeekStartDate, setLocalSelectedWeekStartDate] = useState<string>('');
+  const [loadingWeekDates, setLoadingWeekDates] = useState(false);
+  
+  // Use prop if provided, otherwise fall back to local state
+  const selectedWeekStartDate = localSelectedWeekStartDate;
+  const isWeekStartDateControlled = true;
+
+
+  const debugggg = (logg: any) => {
+    console.log(`[CoutureAnalytics] ${logg}`)
+  }
+
   // Load initial data on component mount
   useEffect(() => {
     loadInitialData();
+    loadMetadata();
   }, [activeSearches, activeUnifiedSearch]);
 
   const parseStringifiedForecastQty = (forecastQtyString: string | any): { bb?: number; cb?: number } => {
@@ -121,6 +210,52 @@ const MonthOnMonthComparison: React.FC = () => {
         sold_qty: 0
       };
     }
+  };
+  
+  const setupColumnGroups = (metadata: ForecastMetadata) => {
+    // Add trigger_qty and max_qty as client-side columns (not from database)
+    const clientSideColumns = ['trigger_qty', 'max_qty'];
+    
+    // Don't exclude card attributes - keep them in regular columns too
+    const groups: ColumnGroup[] = [
+      {
+        name: "Store Parameters",
+        columns: metadata.store_attributes,
+        color: "bg-blue-500/10 border-blue-500/30",
+        expanded: true
+      },
+      {
+        name: "Product Parameters", 
+        columns: metadata.product_attributes,
+        color: "bg-green-500/10 border-green-500/30",
+        expanded: true
+      },
+      {
+        name: "Forecast Parameters",
+        columns: [
+          ...metadata.essential_columns.filter(col => 
+            !metadata.store_attributes.includes(col) && 
+            !metadata.product_attributes.includes(col)
+          ),
+          ...clientSideColumns
+        ],
+        color: "bg-purple-500/10 border-purple-500/30",
+        expanded: true
+      }
+    ];
+    
+    setColumnGroups(groups);
+    
+    // Initialize column visibility settings - all columns visible by default
+    const initialVisibility: { [key: string]: boolean } = {};
+    metadata.essential_columns.forEach(col => {
+      initialVisibility[col] = true;
+    });
+    // Add client-side columns to visibility settings
+    clientSideColumns.forEach(col => {
+      initialVisibility[col] = true;
+    });
+    setVisibleColumnSettings(initialVisibility);
   };
 
   const loadInitialData = async () => {
@@ -463,6 +598,503 @@ const MonthOnMonthComparison: React.FC = () => {
     return String(value);
   };
 
+  const handleGroupByClick = () => {
+    setShowGroupByModal(true);
+  };
+  
+  const handleGroupByCancel = () => {
+    setShowGroupByModal(false);
+    setSelectedGroupByColumns([]);
+  };
+  
+  const handleGroupBySubmit = () => {
+    setGroupByColumns([...selectedGroupByColumns]);
+    setIsGroupByMode(selectedGroupByColumns.length > 0);
+    setShowGroupByModal(false);
+    setSelectedGroupByColumns([]);
+    // Reset data and reload
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+  };
+  
+  const handleGroupByColumnToggle = (column: string) => {
+    setSelectedGroupByColumns(prev => 
+      prev.includes(column) 
+        ? prev.filter(col => col !== column)
+        : [...prev, column]
+    );
+  };
+  
+  const clearGroupBy = () => {
+    setIsGroupByMode(false);
+    setGroupByColumns([]);
+    // Reset data and reload
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+  };
+  
+  // Get available columns for group by (string type only)
+  const getGroupByColumns = () => {
+    if (!metadata) return [];
+    return metadata.essential_columns.filter(col => 
+      metadata.essential_columns_datatypes[col] === 'string'
+    );
+  };
+
+    // Column selector functions
+  const handleColumnSelectorCancel = () => {
+    setShowColumnSelector(false);
+  };
+  
+  const handleColumnToggle = (column: string) => {
+    setVisibleColumnSettings(prev => ({
+      ...prev,
+      [column]: !prev[column]
+    }));
+  };
+  
+  const getAvailableColumns = () => {
+    if (!metadata) return { regularColumns: [], aggregatedColumns: [] };
+    
+    const regularColumns = metadata.essential_columns;
+    const aggregatedColumns: string[] = [];
+    
+    // If in group by mode, also include aggregated columns that would be generated
+    if (isGroupByMode && groupByColumns.length > 0) {
+      metadata.essential_columns.forEach(col => {
+        if (!groupByColumns.includes(col)) {
+          const dataType = metadata.essential_columns_datatypes[col];
+          if (dataType === 'string') {
+            aggregatedColumns.push(`#${col}`);
+          } else if (dataType === 'float' || dataType === 'integer') {
+            aggregatedColumns.push(`Σ${col}`);
+          }
+        }
+      });
+    }
+    
+    return { regularColumns, aggregatedColumns };
+  };
+  
+  const selectAllColumns = () => {
+    const { regularColumns, aggregatedColumns } = getAvailableColumns();
+    const newSettings: { [key: string]: boolean } = {};
+    
+    regularColumns.forEach(col => {
+      newSettings[col] = true;
+    });
+    
+    setVisibleColumnSettings(prev => ({ ...prev, ...newSettings }));
+  };
+  
+  const deselectAllColumns = () => {
+    const { regularColumns, aggregatedColumns } = getAvailableColumns();
+    const newSettings: { [key: string]: boolean } = {};
+    
+    regularColumns.forEach(col => {
+      newSettings[col] = false;
+    });
+    
+    setVisibleColumnSettings(prev => ({ ...prev, ...newSettings }));
+  };
+
+    // Load filter data based on column type
+  const loadFilterData = async (column: string) => {
+    if (!metadata) return;
+    
+    const filterType = metadata.essential_columns_filtertypes[column];
+    
+    if (filterType === 'discrete') {
+      await loadDiscreteOptions(column, 0, true);
+    } else if (filterType === 'range') {
+      await loadRangeValues(column);
+    }
+  };
+  
+  // Load discrete filter options with pagination
+  const loadDiscreteOptions = async (column: string, page: number = 0, reset: boolean = false) => {
+    try {
+      if (reset) {
+        setDiscreteFilters(prev => ({
+          ...prev,
+          [column]: {
+            selectedValues: [],
+            availableOptions: [],
+            loading: true,
+            hasMore: true,
+            page: 0,
+            searchTerm: ''
+          }
+        }));
+      } else {
+        setDiscreteFilters(prev => ({
+          ...prev,
+          [column]: {
+            ...prev[column],
+            loading: true
+          }
+        }));
+      }
+      
+      const offset = page * 100;
+      const sqlQuery = `
+        SELECT ${column} as value, COUNT(*) as count 
+        FROM forecast 
+        WHERE ${column} IS NOT NULL AND ${column} != '' 
+        GROUP BY ${column} 
+        ORDER BY count DESC, ${column} ASC 
+        LIMIT 100 OFFSET ${offset}
+      `;
+      
+      const stateSetters = {
+        setLoading: () => {},
+        setError: (error: string | null) => setError(error),
+        setData: (response: any) => {
+          if (response && response.data) {
+            const options: FilterOption[] = response.data.map((row: any) => ({
+              value: row.value,
+              count: parseInt(row.count)
+            }));
+            
+            setDiscreteFilters(prev => ({
+              ...prev,
+              [column]: {
+                ...prev[column],
+                availableOptions: reset ? options : [...(prev[column]?.availableOptions || []), ...options],
+                loading: false,
+                hasMore: options.length === 100,
+                page: page,
+                searchTerm: prev[column]?.searchTerm || ''
+              }
+            }));
+          }
+        }
+      };
+      
+      await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+    } catch (err) {
+      console.error(`Error loading discrete options for ${column}:`, err);
+      setDiscreteFilters(prev => ({
+        ...prev,
+        [column]: {
+          ...prev[column],
+          loading: false
+        }
+      }));
+    }
+  };
+  
+  // Load range values (min/max) for numeric columns
+  const loadRangeValues = async (column: string) => {
+    try {
+      const sqlQuery = `
+        SELECT 
+          MIN(${column}) as min_value, 
+          MAX(${column}) as max_value 
+        FROM forecast 
+        WHERE ${column} IS NOT NULL
+      `;
+      
+      const stateSetters = {
+        setLoading: () => {},
+        setError: (error: string | null) => setError(error),
+        setData: (response: any) => {
+          if (response && response.data && response.data[0]) {
+            const { min_value, max_value } = response.data[0];
+            setFilterRanges(prev => ({
+              ...prev,
+              [column]: {
+                min: parseFloat(min_value) || 0,
+                max: parseFloat(max_value) || 0
+              }
+            }));
+            
+            // Initialize range filter if not exists
+            setRangeFilters(prev => ({
+              ...prev,
+              [column]: prev[column] || { min: null, max: null }
+            }));
+          }
+        }
+      };
+      
+      await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+    } catch (err) {
+      console.error(`Error loading range values for ${column}:`, err);
+    }
+  };
+  
+  // Handle discrete filter selection
+  const handleDiscreteFilterChange = (column: string, value: string, checked: boolean) => {
+    setDiscreteFilters(prev => {
+      const currentFilter = prev[column] || { selectedValues: [], availableOptions: [], loading: false, hasMore: false, page: 0, searchTerm: '' };
+      const newSelectedValues = checked 
+        ? [...currentFilter.selectedValues, value]
+        : currentFilter.selectedValues.filter(v => v !== value);
+      
+      return {
+        ...prev,
+        [column]: {
+          ...currentFilter,
+          selectedValues: newSelectedValues
+        }
+      };
+    });
+  };
+  
+  // Handle range filter change
+  const handleRangeFilterChange = (column: string, type: 'min' | 'max', value: number | null) => {
+    setRangeFilters(prev => ({
+      ...prev,
+      [column]: {
+        ...prev[column],
+        [type]: value
+      }
+    }));
+  };
+  
+  // Handle search filter change
+  const handleSearchFilterChange = (column: string, value: string) => {
+    setSearchFilters(prev => ({
+      ...prev,
+      [column]: { value }
+    }));
+  };
+  
+  const handleDiscreteFilterSearch = (column: string, searchTerm: string) => {
+    setDiscreteFilters(prev => ({
+      ...prev,
+      [column]: {
+        ...prev[column],
+        searchTerm
+      }
+    }));
+  };
+  
+  // Apply filters and update applied filters list
+  const applyFilters = () => {
+    const newAppliedFilters: AppliedFilter[] = [];
+    
+    // Process discrete filters
+    Object.entries(discreteFilters).forEach(([column, filter]) => {
+      if (filter.selectedValues.length > 0) {
+        const displayValue = filter.selectedValues.length === 1 
+          ? filter.selectedValues[0]
+          : `${filter.selectedValues.length} selected`;
+        const sqlCondition = `${column} IN (${filter.selectedValues.map(v => `'${v}'`).join(', ')})`;
+        
+        newAppliedFilters.push({
+          column,
+          type: 'discrete',
+          displayValue,
+          sqlCondition
+        });
+      }
+    });
+    
+    // Process range filters
+    Object.entries(rangeFilters).forEach(([column, filter]) => {
+      if (filter.min !== null || filter.max !== null) {
+        let displayValue = '';
+        let sqlCondition = '';
+        
+        if (filter.min !== null && filter.max !== null) {
+          displayValue = `${filter.min} - ${filter.max}`;
+          sqlCondition = `${column} >= ${filter.min} AND ${column} <= ${filter.max}`;
+        } else if (filter.min !== null) {
+          displayValue = `≥ ${filter.min}`;
+          sqlCondition = `${column} >= ${filter.min}`;
+        } else if (filter.max !== null) {
+          displayValue = `≤ ${filter.max}`;
+          sqlCondition = `${column} <= ${filter.max}`;
+        }
+        
+        if (sqlCondition) {
+          newAppliedFilters.push({
+            column,
+            type: 'range',
+            displayValue,
+            sqlCondition
+          });
+        }
+      }
+    });
+    
+    // Process search filters
+    Object.entries(searchFilters).forEach(([column, filter]) => {
+      if (filter.value.trim()) {
+        const displayValue = `"${filter.value}"`;
+        const sqlCondition = `${column} ILIKE '%${filter.value}%'`;
+        
+        newAppliedFilters.push({
+          column,
+          type: 'search',
+          displayValue,
+          sqlCondition
+        });
+      }
+    });
+    
+    setAppliedFilters(newAppliedFilters);
+    
+    // Reset data and reload
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+  };
+  
+  // Remove a specific applied filter
+  const removeFilter = (filterToRemove: AppliedFilter) => {
+    const { column, type } = filterToRemove;
+    
+    if (type === 'discrete') {
+      setDiscreteFilters(prev => ({
+        ...prev,
+        [column]: {
+          ...prev[column],
+          selectedValues: []
+        }
+      }));
+    } else if (type === 'range') {
+      setRangeFilters(prev => ({
+        ...prev,
+        [column]: { min: null, max: null }
+      }));
+    } else if (type === 'search') {
+      setSearchFilters(prev => ({
+        ...prev,
+        [column]: { value: '' }
+      }));
+    }
+    
+    // Remove from applied filters and reload
+    const newAppliedFilters = appliedFilters.filter(f => 
+      !(f.column === column && f.type === type)
+    );
+    setAppliedFilters(newAppliedFilters);
+    
+    // Reset data and reload
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+  };
+  
+  // Clear all filters
+  const clearAllFilters = () => {
+    setDiscreteFilters({});
+    setRangeFilters({});
+    setSearchFilters({});
+    setAppliedFilters([]);
+    
+    // Reset data and reload
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+  };
+  
+  // Get columns grouped by parameter type for filter UI
+  const getFilterColumnGroups = () => {
+    if (!metadata) return { storeColumns: [], productColumns: [], forecastColumns: [] };
+    
+    const storeColumns = metadata.essential_columns.filter(col => 
+      metadata.store_attributes.includes(col)
+    );
+    
+    const productColumns = metadata.essential_columns.filter(col => 
+      metadata.product_attributes.includes(col)
+    );
+    
+    const forecastColumns = metadata.essential_columns.filter(col => 
+      !metadata.store_attributes.includes(col) && 
+      !metadata.product_attributes.includes(col)
+    );
+    
+    return { storeColumns, productColumns, forecastColumns };
+  };
+  
+  // Load more discrete options for infinite scroll in filter dropdowns
+  const loadMoreDiscreteOptions = (column: string) => {
+    const currentFilter = discreteFilters[column];
+    if (currentFilter && currentFilter.hasMore && !currentFilter.loading) {
+      loadDiscreteOptions(column, currentFilter.page + 1, false);
+    }
+  };
+
+
+  const loadWeekStartDates = async () => {
+    try {
+      debugggg("Loading Week Start Dates")
+      setLoadingWeekDates(true);
+      const sqlQuery = `SELECT DISTINCT week_start_date FROM forecast ORDER BY week_start_date ASC`;
+      
+      const stateSetters = {
+        setLoading: () => {},
+        setError: (error: string | null) => setError(error),
+        setData: (response: any) => {
+          if (response && response.data) {
+            const dates = response.data.map((row: any) => row.week_start_date).filter(Boolean);
+            
+            setWeekStartDates(dates);
+            // Set the earliest date as default
+            if (dates.length > 0 && !selectedWeekStartDate) {
+              setLocalSelectedWeekStartDate(dates[0]);
+            }
+          }
+        }
+      };
+
+      await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+    } catch (err) {
+      debugggg(`In err: ${err}`)
+      console.error('Error loading week start dates:', err);
+      setError('Failed to load week start dates');
+    } finally {
+      setLoadingWeekDates(false);
+    }
+  };
+
+    // Load metadata and week dates on component mount
+    useEffect(() => {
+      loadMetadata();
+      // Only load week dates if not controlled by props
+      if (isWeekStartDateControlled) {
+        loadWeekStartDates();
+      }
+    }, [isWeekStartDateControlled]);
+
+  const loadMetadata = async () => {
+    try {
+      const stateSetters = {
+        setLoading: (loading: boolean) => setLoading(loading),
+        setError: (error: string | null) => setError(error),
+        setData: (data: ForecastMetadata) => {
+          setMetadata(data);
+          // Load initial data after metadata is loaded
+          loadInitialData();
+        },
+      };
+
+      await forecastRepository.getMetadata({}, stateSetters);
+      debugggg(`State setted`)
+    } catch (err) {
+      console.error("Error loading metadata:", err);
+      setError("Failed to load metadata");
+      setLoading(false);
+    }
+  };
+
+  const handleWeekStartDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newDate = event.target.value;
+    setLocalSelectedWeekStartDate(newDate);
+    // Reset pagination
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+  };
+  
+
   if (loading && data.length === 0) {
     return (
       <div className="flex flex-col h-full bg-[hsl(var(--dark-9))] text-[hsl(var(--panel-foreground))]">
@@ -475,8 +1107,45 @@ const MonthOnMonthComparison: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center space-x-2 text-[hsl(var(--panel-muted-foreground))]">
-            <Calendar size={16} />
-            <span className="text-sm">Forecast Variants by Month</span>
+            <Calendar size={14} className="text-[hsl(var(--table-muted-foreground))] mr-2" />
+            <select
+                value={selectedWeekStartDate}
+                onChange={handleWeekStartDateChange}
+                disabled={loadingWeekDates || isWeekStartDateControlled}
+                className={`px-3 py-1 rounded text-xs border focus:outline-none ${
+                  isWeekStartDateControlled 
+                    ? 'bg-[hsl(var(--table-input-background))] text-[hsl(var(--table-muted-foreground))] border-[hsl(var(--table-border))] cursor-not-allowed' 
+                    : 'bg-[hsl(var(--table-input-background))] text-[hsl(var(--table-foreground))] border-[hsl(var(--table-input-border))] hover:border-[hsl(var(--table-border-strong))] focus:border-[hsl(var(--primary))]'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {loadingWeekDates ? (
+                  <option value="">Loading dates...</option>
+                ) : (
+                  <>
+                    {weekStartDates.length === 0 && (
+                      <option value="">No dates available</option>
+                    )}
+                    {selectedWeekStartDate && !weekStartDates.includes(selectedWeekStartDate) && (
+                      <option value={selectedWeekStartDate}>
+                        {new Date(selectedWeekStartDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </option>
+                    )}
+                    {weekStartDates.map((date) => (
+                      <option key={date} value={date}>
+                        {new Date(date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </option>
+                    ))}
+                  </>
+                )}
+              </select>
           </div>
         </div>
 
@@ -529,7 +1198,63 @@ const MonthOnMonthComparison: React.FC = () => {
         </div>
         <div className="flex items-center space-x-2 text-[hsl(var(--panel-muted-foreground))]">
           <Calendar size={16} />
-          <span className="text-sm">Grouped by Store & Article</span>
+          {/* <span className="text-sm">Grouped by Store & Article</span> */}
+            {/* Group By Button */}
+            <button
+              onClick={handleGroupByClick}
+              className={`px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors ${
+                isGroupByMode 
+                  ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90' 
+                  : 'bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] border border-[hsl(var(--table-border))] hover:bg-[hsl(var(--table-button-hover))]'
+              }`}
+            >
+              <Group size={14} />
+              <span>Group By</span>
+              {isGroupByMode && groupByColumns.length > 0 && (
+                <span className="bg-[hsl(var(--primary))]/30 px-1 rounded text-xs">
+                  {groupByColumns.length}
+                </span>
+              )}
+            </button>
+
+            {/* Clear Group By Button */}
+            {isGroupByMode && (
+              <button
+                onClick={clearGroupBy}
+                className="px-2 py-1 rounded text-xs bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] hover:bg-[hsl(var(--table-button-hover))] flex items-center transition-colors border border-[hsl(var(--table-border))]"
+                title="Clear Group By"
+              >
+                <X size={12} />
+              </button>
+            )}
+
+            {/* Column Selector Button */}
+            <button
+              onClick={() => setShowColumnSelector(true)}
+              className="px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] border border-[hsl(var(--table-border))] hover:bg-[hsl(var(--table-button-hover))]"
+            >
+              <span>☰</span>
+              <span>Columns</span>
+            </button>
+
+            {/* Filter Toggle Button */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors ${
+                showFilters || appliedFilters.length > 0
+                  ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90' 
+                  : 'bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] border border-[hsl(var(--table-border))] hover:bg-[hsl(var(--table-button-hover))]'
+              }`}
+            >
+              <Filter size={14} />
+              <span>Filters</span>
+              {appliedFilters.length > 0 && (
+                <span className="bg-[hsl(var(--primary))]/30 px-1 rounded text-xs">
+                  {appliedFilters.length}
+                </span>
+              )}
+            </button>
+
         </div>
       </div>
 
@@ -587,6 +1312,348 @@ const MonthOnMonthComparison: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Group By Modal */}
+      {showGroupByModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[hsl(var(--panel-background))] border border-[hsl(var(--panel-border))] rounded-lg p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[hsl(var(--panel-foreground))] font-semibold text-lg">Group By Columns</h3>
+              <button
+                onClick={handleGroupByCancel}
+                className="text-[hsl(var(--panel-muted-foreground))] hover:text-[hsl(var(--panel-foreground))]"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-[hsl(var(--panel-muted-foreground))] text-sm mb-3">
+                Select columns to group by. Only string columns are available for grouping.
+              </p>
+              
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {getGroupByColumns().map((column) => (
+                  <label
+                    key={column}
+                    className="flex items-center space-x-2 text-sm hover:bg-[hsl(var(--panel-hover))] p-2 rounded cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedGroupByColumns.includes(column)}
+                      onChange={() => handleGroupByColumnToggle(column)}
+                      className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                    />
+                    <span className="text-[hsl(var(--panel-foreground))]">
+                      {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </span>
+                  </label>
+                ))}
+              </div>
+              
+              {getGroupByColumns().length === 0 && (
+                <div className="text-[hsl(var(--panel-muted-foreground))] text-sm text-center py-4">
+                  No string columns available for grouping
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+                {selectedGroupByColumns.length} column{selectedGroupByColumns.length !== 1 ? 's' : ''} selected
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleGroupByCancel}
+                  className="px-3 py-2 text-sm bg-[hsl(var(--panel-button-background))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-button-hover))]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleGroupBySubmit}
+                  disabled={selectedGroupByColumns.length === 0}
+                  className="px-3 py-2 text-sm bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Apply Group By
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Column Selector Modal */}
+      {showColumnSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[hsl(var(--panel-background))] border border-[hsl(var(--panel-border))] rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[hsl(var(--panel-foreground))] font-semibold text-lg">Column Visibility</h3>
+              <button
+                onClick={handleColumnSelectorCancel}
+                className="text-[hsl(var(--panel-muted-foreground))] hover:text-[hsl(var(--panel-foreground))]"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <div className="flex items-center space-x-2 mb-3">
+                <button
+                  onClick={selectAllColumns}
+                  className="px-3 py-1 text-xs bg-[hsl(var(--panel-success))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-success))]/80"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={deselectAllColumns}
+                  className="px-3 py-1 text-xs bg-[hsl(var(--panel-error))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-error))]/80"
+                >
+                  Deselect All
+                </button>
+              </div>
+              
+              {/* Regular Columns */}
+              <div className="mb-6">
+                <h4 className="text-[hsl(var(--panel-foreground))] font-medium text-sm mb-3">Data Columns</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {/* Store Parameters */}
+                  <div>
+                    <h5 className="text-[hsl(var(--table-card-store-border))] font-medium text-xs mb-2 flex items-center">
+                      <div className="w-2 h-2 bg-[hsl(var(--table-card-store-border))] rounded mr-1"></div>
+                      Store Parameters
+                    </h5>
+                    <div className="space-y-1 max-h-40 overflow-y-auto">
+                      {metadata?.store_attributes.map((column) => (
+                        <label
+                          key={column}
+                          className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={visibleColumnSettings[column] !== false}
+                            onChange={() => handleColumnToggle(column)}
+                            className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                          />
+                          <span className="text-[hsl(var(--panel-foreground))] flex-1 truncate" title={column}>
+                            {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Product Parameters */}
+                  <div>
+                    <h5 className="text-[hsl(var(--table-card-product-border))] font-medium text-xs mb-2 flex items-center">
+                      <div className="w-2 h-2 bg-[hsl(var(--table-card-product-border))] rounded mr-1"></div>
+                      Product Parameters
+                    </h5>
+                    <div className="space-y-1 max-h-40 overflow-y-auto">
+                      {metadata?.product_attributes.map((column) => (
+                        <label
+                          key={column}
+                          className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={visibleColumnSettings[column] !== false}
+                            onChange={() => handleColumnToggle(column)}
+                            className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                          />
+                          <span className="text-[hsl(var(--panel-foreground))] flex-1 truncate" title={column}>
+                            {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Forecast Parameters */}
+                  <div>
+                    <h5 className="text-[hsl(var(--table-card-forecast-border))] font-medium text-xs mb-2 flex items-center">
+                      <div className="w-2 h-2 bg-[hsl(var(--table-card-forecast-border))] rounded mr-1"></div>
+                      Forecast Parameters
+                    </h5>
+                    <div className="space-y-1 max-h-40 overflow-y-auto">
+                      {metadata?.essential_columns
+                        .filter(col => 
+                          !metadata.store_attributes.includes(col) && 
+                          !metadata.product_attributes.includes(col)
+                        )
+                        .map((column) => (
+                          <label
+                            key={column}
+                            className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={visibleColumnSettings[column] !== false}
+                              onChange={() => handleColumnToggle(column)}
+                              className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                            />
+                            <span className="text-[hsl(var(--panel-foreground))] flex-1 truncate" title={column}>
+                              {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </span>
+                          </label>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between border-t border-[hsl(var(--panel-border))] pt-4">
+              <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+                {Object.values(visibleColumnSettings).filter(Boolean).length} of {metadata?.essential_columns.length || 0} columns visible
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleColumnSelectorCancel}
+                  className="px-3 py-2 text-sm bg-[hsl(var(--panel-button-background))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-button-hover))]"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Applied Filters Bar - Always Visible */}
+            {appliedFilters.length > 0 && (
+              <div className="px-4 py-2 border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 flex-wrap">
+                    <span className="text-xs text-[hsl(var(--table-muted-foreground))] flex-shrink-0">Applied Filters:</span>
+                    {appliedFilters.map((filter, index) => (
+                      <div
+                        key={`${filter.column}-${filter.type}-${index}`}
+                        className="flex items-center space-x-1 bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))] px-2 py-1 rounded text-xs border border-[hsl(var(--primary))]/30"
+                      >
+                        <span className="font-medium">
+                          {filter.column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
+                        </span>
+                        <span>{filter.displayValue}</span>
+                        <button
+                          onClick={() => removeFilter(filter)}
+                          className="text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 ml-1"
+                          title="Remove filter"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-xs text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 flex items-center space-x-1"
+                  >
+                    <X size={12} />
+                    <span>Clear All</span>
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Filter Panel - Collapsible */}
+            {showFilters && (
+              <div className="border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
+                <div className="p-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Store Parameters */}
+                    <div className="space-y-3">
+                      <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                        <div className="w-3 h-3 bg-[hsl(var(--primary))] rounded mr-2"></div>
+                        Store Parameters
+                      </h3>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {getFilterColumnGroups().storeColumns.map((column) => (
+                          <FilterColumnComponent
+                            key={column}
+                            column={column}
+                            metadata={metadata}
+                            discreteFilters={discreteFilters}
+                            rangeFilters={rangeFilters}
+                            searchFilters={searchFilters}
+                            filterRanges={filterRanges}
+                            onDiscreteChange={handleDiscreteFilterChange}
+                            onRangeChange={handleRangeFilterChange}
+                            onSearchChange={handleSearchFilterChange}
+                            onLoadFilter={loadFilterData}
+                            onLoadMoreDiscrete={loadMoreDiscreteOptions}
+                            onDiscreteSearch={handleDiscreteFilterSearch}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Product Parameters */}
+                    <div className="space-y-3">
+                      <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                        <div className="w-3 h-3 bg-[hsl(var(--panel-success))] rounded mr-2"></div>
+                        Product Parameters
+                      </h3>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {getFilterColumnGroups().productColumns.map((column) => (
+                          <FilterColumnComponent
+                            key={column}
+                            column={column}
+                            metadata={metadata}
+                            discreteFilters={discreteFilters}
+                            rangeFilters={rangeFilters}
+                            searchFilters={searchFilters}
+                            filterRanges={filterRanges}
+                            onDiscreteChange={handleDiscreteFilterChange}
+                            onRangeChange={handleRangeFilterChange}
+                            onSearchChange={handleSearchFilterChange}
+                            onLoadFilter={loadFilterData}
+                            onLoadMoreDiscrete={loadMoreDiscreteOptions}
+                            onDiscreteSearch={handleDiscreteFilterSearch}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Forecast Parameters */}
+                    <div className="space-y-3">
+                      <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                        <div className="w-3 h-3 bg-[hsl(var(--panel-warning))] rounded mr-2"></div>
+                        Forecast Parameters
+                      </h3>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {getFilterColumnGroups().forecastColumns.map((column) => (
+                          <FilterColumnComponent
+                            key={column}
+                            column={column}
+                            metadata={metadata}
+                            discreteFilters={discreteFilters}
+                            rangeFilters={rangeFilters}
+                            searchFilters={searchFilters}
+                            filterRanges={filterRanges}
+                            onDiscreteChange={handleDiscreteFilterChange}
+                            onRangeChange={handleRangeFilterChange}
+                            onSearchChange={handleSearchFilterChange}
+                            onLoadFilter={loadFilterData}
+                            onLoadMoreDiscrete={loadMoreDiscreteOptions}
+                            onDiscreteSearch={handleDiscreteFilterSearch}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Apply Filters Button */}
+                  <div className="mt-6 flex justify-center">
+                    <button
+                      onClick={applyFilters}
+                      className="px-6 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90"
+                    >
+                      Apply Filters
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
       {/* Table Container */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -831,6 +1898,215 @@ const MonthOnMonthComparison: React.FC = () => {
       </div>
     );
   }
+};
+
+// Filter Column Component
+interface FilterColumnComponentProps {
+  column: string;
+  metadata: ForecastMetadata | null;
+  discreteFilters: { [key: string]: DiscreteFilter };
+  rangeFilters: { [key: string]: RangeFilter };
+  searchFilters: { [key: string]: SearchFilter };
+  filterRanges: { [key: string]: { min: number; max: number } };
+  onDiscreteChange: (column: string, value: string, checked: boolean) => void;
+  onRangeChange: (column: string, type: 'min' | 'max', value: number | null) => void;
+  onSearchChange: (column: string, value: string) => void;
+  onLoadFilter: (column: string) => void;
+  onLoadMoreDiscrete: (column: string) => void;
+  onDiscreteSearch: (column: string, searchTerm: string) => void;
+}
+
+const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
+  column,
+  metadata,
+  discreteFilters,
+  rangeFilters,
+  searchFilters,
+  filterRanges,
+  onDiscreteChange,
+  onRangeChange,
+  onSearchChange,
+  onLoadFilter,
+  onLoadMoreDiscrete,
+  onDiscreteSearch
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  if (!metadata) return null;
+  
+  const filterType = metadata.essential_columns_filtertypes[column];
+  const displayName = column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  
+  const handleToggleExpand = () => {
+    if (!isExpanded && filterType !== 'search') {
+      onLoadFilter(column);
+    }
+    setIsExpanded(!isExpanded);
+  };
+  
+  const renderFilterContent = () => {
+    if (filterType === 'discrete') {
+      const filter = discreteFilters[column];
+      if (!filter) return null;
+      
+      // Filter options based on search term
+      const filteredOptions = filter.availableOptions.filter(option =>
+        option.value.toLowerCase().includes(filter.searchTerm.toLowerCase())
+      );
+      
+      return (
+        <div className="space-y-2">
+          {/* Search input for discrete options */}
+          <div className="relative">
+            <Search size={12} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-[hsl(var(--panel-muted-foreground))]" />
+            <input
+              type="text"
+              placeholder={`Search ${displayName.toLowerCase()}...`}
+              value={filter.searchTerm}
+              onChange={(e) => onDiscreteSearch(column, e.target.value)}
+              className="w-full pl-6 pr-2 py-1 text-xs bg-[hsl(var(--panel-input-background))] text-[hsl(var(--panel-foreground))] border border-[hsl(var(--panel-input-border))] rounded focus:border-[hsl(var(--primary))] focus:outline-none"
+            />
+          </div>
+          
+          <div className="max-h-40 overflow-y-auto space-y-1">
+            {filteredOptions.map((option) => (
+              <label
+                key={option.value}
+                className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={filter.selectedValues.includes(option.value)}
+                  onChange={(e) => onDiscreteChange(column, option.value, e.target.checked)}
+                  className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                />
+                <span className="flex-1 truncate text-[hsl(var(--panel-foreground))]" title={option.value}>
+                  {option.value}
+                </span>
+                <span className="text-[hsl(var(--panel-muted-foreground))] text-xs">
+                  {option.count.toLocaleString()}
+                </span>
+              </label>
+            ))}
+            
+            {filter.loading && (
+              <div className="flex items-center justify-center p-2">
+                <Loader2 size={14} className="animate-spin text-[hsl(var(--panel-muted-foreground))]" />
+                <span className="text-xs text-[hsl(var(--panel-muted-foreground))] ml-2">Loading...</span>
+              </div>
+            )}
+            
+            {filter.hasMore && !filter.loading && (
+              <button
+                onClick={() => onLoadMoreDiscrete(column)}
+                className="w-full text-xs text-[hsl(var(--primary))] hover:text-[hsl(var(--primary))]/80 p-1 text-center"
+              >
+                Load More...
+              </button>
+            )}
+            
+            {filteredOptions.length === 0 && !filter.loading && filter.searchTerm && (
+              <div className="text-xs text-[hsl(var(--panel-muted-foreground))] text-center p-2">
+                No options match "{filter.searchTerm}"
+              </div>
+            )}
+          </div>
+          
+          <div className="flex justify-between items-center text-xs text-[hsl(var(--panel-muted-foreground))] border-t border-[hsl(var(--panel-border))] pt-2">
+            <span>
+              {filter.selectedValues.length > 0 ? `${filter.selectedValues.length} selected` : 'None selected'}
+            </span>
+            {filter.searchTerm && (
+              <span>
+                {filteredOptions.length} of {filter.availableOptions.length} shown
+              </span>
+            )}
+          </div>
+        </div>
+      );
+    } else if (filterType === 'range') {
+      const filter = rangeFilters[column] || { min: null, max: null };
+      const range = filterRanges[column];
+      
+      if (!range) return null;
+      
+      return (
+        <div className="space-y-3">
+          <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+            Range: {range.min.toLocaleString()} - {range.max.toLocaleString()}
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-xs text-[hsl(var(--panel-muted-foreground))] block mb-1">Min</label>
+              <input
+                type="number"
+                placeholder={range.min.toString()}
+                value={filter.min?.toString() || ''}
+                onChange={(e) => onRangeChange(column, 'min', e.target.value ? parseFloat(e.target.value) : null)}
+                className="w-full px-2 py-1 text-xs bg-[hsl(var(--panel-input-background))] text-[hsl(var(--panel-foreground))] border border-[hsl(var(--panel-input-border))] rounded focus:border-[hsl(var(--primary))] focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-[hsl(var(--panel-muted-foreground))] block mb-1">Max</label>
+              <input
+                type="number"
+                placeholder={range.max.toString()}
+                value={filter.max?.toString() || ''}
+                onChange={(e) => onRangeChange(column, 'max', e.target.value ? parseFloat(e.target.value) : null)}
+                className="w-full px-2 py-1 text-xs bg-[hsl(var(--panel-input-background))] text-[hsl(var(--panel-foreground))] border border-[hsl(var(--panel-input-border))] rounded focus:border-[hsl(var(--primary))] focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+      );
+    } else if (filterType === 'search') {
+      const filter = searchFilters[column] || { value: '' };
+      
+      return (
+        <div>
+          <input
+            type="text"
+            placeholder={`Search ${displayName.toLowerCase()}...`}
+            value={filter.value}
+            onChange={(e) => onSearchChange(column, e.target.value)}
+            className="w-full px-2 py-1 text-xs bg-[hsl(var(--panel-input-background))] text-[hsl(var(--panel-foreground))] border border-[hsl(var(--panel-input-border))] rounded focus:border-[hsl(var(--primary))] focus:outline-none"
+          />
+        </div>
+      );
+    }
+    
+    return null;
+  };
+  
+  return (
+    <div className="border border-[hsl(var(--panel-border))] rounded bg-[hsl(var(--panel-background))]">
+      <button
+        onClick={handleToggleExpand}
+        className="w-full flex items-center justify-between p-2 hover:bg-[hsl(var(--panel-hover))] transition-colors"
+      >
+        <span className="text-xs text-[hsl(var(--panel-foreground))] font-medium truncate" title={displayName}>
+          {displayName}
+        </span>
+        <div className="flex items-center space-x-1">
+          <span className="text-xs text-[hsl(var(--panel-muted-foreground))] capitalize">
+            {filterType}
+          </span>
+          {isExpanded ? (
+            <ChevronUp size={12} className="text-[hsl(var(--panel-muted-foreground))]" />
+          ) : (
+            <ChevronDown size={12} className="text-[hsl(var(--panel-muted-foreground))]" />
+          )}
+        </div>
+      </button>
+      
+      {isExpanded && (
+        <div className="p-2 border-t border-[hsl(var(--panel-border))]">
+          {renderFilterContent()}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default MonthOnMonthComparison; 

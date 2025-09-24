@@ -119,6 +119,38 @@ class ForecastRepository {
         }
     }
 
+    async makeAPICall(data: any, stateSetters: StateSetters): Promise<any> {
+        const { setLoading, setError, setData } = stateSetters;
+        const URL = "http://10.145.4.32:30020/couturedbutils/retail/forecast"
+        
+        try {
+            // Set loading state
+            if (setLoading) setLoading(true);
+            if (setError) setError(null);
+
+            // Make API call
+            const response: AxiosResponse = await this.axiosInstance.post(URL, data);
+            
+            // Set success data
+            if (setData) setData(response.data);
+            
+            return response.data;
+
+        } catch (error) {
+            // Handle errors
+            const apiError = error as ApiError;
+            const errorMessage = apiError.response?.data?.detail || apiError.message || 'An error occurred';
+            
+            if (setError) setError(errorMessage);
+            if (setData) setData(null);
+            
+            throw error;
+        } finally {
+            // Clear loading state
+            if (setLoading) setLoading(false);
+        }
+    }
+
     /**
      * Execute SQL query against forecast_new table (forecast variants)
      * @param {SqlQueryData} data - Contains sql_query string
