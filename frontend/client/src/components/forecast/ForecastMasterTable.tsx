@@ -870,6 +870,11 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     });
     setVisibleColumnSettings(initialVisibility);
   };
+
+  const generateGroupBy = () => {
+    // debugggg(groupByColumns)
+    return groupByColumns
+  }
   
   const loadInitialData = async () => {
     if (!selectedWeekStartDate) return;
@@ -994,7 +999,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
         }
       }
 
-      const requestBody = {limit: 100, offset: 0, filters: generateFiltersForAPI()}
+      const requestBody = {limit: 100, offset: 0, filters: generateFiltersForAPI(), group_by: generateGroupBy()}
       
       await forecastRepo.makeAPICall(requestBody, stateSettersNew);
     } catch (err) {
