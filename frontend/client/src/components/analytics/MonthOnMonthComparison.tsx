@@ -120,7 +120,12 @@ const MonthOnMonthComparison: React.FC = () => {
   
   // Month related filter - separate in UI 
   const [months, setMonths] = useState<string[]>([])
+  const [isMonthsLoading, setIsMonthsLoading] = useState<boolean>(false)
+
+  // `selectedMonth` is the temporary state for selections inside the modal
   const [selectedMonth, setSelectedMonth] = useState<string[]>([])
+  // `appliedMonths` is the state that triggers the API call
+  const [appliedMonths, setAppliedMonths] = useState<string[]>([])
   const [isMonthSelectMode, setIsMonthSelectMode] = useState(false)
   const [showMonthSelectModal, setShowMonthSelectModal] = useState(false)
 
@@ -159,8 +164,6 @@ const MonthOnMonthComparison: React.FC = () => {
     "sold_qty",
     "couture_baseline",
     "business_baseline",
-    "revised_baseline",
-    "business_consensus",
     "couture_baseline_accuracy",
     "business_baseline_accuracy",
     "revised_baseline_accuracy",
@@ -169,7 +172,12 @@ const MonthOnMonthComparison: React.FC = () => {
     "couture_vs_business_consensus_uplift",
     "revised_vs_business_consensus_uplift",
     "business_vs_business_consensus_uplift",
+    "revised_baseline",
+    "business_consensus",
   ]);
+
+  // Add a new state for metadata loading
+  const [metadataLoading, setMetadataLoading] = useState(true);
 
 
 const debugggg = (logg: any) => {
@@ -184,47 +192,57 @@ const debugggg = (logg: any) => {
     console.log(`[CoutureDebug] ${log}`)
   }
 
-  // Load initial data on component mount
+  // --- Effect Hooks for Data Loading ---
+
+  // 1. Load metadata and other static data once on component mount.
   useEffect(() => {
-    loadInitialData();
-    loadMetadata();
-    getListOfMonths();
-  }, [activeSearches, activeUnifiedSearch, groupByColumns]);
-
-
-  const getListOfMonths = () => {
-    // replace this with the API call and downstream processing
-    const mo = ["04-2025", "05-2025", "06-2025", "07-2025", "08-2025"]
-    setMonths(mo)
-  }
-
-    // Function to generate random trigger_qty and max_qty values (always generated client-side)
-  const generateRandomQtyValues = (record: ForecastRecord): ForecastRecord => {
-    const enhancedRecord = { ...record };
-    
-    // Get forecast_qty value (handle both regular and group-by modes)
-    const forecastQty = isGroupByMode ? (record['Σforecast_qty'] || 0) : (record.forecast_qty || 0);
-    
-    // Always generate trigger_qty (random between forecast_qty/2 and forecast_qty)
-    const triggerMin = forecastQty / 2;
-    const triggerMax = forecastQty;
-    enhancedRecord.trigger_qty = triggerMin + Math.random() * (triggerMax - triggerMin);
-    
-    // Always generate max_qty (random between forecast_qty+10 and forecast_qty*1.5)
-    const maxMin = forecastQty + 10;
-    const maxMax = forecastQty * 1.5;
-    enhancedRecord.max_qty = maxMin + Math.random() * (maxMax - maxMin);
-    
-    // For group-by mode, also generate Σtrigger_qty and Σmax_qty
-    if (isGroupByMode) {
-      enhancedRecord['Σtrigger_qty'] = triggerMin + Math.random() * (triggerMax - triggerMin);
-      enhancedRecord['Σmax_qty'] = maxMin + Math.random() * (maxMax - maxMin);
+    const initializeData = async () => {
+      loadMetadata();
+      await getListOfMonths();
+      if (isWeekStartDateControlled) {
+        loadWeekStartDates();
+      }
     }
     
-    return enhancedRecord;
-  };
+    initializeData()
+  }, [isWeekStartDateControlled]);
 
-    // take the total requests body from the API and return a final filters body
+  // 2. Load table data after metadata is ready, and re-load when filters change.
+  useEffect(() => {
+    // Prevent loading data until metadata is available.
+    if (metadataLoading) {
+      return;
+    }
+    loadInitialData();
+  }, [activeSearches, activeUnifiedSearch, groupByColumns, appliedMonths, metadataLoading, appliedFilters]);
+
+
+  const getListOfMonths = async () => {
+    // replace this with the API call and downstream processing, placeholders
+
+    const stateSettersNew = {
+        setLoading: (loading: boolean) => setLoading(loading),
+        setError: (error: string | null) => setError(error),
+        setData: (response: any) => {
+          if (response && response.items) {
+              // now set the possible months
+              debugggg("Months Init")
+              const monthsList: any = []
+              response.items.forEach((item : any) => {
+                monthsList.push(item.month_year)
+              });
+              setMonths(monthsList)
+          }
+        }
+      }
+
+      // only bring the top 20 months -- group by month_year
+      const requestBody = {limit: 20, offset: 0, group_by: ["month_year"]}
+      await forecastRepository.makeAPICall(requestBody, stateSettersNew);
+  }
+
+
+  // take the total requests body from the API and return a final filters body
   const generateFiltersForAPI = () => {
     // Define the structure for the final request body object.
     const finalRequestBody: Record<string, 
@@ -247,35 +265,35 @@ const debugggg = (logg: any) => {
 
     // --- Process Range Filters ---
     // Iterate over each entry in the rangeFilters state object.
-    Object.entries(rangeFilters).forEach(([column, filterState]) => {
-      // Check if 'min' or 'max' has a valid, non-null numeric value.
-      const hasMin = filterState.min !== null && !isNaN(Number(filterState.min));
-      const hasMax = filterState.max !== null && !isNaN(Number(filterState.max));
+    // Object.entries(rangeFilters).forEach(([column, filterState]) => {
+    //   // Check if 'min' or 'max' has a valid, non-null numeric value.
+    //   const hasMin = filterState.min !== null && !isNaN(Number(filterState.min));
+    //   const hasMax = filterState.max !== null && !isNaN(Number(filterState.max));
 
-      // If at least one bound (min or max) is set, create the range filter object.
-      if (hasMin || hasMax) {
-        const rangeFilter: { type: "range"; min?: number; max?: number } = { type: "range" };
+    //   // If at least one bound (min or max) is set, create the range filter object.
+    //   if (hasMin || hasMax) {
+    //     const rangeFilter: { type: "range"; min?: number; max?: number } = { type: "range" };
         
-        // Add the 'min' value if it exists.
-        if (hasMin) {
-          rangeFilter.min = Number(filterState.min);
-        }
-        // Add the 'max' value if it exists.
-        if (hasMax) {
-          rangeFilter.max = Number(filterState.max);
-        }
+    //     // Add the 'min' value if it exists.
+    //     if (hasMin) {
+    //       rangeFilter.min = Number(filterState.min);
+    //     }
+    //     // Add the 'max' value if it exists.
+    //     if (hasMax) {
+    //       rangeFilter.max = Number(filterState.max);
+    //     }
         
-        // Add the completed range filter to the request body.
-        finalRequestBody[column] = rangeFilter;
-      }
-    });
+    //     // Add the completed range filter to the request body.
+    //     finalRequestBody[column] = rangeFilter;
+    //   }
+    // });
 
     // Return the final, correctly formatted object.
     return finalRequestBody;
   };
 
   const generateSelectedMonths = () => {
-    return selectedMonth
+    return appliedMonths;
   }
 
   const generateGroupBy = () => {
@@ -335,82 +353,10 @@ const debugggg = (logg: any) => {
     try {
       setLoading(true);
       setError(null);
-      setPage(0);
+      setPage(0); // Reset page for new filters
+      setData([]); // Clear previous data
+      setHasMore(true); // Assume there is more data to load
       
-      
-      // Add search conditions
-      // const searchConditions = Object.entries(activeSearches)
-      //   .filter(([_, value]) => value.trim() !== '')
-      //   .map(([column, value]) => `${column} ILIKE '%${value}%'`);
-
-      // // Add unified search conditions (searches across multiple columns)
-      // if (activeUnifiedSearch.trim() !== '') {
-      //   // Split by semicolon and trim each term
-      //   const searchTerms = activeUnifiedSearch.split(';')
-      //     .map(term => term.trim())
-      //     .filter(term => term !== '');
-        
-      //   if (searchTerms.length > 0) {
-      //     // Create AND conditions for each search term
-      //     const unifiedConditions = searchTerms.map(term => `(
-      //       store_no ILIKE '%${term}%' OR 
-      //       city ILIKE '%${term}%' OR 
-      //       state ILIKE '%${term}%' OR 
-      //       region ILIKE '%${term}%' OR 
-      //       article_id ILIKE '%${term}%' OR 
-      //       article_description ILIKE '%${term}%' OR 
-      //       brand ILIKE '%${term}%' OR 
-      //       segment ILIKE '%${term}%' OR 
-      //       division ILIKE '%${term}%' OR 
-      //       vertical ILIKE '%${term}%' OR 
-      //       channel ILIKE '%${term}%'
-      //     )`);
-          
-      //     // Join multiple terms with AND
-      //     const combinedUnifiedCondition = `(${unifiedConditions.join(' AND ')})`;
-      //     searchConditions.push(combinedUnifiedCondition);
-      //   }
-      // }
-
-      // if (searchConditions.length > 0) {
-      //   sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
-      // }
-      
-      // sqlQuery += ` GROUP BY store_no, article_id ORDER BY store_no, article_id LIMIT 50`;
-      
-      // const stateSetters = {
-      //   setLoading: (loading: boolean) => setLoading(loading),
-      //   setError: (error: string | null) => setError(error),
-      //   setData: (response: any) => {
-      //     if (response && response.data) {
-      //       // Process the grouped data
-      //       console.log('Raw response data:', response.data);
-      //       const processedData = response.data.map((record: any) => {
-      //         console.log('Processing record:', record);
-      //         console.log('Raw months array:', record.months);
-              
-      //         const processedRecord = {
-      //           ...record,
-      //           months: record.months.map((monthData: any) => {
-      //             console.log('Raw month data:', monthData);
-      //             const parsed = parseMonthData(monthData);
-      //             console.log('Parsed month data:', parsed);
-      //             return parsed;
-      //           })
-      //         };
-              
-      //         console.log('Final processed record:', processedRecord);
-      //         return processedRecord;
-      //       });
-      //       setData(processedData);
-      //       setHasMore(response.data.length === 50);
-      //       setPage(1);
-      //     }
-      //   }
-      // };
-      
-      // await forecastRepository.executeForecastNewSqlQuery({ sql_query: sqlQuery }, stateSetters);
-
       /* --------- API CALL ------- */
       const stateSettersNew = {
         setLoading: (loading: boolean) => setLoading(loading),
@@ -418,7 +364,7 @@ const debugggg = (logg: any) => {
         setData: (response: any) => {
           if (response && response.data) {
             // Apply random generation for trigger_qty and max_qty
-            const enhancedData = response.data.map((record: ForecastRecord) => generateRandomQtyValues(record));
+            const enhancedData = response.data;
             setData(enhancedData);
             setHasMore(response.data.length === 100);
             setPage(1);
@@ -427,8 +373,6 @@ const debugggg = (logg: any) => {
       }
 
       const requestBody = {limit: 100, offset: 0, filters: generateFiltersForAPI(), group_by: generateGroupBy(), selected_months: generateSelectedMonths()}
-      debugggg(`In initial data`)
-      debugggg(requestBody)
       await forecastRepository.makeAPICall(requestBody, stateSettersNew, "month-on-month-comparison");
 
 
@@ -447,7 +391,7 @@ const debugggg = (logg: any) => {
     setLoading(true);
     
     try {
-      const offset = page * 50;
+      const offset = page * 100;
 
       // let sqlQuery = `
       //   SELECT 
@@ -551,11 +495,11 @@ const debugggg = (logg: any) => {
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
           debugggg(`${Object.keys(requestBody)} - ${Object.keys(response)}`)
-          if (response && response.items) {
+          if (response && response.data) {
             // Apply random generation for trigger_qty and max_qty
-            const enhancedData = response.items.map((record: ForecastRecord) => generateRandomQtyValues(record));
+            const enhancedData = response.data
             setData(prevData => [...prevData, ...enhancedData]);
-            setHasMore(response.items.length === 100);
+            setHasMore(response.data.length === 100);
             setPage(prevPage => prevPage + 1);
           }
         }
@@ -624,11 +568,6 @@ const debugggg = (logg: any) => {
         return newActive;
       });
     }
-    
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
   };
 
   const handleClearSearch = (column: string) => {
@@ -641,11 +580,6 @@ const debugggg = (logg: any) => {
       delete newActive[column];
       return newActive;
     });
-    
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
   };
 
   const handleSearchKeyPress = (column: string, event: React.KeyboardEvent) => {
@@ -663,22 +597,12 @@ const debugggg = (logg: any) => {
   const handleUnifiedSearchExecute = () => {
     const searchValue = unifiedSearchValue.trim();
     setActiveUnifiedSearch(searchValue);
-    
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
   };
 
   // Handle clearing unified search
   const handleClearUnifiedSearch = () => {
     setUnifiedSearchValue('');
     setActiveUnifiedSearch('');
-    
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
   };
 
   // Handle unified search input key press
@@ -710,10 +634,6 @@ const debugggg = (logg: any) => {
     setIsGroupByMode(selectedGroupByColumns.length > 0);
     setShowGroupByModal(false);
     setSelectedGroupByColumns([]);
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
   };
   
   const handleGroupByColumnToggle = (column: string) => {
@@ -727,10 +647,6 @@ const debugggg = (logg: any) => {
   const clearGroupBy = () => {
     setIsGroupByMode(false);
     setGroupByColumns([]);
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
   };
   
   // Get available columns for group by (string type only)
@@ -743,27 +659,26 @@ const debugggg = (logg: any) => {
 
   // Month Selector Modal options -----------
   const handleMonthSelectClick = () => {
+    setSelectedMonth([...appliedMonths]);
     setShowMonthSelectModal(true);
   };
 
   const handleMonthSelectCancel = () => {
     setShowMonthSelectModal(false);
+    // Resetting here means selections are lost on cancel, which is a valid choice.
     setSelectedMonth([]);
   };
   
   const handleMonthSelectSubmit = () => {
+    // Apply the selection from the modal's state to the main `appliedMonths` state.
+    // This will trigger the `useEffect` to refetch data.
+    setAppliedMonths([...selectedMonth]);
     setIsMonthSelectMode(selectedMonth.length > 0);
     setShowMonthSelectModal(false);
-    setSelectedMonth([...selectedMonth]);
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
-
-    // loadInitialData();
   };
   
   const handleMonthSelectColumnToggle = (column: string) => {
+    // This only updates the temporary state for the modal.
     setSelectedMonth(prev => 
       prev.includes(column) 
         ? prev.filter(col => col !== column)
@@ -774,12 +689,8 @@ const debugggg = (logg: any) => {
   const clearMonthSelct = () => {
     setIsMonthSelectMode(false);
     setSelectedMonth([]);
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
-
-    // loadInitialData()
+    // Clearing `appliedMonths` will trigger the `useEffect` to refetch data.
+    setAppliedMonths([]);
   };
 
 
@@ -1079,10 +990,7 @@ const debugggg = (logg: any) => {
     
     setAppliedFilters(newAppliedFilters);
     
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
+    // Data will reload via the useEffect hook triggered by state changes.
   };
   
   // Remove a specific applied filter
@@ -1115,10 +1023,7 @@ const debugggg = (logg: any) => {
     );
     setAppliedFilters(newAppliedFilters);
     
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
+    // Data will reload via the useEffect hook.
   };
   
   // Clear all filters
@@ -1128,10 +1033,7 @@ const debugggg = (logg: any) => {
     setSearchFilters({});
     setAppliedFilters([]);
     
-    // Reset data and reload
-    setData([]);
-    setPage(0);
-    setHasMore(true);
+    // Data will reload via the useEffect hook.
   };
   
   // Get columns grouped by parameter type for filter UI
@@ -1193,25 +1095,15 @@ const debugggg = (logg: any) => {
     }
   };
 
-    // Load metadata and week dates on component mount
-    useEffect(() => {
-      loadMetadata();
-      // Only load week dates if not controlled by props
-      if (isWeekStartDateControlled) {
-        loadWeekStartDates();
-      }
-    }, [isWeekStartDateControlled]);
-
   const loadMetadata = async () => {
     try {
+      setMetadataLoading(true);
       const stateSetters = {
         setLoading: (loading: boolean) => setLoading(loading),
         setError: (error: string | null) => setError(error),
         setData: (data: ForecastMetadata) => {
           setMetadata(data);
           setupColumnGroups(data)
-          // Load initial data after metadata is loaded
-          loadInitialData();
         },
       };
 
@@ -1219,21 +1111,18 @@ const debugggg = (logg: any) => {
     } catch (err) {
       console.error("Error loading metadata:", err);
       setError("Failed to load metadata");
-      setLoading(false);
+    } finally {
+      setMetadataLoading(false);
     }
   };
 
   const handleWeekStartDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newDate = event.target.value;
     setLocalSelectedWeekStartDate(newDate);
-    // Reset pagination
-    setData([]);
-    setPage(0);
-    setHasMore(true);
   };
   
 
-  if (loading && data.length === 0) {
+  if (metadataLoading || (loading && data.length === 0)) {
     return (
       <div className="flex flex-col h-full bg-[hsl(var(--dark-9))] text-[hsl(var(--panel-foreground))]">
         {/* Header */}
@@ -1335,8 +1224,6 @@ const debugggg = (logg: any) => {
           </div>
         </div>
         <div className="flex items-center space-x-2 text-[hsl(var(--panel-muted-foreground))]">
-          <Calendar size={16} />
-          {/* <span className="text-sm">Grouped by Store & Article</span> */}
           {/* Month Selector Button */}
             <button
               onClick={handleMonthSelectClick}
@@ -1346,11 +1233,11 @@ const debugggg = (logg: any) => {
                   : 'bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] border border-[hsl(var(--table-border))] hover:bg-[hsl(var(--table-button-hover))]'
               }`}
             >
-              <Group size={14} />
+              <Calendar size={14} />
               <span>Select Month</span>
-              {isMonthSelectMode && selectedMonth.length > 0 && (
+              {isMonthSelectMode && appliedMonths.length > 0 && (
                 <span className="bg-[hsl(var(--primary))]/30 px-1 rounded text-xs">
-                  {selectedMonth.length}
+                  {appliedMonths.length}
                 </span>
               )}
             </button>
@@ -1516,6 +1403,10 @@ const debugggg = (logg: any) => {
                     </span>
                   </label>
                 ))}
+
+                {months.length === 0 && <div className="text-[hsl(var(--panel-muted-foreground))] text-sm text-center py-4">
+                  Loading Months....
+                </div>}
               </div>
             </div>
             
@@ -2107,9 +1998,9 @@ const debugggg = (logg: any) => {
         <div className="px-4 py-2 border-t border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))]">
           <div className="flex items-center justify-between text-xs text-[hsl(var(--panel-muted-foreground))]">
             <div className="flex items-center space-x-4">
-              <span>
+              {/* <span>
                 Showing month-on-month comparison grouped by (Store, Article) pairs
-              </span>
+              </span> */}
             </div>
             <div>
               {data.length.toLocaleString()} groups loaded
@@ -2386,4 +2277,4 @@ const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
   );
 };
 
-export default MonthOnMonthComparison; 
+export default MonthOnMonthComparison;

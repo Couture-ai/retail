@@ -129,18 +129,7 @@ class ForecastRepository {
             if (setLoading) setLoading(true);
             if (setError) setError(null);
             
-            // Make API call
-            let response: any = {data: null}
-            
-            if (type === "month-on-month-comparison") {
-                console.log("In Month vs month comparisoion", Object.keys(monthWiseMockData))
-                response.data = monthWiseMockData;
-            }else{
-                response = await this.axiosInstance.post(URL, data);
-            }
-
-            // response = await this.axiosInstance.post(URL, data);
-
+            const response = await this.axiosInstance.post(URL, data);
 
             // Set success data
             if (setData) setData(response.data);
