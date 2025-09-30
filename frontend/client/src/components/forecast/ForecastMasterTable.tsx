@@ -702,12 +702,33 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
       //   sqlQuery += ` LIMIT 100 OFFSET ${offset}`;
       // }
       
+      // const stateSetters = {
+      //   setLoading: () => {},
+      //   setError: (error: string | null) => setError(error),
+      //   setData: (response: any) => {
+      //     console.log('[ForecastMasterTable] Received response:', response);
+      //     if (response && response.data) {
+      //       console.log('[ForecastMasterTable] Adding data:', response.data.length, 'records');
+      //       // Apply random generation for trigger_qty and max_qty
+      //       const enhancedData = response.data.map((record: ForecastRecord) => generateRandomQtyValues(record));
+      //       setData(prevData => [...prevData, ...enhancedData]);
+      //       setHasMore(response.data.length === 100);
+      //       setPage(prevPage => prevPage + 1);
+      //     } else {
+      //       console.log('[ForecastMasterTable] No data in response');
+      //       setHasMore(false);
+      //     }
+      //   }
+      // };
+      
+
       console.log('[ForecastMasterTable] Executing SQL query:', sqlQuery);
       
       // API level implementation of logic
       const filterBody = generateFiltersForAPI()
-      const requestBody = {limit: 100, offset: offset, filters: filterBody}
+      const requestBody = {limit: 100, offset: offset, filters: filterBody, group_by: generateGroupBy()}
 
+      
       const stateSettersNew = {
         setLoading: (loading: boolean) => setLoading(loading),
         setError: (error: string | null) => setError(error),
@@ -723,24 +744,6 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
         }
       }
       
-      const stateSetters = {
-        setLoading: () => {},
-        setError: (error: string | null) => setError(error),
-        setData: (response: any) => {
-          console.log('[ForecastMasterTable] Received response:', response);
-          if (response && response.data) {
-            console.log('[ForecastMasterTable] Adding data:', response.data.length, 'records');
-            // Apply random generation for trigger_qty and max_qty
-            const enhancedData = response.data.map((record: ForecastRecord) => generateRandomQtyValues(record));
-            setData(prevData => [...prevData, ...enhancedData]);
-            setHasMore(response.data.length === 100);
-            setPage(prevPage => prevPage + 1);
-          } else {
-            console.log('[ForecastMasterTable] No data in response');
-            setHasMore(false);
-          }
-        }
-      };
       
       await forecastRepo.makeAPICall(requestBody, stateSettersNew);
     } catch (err) {

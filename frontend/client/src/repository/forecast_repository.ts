@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import monthWiseMockData from "../data/retailMock.json"
 
 // Define interfaces for better type safety
 interface StateSetters {
@@ -119,18 +120,28 @@ class ForecastRepository {
         }
     }
 
-    async makeAPICall(data: any, stateSetters: StateSetters): Promise<any> {
+    async makeAPICall(data: any, stateSetters: StateSetters, type: string = "forecast"): Promise<any> {
         const { setLoading, setError, setData } = stateSetters;
-        const URL = "http://10.145.4.32:30020/couturedbutils/retail/forecast"
-        
+        const URL = `http://10.145.4.32:30020/couturedbutils/retail/${type}`
+
         try {
             // Set loading state
             if (setLoading) setLoading(true);
             if (setError) setError(null);
-
-            // Make API call
-            const response: AxiosResponse = await this.axiosInstance.post(URL, data);
             
+            // Make API call
+            let response: any = {data: null}
+            
+            if (type === "month-on-month-comparison") {
+                console.log("In Month vs month comparisoion", Object.keys(monthWiseMockData))
+                response.data = monthWiseMockData;
+            }else{
+                response = await this.axiosInstance.post(URL, data);
+            }
+
+            // response = await this.axiosInstance.post(URL, data);
+
+
             // Set success data
             if (setData) setData(response.data);
             

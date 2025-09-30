@@ -12,3 +12,13 @@ export function formatDate(date: Date): string {
     hour12: true 
   })}`;
 }
+
+export function sanitizeLabel(input: string): string {
+  return input
+    .replace(/_/g, " ")                 // replace underscores with spaces
+    .replace(/\s+/g, " ")               // collapse multiple spaces
+    .trim()                             // remove leading/trailing spaces
+    .replace(/\w\S*/g, (word) =>        // capitalize each word
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    );
+}

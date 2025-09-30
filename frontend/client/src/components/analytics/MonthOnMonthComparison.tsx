@@ -1,16 +1,21 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { TrendingUp, Calendar, BarChart3, Loader2, AlertCircle, RefreshCw, Search, X, Group, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useProject } from '@/context/ProjectProvider';
+import { sanitizeLabel } from '@/lib/utils';
 
-interface MonthData {
-  month_year: string;
-  week_start_date: string;
-  forecast_qty: {
-    bb?: number; // Business Baseline
-    cb?: number; // Couture Baseline
-  };
-  sold_qty: number;
-}
+// interface MonthData {
+//   month_year: string;
+//   week_start_date: string;
+//   forecast_qty: {
+//     bb?: number; // Business Baseline
+//     cb?: number; // Couture Baseline
+//   };
+//   sold_qty: number;
+// }
+
+type MonthData = {
+  [key: string]: number | string; // depending on your data
+};
 
 interface GroupedForecastRecord {
   // Store details
@@ -83,6 +88,10 @@ interface AppliedFilter {
   sqlCondition: string;
 }
 
+interface ForecastRecord {
+  [key: string]: any;
+}
+
 const MonthOnMonthComparison: React.FC = () => {
   const [data, setData] = useState<GroupedForecastRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,7 +117,13 @@ const MonthOnMonthComparison: React.FC = () => {
   const [showGroupByModal, setShowGroupByModal] = useState(false);
   const [selectedGroupByColumns, setSelectedGroupByColumns] = useState<string[]>([]);
   const [groupByColumns, setGroupByColumns] = useState<string[]>([]);
-    
+  
+  // Month related filter - separate in UI 
+  const [months, setMonths] = useState<string[]>([])
+  const [selectedMonth, setSelectedMonth] = useState<string[]>([])
+  const [isMonthSelectMode, setIsMonthSelectMode] = useState(false)
+  const [showMonthSelectModal, setShowMonthSelectModal] = useState(false)
+
   // field required for columns, dropdowns
   const [metadata, setMetadata] = useState<ForecastMetadata | null>(null);
   const [columnGroups, setColumnGroups] = useState<ColumnGroup[]>([]);
@@ -137,108 +152,158 @@ const MonthOnMonthComparison: React.FC = () => {
   const selectedWeekStartDate = localSelectedWeekStartDate;
   const isWeekStartDateControlled = true;
 
+  // Fields decided to show in the table
+  const [monthWiseColumns, setMonthWiseColumns] = useState<string[]>([
+    "month_year",
+    "week_start_date",
+    "sold_qty",
+    "couture_baseline",
+    "business_baseline",
+    "revised_baseline",
+    "business_consensus",
+    "couture_baseline_accuracy",
+    "business_baseline_accuracy",
+    "revised_baseline_accuracy",
+    "business_consensus_accuracy",
+    "couture_vs_business_uplift",
+    "couture_vs_business_consensus_uplift",
+    "revised_vs_business_consensus_uplift",
+    "business_vs_business_consensus_uplift",
+  ]);
 
-  const debugggg = (logg: any) => {
-    console.log(`[CoutureAnalytics] ${logg}`)
+
+const debugggg = (logg: any) => {
+    let log = logg
+    if (typeof log === "object"){
+      try {
+        log = JSON.stringify(log)        
+      } catch (error) {
+        log = log
+      }
+    }
+    console.log(`[CoutureDebug] ${log}`)
   }
 
   // Load initial data on component mount
   useEffect(() => {
     loadInitialData();
     loadMetadata();
-  }, [activeSearches, activeUnifiedSearch]);
+    getListOfMonths();
+  }, [activeSearches, activeUnifiedSearch, groupByColumns]);
 
-  const parseStringifiedForecastQty = (forecastQtyString: string | any): { bb?: number; cb?: number } => {
-    try {
-      if (typeof forecastQtyString === 'object' && forecastQtyString !== null) {
-        return {
-          bb: forecastQtyString.bb || undefined,
-          cb: forecastQtyString.cb || undefined
-        };
-      }
-      
-      if (typeof forecastQtyString === 'string') {
-        const parsed = JSON.parse(forecastQtyString);
-        return {
-          bb: parsed.bb || undefined,
-          cb: parsed.cb || undefined
-        };
-      }
-      
-      return { bb: undefined, cb: undefined };
-    } catch (error) {
-      console.warn('Failed to parse forecast_qty:', forecastQtyString, error);
-      return { bb: undefined, cb: undefined };
+
+  const getListOfMonths = () => {
+    // replace this with the API call and downstream processing
+    const mo = ["04-2025", "05-2025", "06-2025", "07-2025", "08-2025"]
+    setMonths(mo)
+  }
+
+    // Function to generate random trigger_qty and max_qty values (always generated client-side)
+  const generateRandomQtyValues = (record: ForecastRecord): ForecastRecord => {
+    const enhancedRecord = { ...record };
+    
+    // Get forecast_qty value (handle both regular and group-by modes)
+    const forecastQty = isGroupByMode ? (record['Σforecast_qty'] || 0) : (record.forecast_qty || 0);
+    
+    // Always generate trigger_qty (random between forecast_qty/2 and forecast_qty)
+    const triggerMin = forecastQty / 2;
+    const triggerMax = forecastQty;
+    enhancedRecord.trigger_qty = triggerMin + Math.random() * (triggerMax - triggerMin);
+    
+    // Always generate max_qty (random between forecast_qty+10 and forecast_qty*1.5)
+    const maxMin = forecastQty + 10;
+    const maxMax = forecastQty * 1.5;
+    enhancedRecord.max_qty = maxMin + Math.random() * (maxMax - maxMin);
+    
+    // For group-by mode, also generate Σtrigger_qty and Σmax_qty
+    if (isGroupByMode) {
+      enhancedRecord['Σtrigger_qty'] = triggerMin + Math.random() * (triggerMax - triggerMin);
+      enhancedRecord['Σmax_qty'] = maxMin + Math.random() * (maxMax - maxMin);
     }
+    
+    return enhancedRecord;
   };
 
-  const parseMonthData = (monthDataString: string | any): MonthData => {
-    try {
-      // If it's already an object, return it
-      if (typeof monthDataString === 'object' && monthDataString !== null) {
-        return {
-          month_year: monthDataString.month_year || '',
-          week_start_date: monthDataString.week_start_date || '',
-          forecast_qty: parseStringifiedForecastQty(monthDataString.forecast_qty),
-          sold_qty: monthDataString.sold_qty || 0
+    // take the total requests body from the API and return a final filters body
+  const generateFiltersForAPI = () => {
+    // Define the structure for the final request body object.
+    const finalRequestBody: Record<string, 
+      { type: "discrete"; values: string[] } | 
+      { type: "range"; min?: number; max?: number }
+    > = {};
+
+    // --- Process Discrete Filters ---
+    // Iterate over each entry in the discreteFilters state object.
+    Object.entries(discreteFilters).forEach(([column, filterState]) => {
+      // Check if the filter has any selected values.
+      if (filterState.selectedValues && filterState.selectedValues.length > 0) {
+        // If so, add it to the request body in the required format.
+        finalRequestBody[column] = {
+          type: "discrete",
+          values: filterState.selectedValues,
         };
       }
-      
-      // If it's a string, parse it
-      if (typeof monthDataString === 'string') {
-        const parsed = JSON.parse(monthDataString);
-        return {
-          month_year: parsed.month_year || '',
-          week_start_date: parsed.week_start_date || '',
-          forecast_qty: parseStringifiedForecastQty(parsed.forecast_qty),
-          sold_qty: parsed.sold_qty || 0
-        };
+    });
+
+    // --- Process Range Filters ---
+    // Iterate over each entry in the rangeFilters state object.
+    Object.entries(rangeFilters).forEach(([column, filterState]) => {
+      // Check if 'min' or 'max' has a valid, non-null numeric value.
+      const hasMin = filterState.min !== null && !isNaN(Number(filterState.min));
+      const hasMax = filterState.max !== null && !isNaN(Number(filterState.max));
+
+      // If at least one bound (min or max) is set, create the range filter object.
+      if (hasMin || hasMax) {
+        const rangeFilter: { type: "range"; min?: number; max?: number } = { type: "range" };
+        
+        // Add the 'min' value if it exists.
+        if (hasMin) {
+          rangeFilter.min = Number(filterState.min);
+        }
+        // Add the 'max' value if it exists.
+        if (hasMax) {
+          rangeFilter.max = Number(filterState.max);
+        }
+        
+        // Add the completed range filter to the request body.
+        finalRequestBody[column] = rangeFilter;
       }
-      
-      return {
-        month_year: '',
-        week_start_date: '',
-        forecast_qty: { bb: undefined, cb: undefined },
-        sold_qty: 0
-      };
-    } catch (error) {
-      console.warn('Failed to parse month data:', monthDataString, error);
-      return {
-        month_year: '',
-        week_start_date: '',
-        forecast_qty: { bb: undefined, cb: undefined },
-        sold_qty: 0
-      };
-    }
+    });
+
+    // Return the final, correctly formatted object.
+    return finalRequestBody;
   };
+
+  const generateSelectedMonths = () => {
+    return selectedMonth
+  }
+
+  const generateGroupBy = () => {
+    return groupByColumns
+  }
   
+
   const setupColumnGroups = (metadata: ForecastMetadata) => {
     // Add trigger_qty and max_qty as client-side columns (not from database)
-    const clientSideColumns = ['trigger_qty', 'max_qty'];
+    // const clientSideColumns = ['trigger_qty', 'max_qty'];
     
     // Don't exclude card attributes - keep them in regular columns too
     const groups: ColumnGroup[] = [
-      {
-        name: "Store Parameters",
-        columns: metadata.store_attributes,
-        color: "bg-blue-500/10 border-blue-500/30",
-        expanded: true
-      },
-      {
-        name: "Product Parameters", 
-        columns: metadata.product_attributes,
-        color: "bg-green-500/10 border-green-500/30",
-        expanded: true
-      },
+      // {
+      //   name: "Store Parameters",
+      //   columns: metadata.store_attributes,
+      //   color: "bg-blue-500/10 border-blue-500/30",
+      //   expanded: true
+      // },
+      // {
+      //   name: "Product Parameters", 
+      //   columns: metadata.product_attributes,
+      //   color: "bg-green-500/10 border-green-500/30",
+      //   expanded: true
+      // },
       {
         name: "Forecast Parameters",
-        columns: [
-          ...metadata.essential_columns.filter(col => 
-            !metadata.store_attributes.includes(col) && 
-            !metadata.product_attributes.includes(col)
-          ),
-          ...clientSideColumns
-        ],
+        columns: monthWiseColumns,
         color: "bg-purple-500/10 border-purple-500/30",
         expanded: true
       }
@@ -248,14 +313,22 @@ const MonthOnMonthComparison: React.FC = () => {
     
     // Initialize column visibility settings - all columns visible by default
     const initialVisibility: { [key: string]: boolean } = {};
-    metadata.essential_columns.forEach(col => {
+    
+    // metadata.essential_columns.forEach(col => {
+    //   initialVisibility[col] = true;
+    // });
+    // // Add client-side columns to visibility settings
+    // clientSideColumns.forEach(col => {
+    //   initialVisibility[col] = true;
+    // });
+
+    // Set the initial visbility for the new month wise groups
+    monthWiseColumns.forEach(col => {
       initialVisibility[col] = true;
-    });
-    // Add client-side columns to visibility settings
-    clientSideColumns.forEach(col => {
-      initialVisibility[col] = true;
-    });
+    })
+    
     setVisibleColumnSettings(initialVisibility);
+
   };
 
   const loadInitialData = async () => {
@@ -264,105 +337,102 @@ const MonthOnMonthComparison: React.FC = () => {
       setError(null);
       setPage(0);
       
-      let sqlQuery = `
-        SELECT 
-          store_no,
-          MAX(city) as city,
-          MAX(state) as state,
-          MAX(region) as region,
-          MAX(store_type) as store_type,
-          MAX(channel) as channel,
-          article_id,
-          MAX(article_description) as article_description,
-          MAX(brand) as brand,
-          MAX(super_category) as super_category,
-          MAX(segment) as segment,
-          MAX(division) as division,
-          MAX(vertical) as vertical,
-          ARRAY_AGG(
-            JSON_BUILD_OBJECT(
-              'month_year', month_year,
-              'week_start_date', week_start_date,
-              'forecast_qty', forecast_qty,
-              'sold_qty', sold_qty
-            ) ORDER BY month_year
-          ) as months
-        FROM forecast 
-        WHERE 1=1
-      `;
       
       // Add search conditions
-      const searchConditions = Object.entries(activeSearches)
-        .filter(([_, value]) => value.trim() !== '')
-        .map(([column, value]) => `${column} ILIKE '%${value}%'`);
+      // const searchConditions = Object.entries(activeSearches)
+      //   .filter(([_, value]) => value.trim() !== '')
+      //   .map(([column, value]) => `${column} ILIKE '%${value}%'`);
 
-      // Add unified search conditions (searches across multiple columns)
-      if (activeUnifiedSearch.trim() !== '') {
-        // Split by semicolon and trim each term
-        const searchTerms = activeUnifiedSearch.split(';')
-          .map(term => term.trim())
-          .filter(term => term !== '');
+      // // Add unified search conditions (searches across multiple columns)
+      // if (activeUnifiedSearch.trim() !== '') {
+      //   // Split by semicolon and trim each term
+      //   const searchTerms = activeUnifiedSearch.split(';')
+      //     .map(term => term.trim())
+      //     .filter(term => term !== '');
         
-        if (searchTerms.length > 0) {
-          // Create AND conditions for each search term
-          const unifiedConditions = searchTerms.map(term => `(
-            store_no ILIKE '%${term}%' OR 
-            city ILIKE '%${term}%' OR 
-            state ILIKE '%${term}%' OR 
-            region ILIKE '%${term}%' OR 
-            article_id ILIKE '%${term}%' OR 
-            article_description ILIKE '%${term}%' OR 
-            brand ILIKE '%${term}%' OR 
-            segment ILIKE '%${term}%' OR 
-            division ILIKE '%${term}%' OR 
-            vertical ILIKE '%${term}%' OR 
-            channel ILIKE '%${term}%'
-          )`);
+      //   if (searchTerms.length > 0) {
+      //     // Create AND conditions for each search term
+      //     const unifiedConditions = searchTerms.map(term => `(
+      //       store_no ILIKE '%${term}%' OR 
+      //       city ILIKE '%${term}%' OR 
+      //       state ILIKE '%${term}%' OR 
+      //       region ILIKE '%${term}%' OR 
+      //       article_id ILIKE '%${term}%' OR 
+      //       article_description ILIKE '%${term}%' OR 
+      //       brand ILIKE '%${term}%' OR 
+      //       segment ILIKE '%${term}%' OR 
+      //       division ILIKE '%${term}%' OR 
+      //       vertical ILIKE '%${term}%' OR 
+      //       channel ILIKE '%${term}%'
+      //     )`);
           
-          // Join multiple terms with AND
-          const combinedUnifiedCondition = `(${unifiedConditions.join(' AND ')})`;
-          searchConditions.push(combinedUnifiedCondition);
-        }
-      }
+      //     // Join multiple terms with AND
+      //     const combinedUnifiedCondition = `(${unifiedConditions.join(' AND ')})`;
+      //     searchConditions.push(combinedUnifiedCondition);
+      //   }
+      // }
 
-      if (searchConditions.length > 0) {
-        sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
-      }
+      // if (searchConditions.length > 0) {
+      //   sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
+      // }
       
-      sqlQuery += ` GROUP BY store_no, article_id ORDER BY store_no, article_id LIMIT 50`;
+      // sqlQuery += ` GROUP BY store_no, article_id ORDER BY store_no, article_id LIMIT 50`;
       
-      const stateSetters = {
+      // const stateSetters = {
+      //   setLoading: (loading: boolean) => setLoading(loading),
+      //   setError: (error: string | null) => setError(error),
+      //   setData: (response: any) => {
+      //     if (response && response.data) {
+      //       // Process the grouped data
+      //       console.log('Raw response data:', response.data);
+      //       const processedData = response.data.map((record: any) => {
+      //         console.log('Processing record:', record);
+      //         console.log('Raw months array:', record.months);
+              
+      //         const processedRecord = {
+      //           ...record,
+      //           months: record.months.map((monthData: any) => {
+      //             console.log('Raw month data:', monthData);
+      //             const parsed = parseMonthData(monthData);
+      //             console.log('Parsed month data:', parsed);
+      //             return parsed;
+      //           })
+      //         };
+              
+      //         console.log('Final processed record:', processedRecord);
+      //         return processedRecord;
+      //       });
+      //       setData(processedData);
+      //       setHasMore(response.data.length === 50);
+      //       setPage(1);
+      //     }
+      //   }
+      // };
+      
+      // await forecastRepository.executeForecastNewSqlQuery({ sql_query: sqlQuery }, stateSetters);
+
+      /* --------- API CALL ------- */
+      const stateSettersNew = {
         setLoading: (loading: boolean) => setLoading(loading),
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
           if (response && response.data) {
-            // Process the grouped data
-            console.log('Raw response data:', response.data);
-            const processedData = response.data.map((record: any) => {
-              console.log('Processing record:', record);
-              console.log('Raw months array:', record.months);
-              
-              const processedRecord = {
-                ...record,
-                months: record.months.map((monthData: any) => {
-                  console.log('Raw month data:', monthData);
-                  const parsed = parseMonthData(monthData);
-                  console.log('Parsed month data:', parsed);
-                  return parsed;
-                })
-              };
-              
-              console.log('Final processed record:', processedRecord);
-              return processedRecord;
-            });
-            setData(processedData);
-            setHasMore(response.data.length === 50);
+            // Apply random generation for trigger_qty and max_qty
+            const enhancedData = response.data.map((record: ForecastRecord) => generateRandomQtyValues(record));
+            setData(enhancedData);
+            setHasMore(response.data.length === 100);
             setPage(1);
           }
         }
-      };
-      
-      await forecastRepository.executeForecastNewSqlQuery({ sql_query: sqlQuery }, stateSetters);
+      }
+
+      const requestBody = {limit: 100, offset: 0, filters: generateFiltersForAPI(), group_by: generateGroupBy(), selected_months: generateSelectedMonths()}
+      debugggg(`In initial data`)
+      debugggg(requestBody)
+      await forecastRepository.makeAPICall(requestBody, stateSettersNew, "month-on-month-comparison");
+
+
+
     } catch (err) {
       console.error('Error loading initial data:', err);
       setError('Failed to load data');
@@ -378,93 +448,121 @@ const MonthOnMonthComparison: React.FC = () => {
     
     try {
       const offset = page * 50;
-      let sqlQuery = `
-        SELECT 
-          store_no,
-          MAX(city) as city,
-          MAX(state) as state,
-          MAX(region) as region,
-          MAX(store_type) as store_type,
-          MAX(channel) as channel,
-          article_id,
-          MAX(article_description) as article_description,
-          MAX(brand) as brand,
-          MAX(super_category) as super_category,
-          MAX(segment) as segment,
-          MAX(division) as division,
-          MAX(vertical) as vertical,
-          ARRAY_AGG(
-            JSON_BUILD_OBJECT(
-              'month_year', month_year,
-              'week_start_date', week_start_date,
-              'forecast_qty', forecast_qty,
-              'sold_qty', sold_qty
-            ) ORDER BY month_year
-          ) as months
-        FROM forecast 
-        WHERE 1=1
-      `;
-      
-      // Add search conditions
-      const searchConditions = Object.entries(activeSearches)
-        .filter(([_, value]) => value.trim() !== '')
-        .map(([column, value]) => `${column} ILIKE '%${value}%'`);
 
-      // Add unified search conditions (searches across multiple columns)
-      if (activeUnifiedSearch.trim() !== '') {
-        // Split by semicolon and trim each term
-        const searchTerms = activeUnifiedSearch.split(';')
-          .map(term => term.trim())
-          .filter(term => term !== '');
+      // let sqlQuery = `
+      //   SELECT 
+      //     store_no,
+      //     MAX(city) as city,
+      //     MAX(state) as state,
+      //     MAX(region) as region,
+      //     MAX(store_type) as store_type,
+      //     MAX(channel) as channel,
+      //     article_id,
+      //     MAX(article_description) as article_description,
+      //     MAX(brand) as brand,
+      //     MAX(super_category) as super_category,
+      //     MAX(segment) as segment,
+      //     MAX(division) as division,
+      //     MAX(vertical) as vertical,
+      //     ARRAY_AGG(
+      //       JSON_BUILD_OBJECT(
+      //         'month_year', month_year,
+      //         'week_start_date', week_start_date,
+      //         'forecast_qty', forecast_qty,
+      //         'sold_qty', sold_qty
+      //       ) ORDER BY month_year
+      //     ) as months
+      //   FROM forecast 
+      //   WHERE 1=1
+      // `;
+      
+      // // Add search conditions
+      // const searchConditions = Object.entries(activeSearches)
+      //   .filter(([_, value]) => value.trim() !== '')
+      //   .map(([column, value]) => `${column} ILIKE '%${value}%'`);
+
+      // // Add unified search conditions (searches across multiple columns)
+      // if (activeUnifiedSearch.trim() !== '') {
+      //   // Split by semicolon and trim each term
+      //   const searchTerms = activeUnifiedSearch.split(';')
+      //     .map(term => term.trim())
+      //     .filter(term => term !== '');
         
-        if (searchTerms.length > 0) {
-          // Create AND conditions for each search term
-          const unifiedConditions = searchTerms.map(term => `(
-            store_no ILIKE '%${term}%' OR 
-            city ILIKE '%${term}%' OR 
-            state ILIKE '%${term}%' OR 
-            region ILIKE '%${term}%' OR 
-            article_id ILIKE '%${term}%' OR 
-            article_description ILIKE '%${term}%' OR 
-            brand ILIKE '%${term}%' OR 
-            segment ILIKE '%${term}%' OR 
-            division ILIKE '%${term}%' OR 
-            vertical ILIKE '%${term}%' OR 
-            channel ILIKE '%${term}%'
-          )`);
+      //   if (searchTerms.length > 0) {
+      //     // Create AND conditions for each search term
+      //     const unifiedConditions = searchTerms.map(term => `(
+      //       store_no ILIKE '%${term}%' OR 
+      //       city ILIKE '%${term}%' OR 
+      //       state ILIKE '%${term}%' OR 
+      //       region ILIKE '%${term}%' OR 
+      //       article_id ILIKE '%${term}%' OR 
+      //       article_description ILIKE '%${term}%' OR 
+      //       brand ILIKE '%${term}%' OR 
+      //       segment ILIKE '%${term}%' OR 
+      //       division ILIKE '%${term}%' OR 
+      //       vertical ILIKE '%${term}%' OR 
+      //       channel ILIKE '%${term}%'
+      //     )`);
           
-          // Join multiple terms with AND
-          const combinedUnifiedCondition = `(${unifiedConditions.join(' AND ')})`;
-          searchConditions.push(combinedUnifiedCondition);
-        }
-      }
+      //     // Join multiple terms with AND
+      //     const combinedUnifiedCondition = `(${unifiedConditions.join(' AND ')})`;
+      //     searchConditions.push(combinedUnifiedCondition);
+      //   }
+      // }
 
-      if (searchConditions.length > 0) {
-        sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
-      }
+      // if (searchConditions.length > 0) {
+      //   sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
+      // }
       
-      sqlQuery += ` GROUP BY store_no, article_id ORDER BY store_no, article_id LIMIT 50 OFFSET ${offset}`;
+      // sqlQuery += ` GROUP BY store_no, article_id ORDER BY store_no, article_id LIMIT 50 OFFSET ${offset}`;
       
-      const stateSetters = {
-        setLoading: () => {},
+      // const stateSetters = {
+      //   setLoading: () => {},
+      //   setError: (error: string | null) => setError(error),
+      //   setData: (response: any) => {
+      //     if (response && response.data) {
+      //       // Process the grouped data
+      //       const processedData = response.data.map((record: any) => ({
+      //         ...record,
+      //         months: record.months.map((monthData: any) => parseMonthData(monthData))
+      //       }));
+      //       setData(prevData => [...prevData, ...processedData]);
+      //       setHasMore(response.data.length === 50);
+      //       setPage(prevPage => prevPage + 1);
+      //     } else {
+      //       setHasMore(false);
+      //     }
+      //   }
+      // };
+
+      const filterBody = generateFiltersForAPI();
+      const requestBody = {
+        limit: 100,
+        offset: offset,
+        filters: filterBody,
+        group_by: generateGroupBy(),
+        selected_months: generateSelectedMonths(),
+      };
+      debugggg(hasMore);
+      debugggg(requestBody);
+      
+      const stateSettersNew = {
+        setLoading: (loading: boolean) => setLoading(loading),
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
-          if (response && response.data) {
-            // Process the grouped data
-            const processedData = response.data.map((record: any) => ({
-              ...record,
-              months: record.months.map((monthData: any) => parseMonthData(monthData))
-            }));
-            setData(prevData => [...prevData, ...processedData]);
-            setHasMore(response.data.length === 50);
+          debugggg(`${Object.keys(requestBody)} - ${Object.keys(response)}`)
+          if (response && response.items) {
+            // Apply random generation for trigger_qty and max_qty
+            const enhancedData = response.items.map((record: ForecastRecord) => generateRandomQtyValues(record));
+            setData(prevData => [...prevData, ...enhancedData]);
+            setHasMore(response.items.length === 100);
             setPage(prevPage => prevPage + 1);
-          } else {
-            setHasMore(false);
           }
         }
-      };
+      }
       
-      await forecastRepository.executeForecastNewSqlQuery({ sql_query: sqlQuery }, stateSetters);
+      await forecastRepository.makeAPICall(requestBody, stateSettersNew, "month-on-month-comparison");
+
     } catch (err) {
       console.error('Error loading more data:', err);
       setError('Failed to load more data');
@@ -643,6 +741,48 @@ const MonthOnMonthComparison: React.FC = () => {
     );
   };
 
+  // Month Selector Modal options -----------
+  const handleMonthSelectClick = () => {
+    setShowMonthSelectModal(true);
+  };
+
+  const handleMonthSelectCancel = () => {
+    setShowMonthSelectModal(false);
+    setSelectedMonth([]);
+  };
+  
+  const handleMonthSelectSubmit = () => {
+    setIsMonthSelectMode(selectedMonth.length > 0);
+    setShowMonthSelectModal(false);
+    setSelectedMonth([...selectedMonth]);
+    // Reset data and reload
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+
+    // loadInitialData();
+  };
+  
+  const handleMonthSelectColumnToggle = (column: string) => {
+    setSelectedMonth(prev => 
+      prev.includes(column) 
+        ? prev.filter(col => col !== column)
+        : [...prev, column]
+    );
+  };
+  
+  const clearMonthSelct = () => {
+    setIsMonthSelectMode(false);
+    setSelectedMonth([]);
+    // Reset data and reload
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+
+    // loadInitialData()
+  };
+
+
     // Column selector functions
   const handleColumnSelectorCancel = () => {
     setShowColumnSelector(false);
@@ -656,24 +796,24 @@ const MonthOnMonthComparison: React.FC = () => {
   };
   
   const getAvailableColumns = () => {
-    if (!metadata) return { regularColumns: [], aggregatedColumns: [] };
+    // if (!metadata) return { regularColumns: [], aggregatedColumns: [] };
     
-    const regularColumns = metadata.essential_columns;
+    const regularColumns = monthWiseColumns;
     const aggregatedColumns: string[] = [];
     
-    // If in group by mode, also include aggregated columns that would be generated
-    if (isGroupByMode && groupByColumns.length > 0) {
-      metadata.essential_columns.forEach(col => {
-        if (!groupByColumns.includes(col)) {
-          const dataType = metadata.essential_columns_datatypes[col];
-          if (dataType === 'string') {
-            aggregatedColumns.push(`#${col}`);
-          } else if (dataType === 'float' || dataType === 'integer') {
-            aggregatedColumns.push(`Σ${col}`);
-          }
-        }
-      });
-    }
+    // // If in group by mode, also include aggregated columns that would be generated
+    // if (isGroupByMode && groupByColumns.length > 0) {
+    //   metadata.essential_columns.forEach(col => {
+    //     if (!groupByColumns.includes(col)) {
+    //       const dataType = metadata.essential_columns_datatypes[col];
+    //       if (dataType === 'string') {
+    //         aggregatedColumns.push(`#${col}`);
+    //       } else if (dataType === 'float' || dataType === 'integer') {
+    //         aggregatedColumns.push(`Σ${col}`);
+    //       }
+    //     }
+    //   });
+    // }
     
     return { regularColumns, aggregatedColumns };
   };
@@ -1025,7 +1165,6 @@ const MonthOnMonthComparison: React.FC = () => {
 
   const loadWeekStartDates = async () => {
     try {
-      debugggg("Loading Week Start Dates")
       setLoadingWeekDates(true);
       const sqlQuery = `SELECT DISTINCT week_start_date FROM forecast ORDER BY week_start_date ASC`;
       
@@ -1047,7 +1186,6 @@ const MonthOnMonthComparison: React.FC = () => {
 
       await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
     } catch (err) {
-      debugggg(`In err: ${err}`)
       console.error('Error loading week start dates:', err);
       setError('Failed to load week start dates');
     } finally {
@@ -1071,13 +1209,13 @@ const MonthOnMonthComparison: React.FC = () => {
         setError: (error: string | null) => setError(error),
         setData: (data: ForecastMetadata) => {
           setMetadata(data);
+          setupColumnGroups(data)
           // Load initial data after metadata is loaded
           loadInitialData();
         },
       };
 
       await forecastRepository.getMetadata({}, stateSetters);
-      debugggg(`State setted`)
     } catch (err) {
       console.error("Error loading metadata:", err);
       setError("Failed to load metadata");
@@ -1199,6 +1337,35 @@ const MonthOnMonthComparison: React.FC = () => {
         <div className="flex items-center space-x-2 text-[hsl(var(--panel-muted-foreground))]">
           <Calendar size={16} />
           {/* <span className="text-sm">Grouped by Store & Article</span> */}
+          {/* Month Selector Button */}
+            <button
+              onClick={handleMonthSelectClick}
+              className={`px-3 py-1 rounded text-xs flex items-center space-x-1 transition-colors ${
+                isMonthSelectMode 
+                  ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))]/90' 
+                  : 'bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] border border-[hsl(var(--table-border))] hover:bg-[hsl(var(--table-button-hover))]'
+              }`}
+            >
+              <Group size={14} />
+              <span>Select Month</span>
+              {isMonthSelectMode && selectedMonth.length > 0 && (
+                <span className="bg-[hsl(var(--primary))]/30 px-1 rounded text-xs">
+                  {selectedMonth.length}
+                </span>
+              )}
+            </button>
+
+            {isMonthSelectMode && (
+              <button
+                onClick={clearMonthSelct}
+                className="px-2 py-1 rounded text-xs bg-[hsl(var(--table-button-background))] text-[hsl(var(--table-foreground))] hover:bg-[hsl(var(--table-button-hover))] flex items-center transition-colors border border-[hsl(var(--table-border))]"
+                title="Clear Group By"
+              >
+                <X size={12} />
+              </button>
+            )}
+
+
             {/* Group By Button */}
             <button
               onClick={handleGroupByClick}
@@ -1313,6 +1480,69 @@ const MonthOnMonthComparison: React.FC = () => {
         </div>
       </div>
 
+      {/* Month Selector Modal */}
+      {showMonthSelectModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[hsl(var(--panel-background))] border border-[hsl(var(--panel-border))] rounded-lg p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[hsl(var(--panel-foreground))] font-semibold text-lg">Select Months</h3>
+              <button
+                onClick={handleMonthSelectCancel}
+                className="text-[hsl(var(--panel-muted-foreground))] hover:text-[hsl(var(--panel-foreground))]"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-[hsl(var(--panel-muted-foreground))] text-sm mb-3">
+                Select Months to find the analysis
+              </p>
+              
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {months.map((column) => (
+                  <label
+                    key={column}
+                    className="flex items-center space-x-2 text-sm hover:bg-[hsl(var(--panel-hover))] p-2 rounded cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedMonth.includes(column)}
+                      onChange={() => handleMonthSelectColumnToggle(column)}
+                      className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                    />
+                    <span className="text-[hsl(var(--panel-foreground))]">
+                      {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+                {selectedMonth.length} column{selectedMonth.length !== 1 ? 's' : ''} selected
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleMonthSelectCancel}
+                  className="px-3 py-2 text-sm bg-[hsl(var(--panel-button-background))] text-[hsl(var(--panel-foreground))] rounded hover:bg-[hsl(var(--panel-button-hover))]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleMonthSelectSubmit}
+                  disabled={selectedMonth.length === 0}
+                  className="px-3 py-2 text-sm bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Show Results
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Group By Modal */}
       {showGroupByModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -1417,7 +1647,7 @@ const MonthOnMonthComparison: React.FC = () => {
                 <h4 className="text-[hsl(var(--panel-foreground))] font-medium text-sm mb-3">Data Columns</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Store Parameters */}
-                  <div>
+                  {/* <div>
                     <h5 className="text-[hsl(var(--table-card-store-border))] font-medium text-xs mb-2 flex items-center">
                       <div className="w-2 h-2 bg-[hsl(var(--table-card-store-border))] rounded mr-1"></div>
                       Store Parameters
@@ -1440,10 +1670,10 @@ const MonthOnMonthComparison: React.FC = () => {
                         </label>
                       ))}
                     </div>
-                  </div>
+                  </div> */}
                   
                   {/* Product Parameters */}
-                  <div>
+                  {/* <div>
                     <h5 className="text-[hsl(var(--table-card-product-border))] font-medium text-xs mb-2 flex items-center">
                       <div className="w-2 h-2 bg-[hsl(var(--table-card-product-border))] rounded mr-1"></div>
                       Product Parameters
@@ -1466,21 +1696,38 @@ const MonthOnMonthComparison: React.FC = () => {
                         </label>
                       ))}
                     </div>
-                  </div>
+                  </div> */}
                   
                   {/* Forecast Parameters */}
-                  <div>
+                  <div className='col-span-1 md:col-span-2 lg:col-span-3'>
                     <h5 className="text-[hsl(var(--table-card-forecast-border))] font-medium text-xs mb-2 flex items-center">
-                      <div className="w-2 h-2 bg-[hsl(var(--table-card-forecast-border))] rounded mr-1"></div>
+                      <div className="h-2 bg-[hsl(var(--table-card-forecast-border))] rounded mr-1"></div>
                       Forecast Parameters
                     </h5>
                     <div className="space-y-1 max-h-40 overflow-y-auto">
-                      {metadata?.essential_columns
+                      {/* {metadata?.essential_columns
                         .filter(col => 
                           !metadata.store_attributes.includes(col) && 
                           !metadata.product_attributes.includes(col)
                         )
                         .map((column) => (
+                          <label
+                            key={column}
+                            className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={visibleColumnSettings[column] !== false}
+                              onChange={() => handleColumnToggle(column)}
+                              className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
+                            />
+                            <span className="text-[hsl(var(--panel-foreground))] flex-1 truncate" title={column}>
+                              {column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </span>
+                          </label>
+                        ))} */}
+
+                        {monthWiseColumns.map((column) => (
                           <label
                             key={column}
                             className="flex items-center space-x-2 text-xs hover:bg-[hsl(var(--panel-hover))] p-1 rounded cursor-pointer"
@@ -1503,9 +1750,9 @@ const MonthOnMonthComparison: React.FC = () => {
             </div>
             
             <div className="flex items-center justify-between border-t border-[hsl(var(--panel-border))] pt-4">
-              <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+              {/* <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
                 {Object.values(visibleColumnSettings).filter(Boolean).length} of {metadata?.essential_columns.length || 0} columns visible
-              </div>
+              </div> */}
               <div className="flex space-x-2">
                 <button
                   onClick={handleColumnSelectorCancel}
@@ -1705,7 +1952,7 @@ const MonthOnMonthComparison: React.FC = () => {
                 </th>
                 
                 {/* Month Data */}
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
+                {/* <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
                   <span>Month</span>
                 </th>
                 <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[130px]">
@@ -1716,65 +1963,93 @@ const MonthOnMonthComparison: React.FC = () => {
                 </th>
                 <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
                   <span>Sold Qty</span>
-                </th>
+                </th> */}
+
+                {/* Dynamic Month data */}
+                {monthWiseColumns.map((column) => {
+                  return (visibleColumnSettings[column]) ? <th
+                    key={column}  // ✅ unique key
+                    className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]"
+                  >
+                    <span>{sanitizeLabel(column)}</span>
+                  </th> : null
+                }
+                  
+                  
+                )}
+
               </tr>
             </thead>
             
             <tbody>
               {data.map((record, recordIndex) => {
-                return record.months.map((monthData, monthIndex) => (
-                  <tr 
+                return record?.months?.map((monthData, monthIndex) => (
+                  <tr
                     key={`${record.store_no}-${record.article_id}-${monthData.month_year}`}
                     className={`border-b border-[hsl(var(--panel-border))] hover:bg-[hsl(var(--panel-hover))] transition-colors ${
-                      monthIndex === record.months.length - 1 ? 'border-b-2 border-b-[hsl(var(--panel-border))]' : ''
+                      monthIndex === record.months.length - 1
+                        ? "border-b-2 border-b-[hsl(var(--panel-border))]"
+                        : ""
                     }`}
                   >
                     {/* Store Details - only show on first month row */}
                     {monthIndex === 0 ? (
                       <>
-                        <td 
+                        <td
                           className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
                           rowSpan={record.months.length}
                         >
                           <div className="space-y-1">
-                            <div className="font-bold text-sm">{formatCellValue(record.store_no)}</div>
+                            <div className="font-bold text-sm">
+                              {formatCellValue(record.store_no)}
+                            </div>
                             <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                              {formatCellValue(record.city)}, {formatCellValue(record.state)}
+                              {formatCellValue(record.city)},{" "}
+                              {formatCellValue(record.state)}
                             </div>
                             <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
                               {formatCellValue(record.region)}
                             </div>
                           </div>
                         </td>
-                        
+
                         {/* Product Details - only show on first month row */}
-                        <td 
+                        <td
                           className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[250px] align-top"
                           rowSpan={record.months.length}
                         >
                           <div className="space-y-1">
-                            <div className="font-bold text-sm">{formatCellValue(record.article_id)}</div>
-                            <div className="text-xs text-[hsl(var(--panel-muted-foreground))] max-w-[220px] overflow-hidden" title={record.article_description}>
-                              <div className="break-words">{formatCellValue(record.article_description)}</div>
+                            <div className="font-bold text-sm">
+                              {formatCellValue(record.article_id)}
+                            </div>
+                            <div
+                              className="text-xs text-[hsl(var(--panel-muted-foreground))] max-w-[220px] overflow-hidden"
+                              title={record.article_description}
+                            >
+                              <div className="break-words">
+                                {formatCellValue(record.article_description)}
+                              </div>
                             </div>
                           </div>
                         </td>
-                        
+
                         {/* Brand */}
-                        <td 
+                        <td
                           className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[120px] align-top"
                           rowSpan={record.months.length}
                         >
                           {formatCellValue(record.brand)}
                         </td>
-                        
+
                         {/* Category Combined */}
-                        <td 
+                        <td
                           className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
                           rowSpan={record.months.length}
                         >
                           <div className="space-y-1">
-                            <div className="text-sm font-medium">{formatCellValue(record.segment)}</div>
+                            <div className="text-sm font-medium">
+                              {formatCellValue(record.segment)}
+                            </div>
                             <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
                               {formatCellValue(record.division)}
                             </div>
@@ -1783,9 +2058,9 @@ const MonthOnMonthComparison: React.FC = () => {
                             </div>
                           </div>
                         </td>
-                        
+
                         {/* Channel */}
-                        <td 
+                        <td
                           className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
                           rowSpan={record.months.length}
                         >
@@ -1793,20 +2068,22 @@ const MonthOnMonthComparison: React.FC = () => {
                         </td>
                       </>
                     ) : null}
-                    
+
                     {/* Month Data - show for every row */}
-                    <td className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px]">
-                      <span className="font-medium">{formatCellValue(monthData.month_year)}</span>
-                    </td>
-                    <td className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] font-semibold bg-[hsl(var(--panel-background))] min-w-[130px] text-right">
-                      {monthData.forecast_qty.bb !== null && monthData.forecast_qty.bb !== undefined ? formatCellValue(monthData.forecast_qty.bb) : '-'}
-                    </td>
-                    <td className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] font-semibold bg-[hsl(var(--panel-background))] min-w-[130px] text-right">
-                      {monthData.forecast_qty.cb !== null && monthData.forecast_qty.cb !== undefined ? formatCellValue(monthData.forecast_qty.cb) : '-'}
-                    </td>
-                    <td className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] font-semibold bg-[hsl(var(--panel-background))] min-w-[100px] text-right">
-                      {formatCellValue(monthData.sold_qty)}
-                    </td>
+
+                    {/* Dynamic month related data */}
+                    {monthWiseColumns.map((column) => {
+                      return (visibleColumnSettings[column]) ? (
+                        <td
+                          key={column}
+                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px]"
+                        >
+                          <span className="font-medium">
+                            {formatCellValue(monthData[column])}
+                          </span>
+                        </td>
+                      ) : null
+                    })}
                   </tr>
                 ));
               })}
