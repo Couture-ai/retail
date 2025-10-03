@@ -37,6 +37,9 @@ interface GroupedForecastRecord {
   
   // Aggregated month data
   months: MonthData[];
+
+  // 👇 add this for loose typing
+  [key: string]: any;
 }
 
 interface ForecastMetadata {
@@ -160,7 +163,7 @@ const MonthOnMonthComparison: React.FC = () => {
   // Fields decided to show in the table
   const [monthWiseColumns, setMonthWiseColumns] = useState<string[]>([
     "month_year",
-    "week_start_date",
+    // "week_start_date",
     "sold_qty",
     "couture_baseline",
     "business_baseline",
@@ -1802,46 +1805,52 @@ const debugggg = (logg: any) => {
           <table className="w-full text-sm border-collapse">
             <thead className="sticky top-0 bg-[hsl(var(--panel-header-background))] border-b border-[hsl(var(--panel-border))] z-50">
               <tr className="h-12">
-                {/* Store Details Combined */}
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[200px]">
-                  <div className="flex items-center justify-between">
-                    <span>Store Details</span>
-                    <SearchButton column="store_no" />
-                  </div>
-                </th>
-                
-                {/* Product Details Combined */}
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[250px]">
-                  <div className="flex items-center justify-between">
-                    <span>Product Details</span>
-                    <SearchButton column="article_id" />
-                  </div>
-                </th>
-                
-                {/* Brand */}
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[120px]">
-                  <div className="flex items-center justify-between">
-                    <span>Brand</span>
-                    <SearchButton column="brand" />
-                  </div>
-                </th>
-                
-                {/* Category Combined */}
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[200px]">
-                  <div className="flex items-center justify-between">
-                    <span>Category</span>
-                    <SearchButton column="segment" />
-                  </div>
-                </th>
-                
-                {/* Channel */}
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
-                  <div className="flex items-center justify-between">
-                    <span>Channel</span>
-                    <SearchButton column="channel" />
-                  </div>
-                </th>
-                
+
+                {/* only show the following columns if you are not in groupByMode */}
+                {!isGroupByMode && 
+                  <>
+                    {/* Store Details Combined */}
+                    <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[200px]">
+                      <div className="flex items-center justify-between">
+                        <span>Store Details</span>
+                        <SearchButton column="store_no" />
+                      </div>
+                    </th>
+                    
+                    {/* Product Details Combined */}
+                    <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[250px]">
+                      <div className="flex items-center justify-between">
+                        <span>Product Details</span>
+                        <SearchButton column="article_id" />
+                      </div>
+                    </th>
+                    
+                    {/* Brand */}
+                    <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[120px]">
+                      <div className="flex items-center justify-between">
+                        <span>Brand</span>
+                        <SearchButton column="brand" />
+                      </div>
+                    </th>
+                    
+                    {/* Category Combined */}
+                    <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[200px]">
+                      <div className="flex items-center justify-between">
+                        <span>Category</span>
+                        <SearchButton column="segment" />
+                      </div>
+                    </th>
+                    
+                    {/* Channel */}
+                    <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
+                      <div className="flex items-center justify-between">
+                        <span>Channel</span>
+                        <SearchButton column="channel" />
+                      </div>
+                    </th>
+                  </>
+                }
+
                 {/* Month Data */}
                 {/* <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
                   <span>Month</span>
@@ -1855,6 +1864,17 @@ const debugggg = (logg: any) => {
                 <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
                   <span>Sold Qty</span>
                 </th> */}
+
+                {/* Only display the Grouped By columns */}{
+                  groupByColumns.map((column) => {
+                    return <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
+                      <div className="flex items-center justify-between">
+                        <span>{sanitizeLabel(column)}</span>
+                        <SearchButton column="channel" />
+                      </div>
+                    </th>
+                  })
+                }
 
                 {/* Dynamic Month data */}
                 {monthWiseColumns.map((column) => {
@@ -1884,7 +1904,7 @@ const debugggg = (logg: any) => {
                     }`}
                   >
                     {/* Store Details - only show on first month row */}
-                    {monthIndex === 0 ? (
+                    {monthIndex === 0 && !isGroupByMode ? (
                       <>
                         <td
                           className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
@@ -1960,8 +1980,19 @@ const debugggg = (logg: any) => {
                       </>
                     ) : null}
 
+                    {/* Only display the Grouped By columns */}
+                    {
+                      groupByColumns.map((column) => {
+                        return <td
+                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
+                          rowSpan={record.months.length}
+                        >
+                            <span>{record[column] ? record[column] : null}</span>
+                        </td>
+                      })
+                    }
+                    
                     {/* Month Data - show for every row */}
-
                     {/* Dynamic month related data */}
                     {monthWiseColumns.map((column) => {
                       return (visibleColumnSettings[column]) ? (
