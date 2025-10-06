@@ -25,6 +25,8 @@ interface ApiError {
     message?: string;
 }
 
+const FORECAST_BASE_URL = "http://10.145.4.32:30020/couturedbutils/retail"
+
 class ForecastRepository {
     private apiEndpoint: string;
     private project: string;
@@ -122,7 +124,7 @@ class ForecastRepository {
 
     async makeAPICall(data: any, stateSetters: StateSetters, type: string = "forecast"): Promise<any> {
         const { setLoading, setError, setData } = stateSetters;
-        const URL = `http://10.145.4.32:30020/couturedbutils/retail/${type}`
+        const URL = `${FORECAST_BASE_URL}/${type}`
 
         try {
             // Set loading state
@@ -218,6 +220,39 @@ class ForecastRepository {
 
             // Make API call
             const response: AxiosResponse = await this.axiosInstance.get('/core/forecast-metadata');
+
+            // Set success data
+            if (setData) setData(response.data);
+            
+            return response.data;
+
+        } catch (error) {
+            // Handle errors
+            const apiError = error as ApiError;
+            const errorMessage = apiError.response?.data?.detail || apiError.message || 'An error occurred';
+            
+            if (setError) setError(errorMessage);
+            if (setData) setData(null);
+            
+            throw error;
+        } finally {
+            // Clear loading state
+            if (setLoading) setLoading(false);
+        }
+    }
+
+
+    async getMetadataFromAPI(data: MetadataData, stateSetters: StateSetters, type: string = "forecast-metadata"): Promise<any> {
+        const { setLoading, setError, setData } = stateSetters;
+        
+        try {
+            // Set loading state
+            if (setLoading) setLoading(true);
+            if (setError) setError(null);
+
+            // Make API call
+            const URL = `${FORECAST_BASE_URL}/${type}`
+            const response: AxiosResponse = await this.axiosInstance.get(URL, {params: data});
 
             // Set success data
             if (setData) setData(response.data);

@@ -792,24 +792,14 @@ const debugggg = (logg: any) => {
         }));
       }
       
-      const offset = page * 100;
-      const sqlQuery = `
-        SELECT ${column} as value, COUNT(*) as count 
-        FROM forecast 
-        WHERE ${column} IS NOT NULL AND ${column} != '' 
-        GROUP BY ${column} 
-        ORDER BY count DESC, ${column} ASC 
-        LIMIT 100 OFFSET ${offset}
-      `;
-      
       const stateSetters = {
         setLoading: () => {},
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
-          if (response && response.data) {
-            const options: FilterOption[] = response.data.map((row: any) => ({
-              value: row.value,
-              count: parseInt(row.count)
+          if (response && response.filters) {
+            const options: FilterOption[] = response.filters.map((row: any) => ({
+              value: row[0],
+              count: row[1]
             }));
             
             setDiscreteFilters(prev => ({
@@ -827,7 +817,9 @@ const debugggg = (logg: any) => {
         }
       };
       
-      await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+      // await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+      await forecastRepository.getMetadataFromAPI({filter_name: column}, stateSetters, "get-filters");
+
     } catch (err) {
       console.error(`Error loading discrete options for ${column}:`, err);
       setDiscreteFilters(prev => ({
@@ -1110,7 +1102,7 @@ const debugggg = (logg: any) => {
         },
       };
 
-      await forecastRepository.getMetadata({}, stateSetters);
+      await forecastRepository.getMetadataFromAPI({}, stateSetters);
     } catch (err) {
       console.error("Error loading metadata:", err);
       setError("Failed to load metadata");
