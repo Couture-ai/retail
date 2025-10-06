@@ -809,7 +809,7 @@ const MonthOnMonthComparison: React.FC = () => {
       };
       
       // await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
-      await forecastRepository.getMetadataFromAPI({filter_name: column, group_by: groupByColumns}, stateSetters, "get-filters");
+      await forecastRepository.getMetadataFromAPI({filter_name: column, group_by: generateGroupBy().join(",")}, stateSetters, "get-filters");
 
     } catch (err) {
       console.error(`Error loading discrete options for ${column}:`, err);
@@ -854,7 +854,7 @@ const MonthOnMonthComparison: React.FC = () => {
         }
       };
       
-      await forecastRepository.getMetadataFromAPI({filter_name: column, group_by: groupByColumns}, stateSetters, "get-filters");
+      await forecastRepository.getMetadataFromAPI({filter_name: column, group_by: generateGroupBy().join(",")}, stateSetters, "get-filters");
 
     } catch (err) {
       console.error(`Error loading range values for ${column}:`, err);
