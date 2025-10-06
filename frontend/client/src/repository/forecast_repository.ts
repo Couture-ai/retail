@@ -25,7 +25,7 @@ interface ApiError {
     message?: string;
 }
 
-const FORECAST_BASE_URL = "http://10.145.4.32:30020/couturedbutils/retail"
+const FORECAST_BASE_URL = import.meta.env.VITE_RETAIL_API_BASE_URL || "http://localhost:8000/retail"
 
 class ForecastRepository {
     private apiEndpoint: string;
