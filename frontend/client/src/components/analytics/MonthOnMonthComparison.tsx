@@ -835,13 +835,6 @@ const debugggg = (logg: any) => {
   // Load range values (min/max) for numeric columns
   const loadRangeValues = async (column: string) => {
     try {
-      const sqlQuery = `
-        SELECT 
-          MIN(${column}) as min_value, 
-          MAX(${column}) as max_value 
-        FROM forecast 
-        WHERE ${column} IS NOT NULL
-      `;
       
       const stateSetters = {
         setLoading: () => {},
@@ -866,7 +859,8 @@ const debugggg = (logg: any) => {
         }
       };
       
-      await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+      await forecastRepository.getMetadataFromAPI({filter_name: column}, stateSetters, "get-filters");
+
     } catch (err) {
       console.error(`Error loading range values for ${column}:`, err);
     }
