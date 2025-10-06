@@ -1904,94 +1904,99 @@ const debugggg = (logg: any) => {
                     }`}
                   >
                     {/* Store Details - only show on first month row */}
-                    {monthIndex === 0 && !isGroupByMode ? (
+                    {monthIndex === 0 && (
                       <>
-                        <td
-                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
-                          rowSpan={record.months.length}
-                        >
-                          <div className="space-y-1">
-                            <div className="font-bold text-sm">
-                              {formatCellValue(record.store_no)}
-                            </div>
-                            <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                              {formatCellValue(record.city)},{" "}
-                              {formatCellValue(record.state)}
-                            </div>
-                            <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                              {formatCellValue(record.region)}
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Product Details - only show on first month row */}
-                        <td
-                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[250px] align-top"
-                          rowSpan={record.months.length}
-                        >
-                          <div className="space-y-1">
-                            <div className="font-bold text-sm">
-                              {formatCellValue(record.article_id)}
-                            </div>
-                            <div
-                              className="text-xs text-[hsl(var(--panel-muted-foreground))] max-w-[220px] overflow-hidden"
-                              title={record.article_description}
+                        {/* A. Show these standard columns ONLY IF NOT in group-by mode */}
+                        {!isGroupByMode && (
+                          <>
+                            {/* Store Details */}
+                            <td
+                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
+                              rowSpan={record.months.length}
                             >
-                              <div className="break-words">
-                                {formatCellValue(record.article_description)}
+                              <div className="space-y-1">
+                                <div className="font-bold text-sm">
+                                  {formatCellValue(record.store_no)}
+                                </div>
+                                <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+                                  {formatCellValue(record.city)},{" "}
+                                  {formatCellValue(record.state)}
+                                </div>
+                                <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+                                  {formatCellValue(record.region)}
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </td>
+                            </td>
 
-                        {/* Brand */}
-                        <td
-                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[120px] align-top"
-                          rowSpan={record.months.length}
-                        >
-                          {formatCellValue(record.brand)}
-                        </td>
+                            {/* Product Details */}
+                            <td
+                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[250px] align-top"
+                              rowSpan={record.months.length}
+                            >
+                              <div className="space-y-1">
+                                <div className="font-bold text-sm">
+                                  {formatCellValue(record.article_id)}
+                                </div>
+                                <div
+                                  className="text-xs text-[hsl(var(--panel-muted-foreground))] max-w-[220px] overflow-hidden"
+                                  title={record.article_description}
+                                >
+                                  <div className="break-words">
+                                    {formatCellValue(record.article_description)}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
 
-                        {/* Category Combined */}
-                        <td
-                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
-                          rowSpan={record.months.length}
-                        >
-                          <div className="space-y-1">
-                            <div className="text-sm font-medium">
-                              {formatCellValue(record.segment)}
-                            </div>
-                            <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                              {formatCellValue(record.division)}
-                            </div>
-                            <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                              {formatCellValue(record.vertical)}
-                            </div>
-                          </div>
-                        </td>
+                            {/* Brand */}
+                            <td
+                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[120px] align-top"
+                              rowSpan={record.months.length}
+                            >
+                              {formatCellValue(record.brand)}
+                            </td>
 
-                        {/* Channel */}
-                        <td
-                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
-                          rowSpan={record.months.length}
-                        >
-                          {formatCellValue(record.channel)}
-                        </td>
+                            {/* Category Combined */}
+                            <td
+                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
+                              rowSpan={record.months.length}
+                            >
+                              <div className="space-y-1">
+                                <div className="text-sm font-medium">
+                                  {formatCellValue(record.segment)}
+                                </div>
+                                <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+                                  {formatCellValue(record.division)}
+                                </div>
+                                <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
+                                  {formatCellValue(record.vertical)}
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Channel */}
+                            <td
+                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
+                              rowSpan={record.months.length}
+                            >
+                              {formatCellValue(record.channel)}
+                            </td>
+                          </>
+                        )}
+
+                        {/* B. Show the selected "Group By" columns ONLY IF in group-by mode */}
+                        {isGroupByMode &&
+                          groupByColumns.map((column) => (
+                            <td
+                              key={column} // Added a key for React best practices
+                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
+                              rowSpan={record.months.length}
+                            >
+                              <span>{record[column] ? record[column] : null}</span>
+                            </td>
+                          ))}
                       </>
-                    ) : null}
-
-                    {/* Only display the Grouped By columns */}
-                    {
-                      groupByColumns.map((column) => {
-                        return <td
-                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
-                          rowSpan={record.months.length}
-                        >
-                            <span>{record[column] ? record[column] : null}</span>
-                        </td>
-                      })
-                    }
-                    
+                    )}
                     {/* Month Data - show for every row */}
                     {/* Dynamic month related data */}
                     {monthWiseColumns.map((column) => {
