@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { TrendingUp, Calendar, BarChart3, Loader2, AlertCircle, RefreshCw, Search, X, Group, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { useProject } from '@/context/ProjectProvider';
-import { sanitizeLabel } from '@/lib/utils';
+import { sanitizeLabel, debugggg } from '@/lib/utils';
 
 // interface MonthData {
 //   month_year: string;
@@ -182,18 +182,6 @@ const MonthOnMonthComparison: React.FC = () => {
   // Add a new state for metadata loading
   const [metadataLoading, setMetadataLoading] = useState(true);
 
-
-const debugggg = (logg: any) => {
-    let log = logg
-    if (typeof log === "object"){
-      try {
-        log = JSON.stringify(log)        
-      } catch (error) {
-        log = log
-      }
-    }
-    console.log(`[CoutureDebug] ${log}`)
-  }
 
   // --- Effect Hooks for Data Loading ---
 

@@ -25,6 +25,7 @@ import { ResponsiveBar } from '@nivo/bar';
 import SalesChart from './SalesChart';
 import AdjustmentDiffView, { DiffRow } from './AdjustmentDiffView';
 import { useProject } from "@/context/ProjectProvider";
+import { debugggg } from '@/lib/utils';
 
 interface ForecastMetadata {
   essential_columns: string[];
@@ -37,18 +38,6 @@ interface ForecastMetadata {
   store_card_attributes: string[];
   product_card_attributes: string[];
 }
-
-const debugggg = (logg: any) => {
-    let log = logg
-    if (typeof log === "object"){
-      try {
-        log = JSON.stringify(log)        
-      } catch (error) {
-        log = log
-      }
-    }
-    console.log(`[CoutureDebug] ${log}`)
-  }
 
 interface ForecastRecord {
   [key: string]: any;
