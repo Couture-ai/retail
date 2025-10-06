@@ -244,7 +244,11 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
     if (tabId.startsWith('analytics-')) {
       const analyticsType = tabId.replace('analytics-', '');
       console.log('[getTabData] Analytics tab detected:', { tabId, analyticsType });
-      const title = analyticsType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      // Decode URL-encoded characters like %20
+      const decodedType = decodeURIComponent(analyticsType);
+      // Format the title: replace dashes with spaces and capitalize words
+      const title = decodedType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      console.log(`[getTabData] ${tabId} ${title}`)
       return { id: tabId, title: title, type: 'analytics' };
     }
 

@@ -190,9 +190,6 @@ const MonthOnMonthComparison: React.FC = () => {
     const initializeData = async () => {
       loadMetadata();
       await getListOfMonths();
-      if (isWeekStartDateControlled) {
-        loadWeekStartDates();
-      }
     }
     
     initializeData()
@@ -212,23 +209,22 @@ const MonthOnMonthComparison: React.FC = () => {
     // replace this with the API call and downstream processing, placeholders
 
     const stateSettersNew = {
-        setLoading: (loading: boolean) => setLoading(loading),
+        setLoading: (loading: boolean) => setIsMonthsLoading(loading),
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
-          if (response && response.items) {
+          if (response && response.filters) {
               // now set the possible months
               const monthsList: any = []
-              response.items.forEach((item : any) => {
-                monthsList.push(item.month_year)
+              response.filters.forEach((item : any) => {
+                monthsList.push(item[0])
               });
               setMonths(monthsList)
           }
         }
       }
 
-      // only bring the top 20 months -- group by month_year
-      const requestBody = {limit: 20, offset: 0, group_by: ["month_year"]}
-      await forecastRepository.makeAPICall(requestBody, stateSettersNew);
+      // bring all the months from the API
+      await forecastRepository.getMetadataFromAPI({filter_name: "month_year"}, stateSettersNew, 'get-filters');
   }
 
 
@@ -340,6 +336,9 @@ const MonthOnMonthComparison: React.FC = () => {
   };
 
   const loadInitialData = async () => {
+    // hide the filter component whenever the data is being loaded
+    setShowFilters(false);
+
     try {
       setLoading(true);
       setError(null);
@@ -602,11 +601,18 @@ const MonthOnMonthComparison: React.FC = () => {
 
   const formatCellValue = (value: any) => {
     if (value === null || value === undefined) return '';
+    
     if (typeof value === 'number') {
-      return Math.ceil(value).toLocaleString();
+      // Check if it's a decimal number
+      if (!Number.isInteger(value)) {
+        return value.toFixed(3); // round to 3 decimal places
+      }
+      return value.toLocaleString(); // show as-is if integer
     }
+
     return String(value);
   };
+
 
   const handleGroupByClick = () => {
     setShowGroupByModal(true);
@@ -641,8 +647,8 @@ const MonthOnMonthComparison: React.FC = () => {
   const getGroupByColumns = () => {
     if (!metadata) return [];
     return metadata.essential_columns.filter(col => 
-      metadata.essential_columns_datatypes[col] === 'string'
-    );
+    metadata.essential_columns_datatypes[col] === 'string'
+    ).sort();
   };
 
   // Month Selector Modal options -----------
@@ -803,7 +809,7 @@ const MonthOnMonthComparison: React.FC = () => {
       };
       
       // await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
-      await forecastRepository.getMetadataFromAPI({filter_name: column}, stateSetters, "get-filters");
+      await forecastRepository.getMetadataFromAPI({filter_name: column, group_by: groupByColumns}, stateSetters, "get-filters");
 
     } catch (err) {
       console.error(`Error loading discrete options for ${column}:`, err);
@@ -825,8 +831,12 @@ const MonthOnMonthComparison: React.FC = () => {
         setLoading: () => {},
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
-          if (response && response.data && response.data[0]) {
-            const { min_value, max_value } = response.data[0];
+          if (response && response.filters && response.filters.length > 0) {
+            const min_max_value = response.filters[1]
+            
+            const min_value = (min_max_value.length > 1) ? min_max_value[0]: 0;
+            const max_value = (min_max_value.length > 1) ? min_max_value[1]: 0;
+
             setFilterRanges(prev => ({
               ...prev,
               [column]: {
@@ -844,7 +854,7 @@ const MonthOnMonthComparison: React.FC = () => {
         }
       };
       
-      await forecastRepository.getMetadataFromAPI({filter_name: column}, stateSetters, "get-filters");
+      await forecastRepository.getMetadataFromAPI({filter_name: column, group_by: groupByColumns}, stateSetters, "get-filters");
 
     } catch (err) {
       console.error(`Error loading range values for ${column}:`, err);
@@ -963,10 +973,8 @@ const MonthOnMonthComparison: React.FC = () => {
     });
     
     setAppliedFilters(newAppliedFilters);
-    // Data will reload via the useEffect hook triggered by state changes.
+    // Data will reload via the useEffect hook triggered by state changes
 
-    // Hide the filter component from appearing after the filter is applied.
-    setShowFilters(false);
 
   };
   
@@ -1001,9 +1009,6 @@ const MonthOnMonthComparison: React.FC = () => {
     setAppliedFilters(newAppliedFilters);
     
     // Data will reload via the useEffect hook.
-
-    // Hide the filter component from appearing after the filter is applied.
-    setShowFilters(false);
   };
   
   // Clear all filters
@@ -1014,9 +1019,6 @@ const MonthOnMonthComparison: React.FC = () => {
     setAppliedFilters([]);
     
     // Data will reload via the useEffect hook.
-
-    // Hide the filter component from appearing after the filter is applied.
-    // setShowFilters(false);
   };
   
   // Get columns grouped by parameter type for filter UI
@@ -1025,16 +1027,16 @@ const MonthOnMonthComparison: React.FC = () => {
     
     const storeColumns = metadata.essential_columns.filter(col => 
       metadata.store_attributes.includes(col)
-    );
+    ).sort();
     
     const productColumns = metadata.essential_columns.filter(col => 
       metadata.product_attributes.includes(col)
-    );
+    ).sort();
     
     const forecastColumns = metadata.essential_columns.filter(col => 
       !metadata.store_attributes.includes(col) && 
       !metadata.product_attributes.includes(col)
-    );
+    ).sort();
     
     return { storeColumns, productColumns, forecastColumns };
   };
@@ -1044,37 +1046,6 @@ const MonthOnMonthComparison: React.FC = () => {
     const currentFilter = discreteFilters[column];
     if (currentFilter && currentFilter.hasMore && !currentFilter.loading) {
       loadDiscreteOptions(column, currentFilter.page + 1, false);
-    }
-  };
-
-
-  const loadWeekStartDates = async () => {
-    try {
-      setLoadingWeekDates(true);
-      const sqlQuery = `SELECT DISTINCT week_start_date FROM forecast ORDER BY week_start_date ASC`;
-      
-      const stateSetters = {
-        setLoading: () => {},
-        setError: (error: string | null) => setError(error),
-        setData: (response: any) => {
-          if (response && response.data) {
-            const dates = response.data.map((row: any) => row.week_start_date).filter(Boolean);
-            
-            setWeekStartDates(dates);
-            // Set the earliest date as default
-            if (dates.length > 0 && !selectedWeekStartDate) {
-              setLocalSelectedWeekStartDate(dates[0]);
-            }
-          }
-        }
-      };
-
-      await forecastRepository.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
-    } catch (err) {
-      console.error('Error loading week start dates:', err);
-      setError('Failed to load week start dates');
-    } finally {
-      setLoadingWeekDates(false);
     }
   };
 
