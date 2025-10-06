@@ -217,7 +217,6 @@ const MonthOnMonthComparison: React.FC = () => {
         setData: (response: any) => {
           if (response && response.items) {
               // now set the possible months
-              debugggg("Months Init")
               const monthsList: any = []
               response.items.forEach((item : any) => {
                 monthsList.push(item.month_year)
@@ -478,8 +477,6 @@ const MonthOnMonthComparison: React.FC = () => {
         group_by: generateGroupBy(),
         selected_months: generateSelectedMonths(),
       };
-      debugggg(hasMore);
-      debugggg(requestBody);
       
       const stateSettersNew = {
         setLoading: (loading: boolean) => setLoading(loading),
@@ -966,8 +963,11 @@ const MonthOnMonthComparison: React.FC = () => {
     });
     
     setAppliedFilters(newAppliedFilters);
-    
     // Data will reload via the useEffect hook triggered by state changes.
+
+    // Hide the filter component from appearing after the filter is applied.
+    setShowFilters(false);
+
   };
   
   // Remove a specific applied filter
@@ -1001,6 +1001,9 @@ const MonthOnMonthComparison: React.FC = () => {
     setAppliedFilters(newAppliedFilters);
     
     // Data will reload via the useEffect hook.
+
+    // Hide the filter component from appearing after the filter is applied.
+    setShowFilters(false);
   };
   
   // Clear all filters
@@ -1011,6 +1014,9 @@ const MonthOnMonthComparison: React.FC = () => {
     setAppliedFilters([]);
     
     // Data will reload via the useEffect hook.
+
+    // Hide the filter component from appearing after the filter is applied.
+    // setShowFilters(false);
   };
   
   // Get columns grouped by parameter type for filter UI
@@ -1290,7 +1296,7 @@ const MonthOnMonthComparison: React.FC = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="px-4 py-3 border-b border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))]">
+      {/* <div className="px-4 py-3 border-b border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))]">
         <div className="flex items-center space-x-3">
           <div className="flex-1">
             <div className="relative">
@@ -1342,7 +1348,7 @@ const MonthOnMonthComparison: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Month Selector Modal */}
       {showMonthSelectModal && (
@@ -1635,140 +1641,140 @@ const MonthOnMonthComparison: React.FC = () => {
       )}
       
       {/* Applied Filters Bar - Always Visible */}
-            {appliedFilters.length > 0 && (
-              <div className="px-4 py-2 border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 flex-wrap">
-                    <span className="text-xs text-[hsl(var(--table-muted-foreground))] flex-shrink-0">Applied Filters:</span>
-                    {appliedFilters.map((filter, index) => (
-                      <div
-                        key={`${filter.column}-${filter.type}-${index}`}
-                        className="flex items-center space-x-1 bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))] px-2 py-1 rounded text-xs border border-[hsl(var(--primary))]/30"
-                      >
-                        <span className="font-medium">
-                          {filter.column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
-                        </span>
-                        <span>{filter.displayValue}</span>
-                        <button
-                          onClick={() => removeFilter(filter)}
-                          className="text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 ml-1"
-                          title="Remove filter"
-                        >
-                          <X size={12} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+      {appliedFilters.length > 0 && (
+        <div className="px-4 py-2 border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 flex-wrap">
+              <span className="text-xs text-[hsl(var(--table-muted-foreground))] flex-shrink-0">Applied Filters:</span>
+              {appliedFilters.map((filter, index) => (
+                <div
+                  key={`${filter.column}-${filter.type}-${index}`}
+                  className="flex items-center space-x-1 bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))] px-2 py-1 rounded text-xs border border-[hsl(var(--primary))]/30"
+                >
+                  <span className="font-medium">
+                    {filter.column.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
+                  </span>
+                  <span>{filter.displayValue}</span>
                   <button
-                    onClick={clearAllFilters}
-                    className="text-xs text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 flex items-center space-x-1"
+                    onClick={() => removeFilter(filter)}
+                    className="text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 ml-1"
+                    title="Remove filter"
                   >
                     <X size={12} />
-                    <span>Clear All</span>
                   </button>
                 </div>
-              </div>
-            )}
-            
-            {/* Filter Panel - Collapsible */}
-            {showFilters && (
-              <div className="border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
-                <div className="p-4">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Store Parameters */}
-                    <div className="space-y-3">
-                      <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
-                        <div className="w-3 h-3 bg-[hsl(var(--primary))] rounded mr-2"></div>
-                        Store Parameters
-                      </h3>
-                      <div className="space-y-2 max-h-60 overflow-y-auto">
-                        {getFilterColumnGroups().storeColumns.map((column) => (
-                          <FilterColumnComponent
-                            key={column}
-                            column={column}
-                            metadata={metadata}
-                            discreteFilters={discreteFilters}
-                            rangeFilters={rangeFilters}
-                            searchFilters={searchFilters}
-                            filterRanges={filterRanges}
-                            onDiscreteChange={handleDiscreteFilterChange}
-                            onRangeChange={handleRangeFilterChange}
-                            onSearchChange={handleSearchFilterChange}
-                            onLoadFilter={loadFilterData}
-                            onLoadMoreDiscrete={loadMoreDiscreteOptions}
-                            onDiscreteSearch={handleDiscreteFilterSearch}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {/* Product Parameters */}
-                    <div className="space-y-3">
-                      <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
-                        <div className="w-3 h-3 bg-[hsl(var(--panel-success))] rounded mr-2"></div>
-                        Product Parameters
-                      </h3>
-                      <div className="space-y-2 max-h-60 overflow-y-auto">
-                        {getFilterColumnGroups().productColumns.map((column) => (
-                          <FilterColumnComponent
-                            key={column}
-                            column={column}
-                            metadata={metadata}
-                            discreteFilters={discreteFilters}
-                            rangeFilters={rangeFilters}
-                            searchFilters={searchFilters}
-                            filterRanges={filterRanges}
-                            onDiscreteChange={handleDiscreteFilterChange}
-                            onRangeChange={handleRangeFilterChange}
-                            onSearchChange={handleSearchFilterChange}
-                            onLoadFilter={loadFilterData}
-                            onLoadMoreDiscrete={loadMoreDiscreteOptions}
-                            onDiscreteSearch={handleDiscreteFilterSearch}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {/* Forecast Parameters */}
-                    <div className="space-y-3">
-                      <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
-                        <div className="w-3 h-3 bg-[hsl(var(--panel-warning))] rounded mr-2"></div>
-                        Forecast Parameters
-                      </h3>
-                      <div className="space-y-2 max-h-60 overflow-y-auto">
-                        {getFilterColumnGroups().forecastColumns.map((column) => (
-                          <FilterColumnComponent
-                            key={column}
-                            column={column}
-                            metadata={metadata}
-                            discreteFilters={discreteFilters}
-                            rangeFilters={rangeFilters}
-                            searchFilters={searchFilters}
-                            filterRanges={filterRanges}
-                            onDiscreteChange={handleDiscreteFilterChange}
-                            onRangeChange={handleRangeFilterChange}
-                            onSearchChange={handleSearchFilterChange}
-                            onLoadFilter={loadFilterData}
-                            onLoadMoreDiscrete={loadMoreDiscreteOptions}
-                            onDiscreteSearch={handleDiscreteFilterSearch}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Apply Filters Button */}
-                  <div className="mt-6 flex justify-center">
-                    <button
-                      onClick={applyFilters}
-                      className="px-6 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90"
-                    >
-                      Apply Filters
-                    </button>
-                  </div>
+              ))}
+            </div>
+            <button
+              onClick={clearAllFilters}
+              className="text-xs text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 flex items-center space-x-1"
+            >
+              <X size={12} />
+              <span>Clear All</span>
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* Filter Panel - Collapsible */}
+      {showFilters && (
+        <div className="border-b border-[hsl(var(--table-border))] bg-[hsl(var(--table-header-background))]">
+          <div className="p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Store Parameters */}
+              <div className="space-y-3">
+                <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                  <div className="w-3 h-3 bg-[hsl(var(--primary))] rounded mr-2"></div>
+                  Store Parameters
+                </h3>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {getFilterColumnGroups().storeColumns.map((column) => (
+                    <FilterColumnComponent
+                      key={column}
+                      column={column}
+                      metadata={metadata}
+                      discreteFilters={discreteFilters}
+                      rangeFilters={rangeFilters}
+                      searchFilters={searchFilters}
+                      filterRanges={filterRanges}
+                      onDiscreteChange={handleDiscreteFilterChange}
+                      onRangeChange={handleRangeFilterChange}
+                      onSearchChange={handleSearchFilterChange}
+                      onLoadFilter={loadFilterData}
+                      onLoadMoreDiscrete={loadMoreDiscreteOptions}
+                      onDiscreteSearch={handleDiscreteFilterSearch}
+                    />
+                  ))}
                 </div>
               </div>
-            )}
+              
+              {/* Product Parameters */}
+              <div className="space-y-3">
+                <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                  <div className="w-3 h-3 bg-[hsl(var(--panel-success))] rounded mr-2"></div>
+                  Product Parameters
+                </h3>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {getFilterColumnGroups().productColumns.map((column) => (
+                    <FilterColumnComponent
+                      key={column}
+                      column={column}
+                      metadata={metadata}
+                      discreteFilters={discreteFilters}
+                      rangeFilters={rangeFilters}
+                      searchFilters={searchFilters}
+                      filterRanges={filterRanges}
+                      onDiscreteChange={handleDiscreteFilterChange}
+                      onRangeChange={handleRangeFilterChange}
+                      onSearchChange={handleSearchFilterChange}
+                      onLoadFilter={loadFilterData}
+                      onLoadMoreDiscrete={loadMoreDiscreteOptions}
+                      onDiscreteSearch={handleDiscreteFilterSearch}
+                    />
+                  ))}
+                </div>
+              </div>
+              
+              {/* Forecast Parameters */}
+              <div className="space-y-3">
+                <h3 className="text-[hsl(var(--table-foreground))] font-medium text-sm flex items-center">
+                  <div className="w-3 h-3 bg-[hsl(var(--panel-warning))] rounded mr-2"></div>
+                  Forecast Parameters
+                </h3>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {getFilterColumnGroups().forecastColumns.map((column) => (
+                    <FilterColumnComponent
+                      key={column}
+                      column={column}
+                      metadata={metadata}
+                      discreteFilters={discreteFilters}
+                      rangeFilters={rangeFilters}
+                      searchFilters={searchFilters}
+                      filterRanges={filterRanges}
+                      onDiscreteChange={handleDiscreteFilterChange}
+                      onRangeChange={handleRangeFilterChange}
+                      onSearchChange={handleSearchFilterChange}
+                      onLoadFilter={loadFilterData}
+                      onLoadMoreDiscrete={loadMoreDiscreteOptions}
+                      onDiscreteSearch={handleDiscreteFilterSearch}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            {/* Apply Filters Button */}
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={applyFilters}
+                className="px-6 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Table Container */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -1777,7 +1783,7 @@ const MonthOnMonthComparison: React.FC = () => {
           className="flex-1 overflow-y-auto overflow-x-auto"
         >
           <table className="w-full text-sm border-collapse">
-            <thead className="sticky top-0 bg-[hsl(var(--panel-header-background))] border-b border-[hsl(var(--panel-border))] z-50">
+            <thead className="sticky top-0 bg-[hsl(var(--panel-header-background))] border-b border-[hsl(var(--panel-border))] z-20">
               <tr className="h-12">
 
                 {/* only show the following columns if you are not in groupByMode */}
