@@ -224,6 +224,8 @@ const MonthOnMonthComparison: React.FC = () => {
     article_id: [],
   });
 
+  const [aggLoading, setAggLoading] = useState(false);
+
 
   // Add a new state for metadata loading
   const [metadataLoading, setMetadataLoading] = useState(true);
@@ -265,7 +267,7 @@ const MonthOnMonthComparison: React.FC = () => {
   useEffect(() => {
     // fire this only when the filter is changed
     getAllAggTableData()
-  }, [appliedFilters])
+  }, [appliedFilters, appliedMonths])
 
 
   const getListOfMonths = async () => {
@@ -291,29 +293,69 @@ const MonthOnMonthComparison: React.FC = () => {
   }
 
   // Function to load the entries for the tables
-  const getSingleAggTableData = async (type: string, group_by_columns: string[]) => { 
+  const getSingleAggTableData = async (type: string, group_by_columns: string[]) => {
     const stateSettersNew = {
-      setLoading: (loading: boolean) => setLoading(loading),
+      setLoading: () => {},
       setError: (error: string | null) => setError(error),
       setData: (response: any) => {
         if (response && response.items) {
-          setAggTableData(prev => ({
+          setAggTableData((prev) => ({
             ...prev,
-            [type]: response.items as AggTableRowEntry[]
+            [type]: response.items as AggTableRowEntry[],
           }));
         }
-      }
+      },
+    };
+
+    // get the existing filter body
+    const filter_body = generateFiltersForAPI();
+
+    // combine months from both sources
+    const monthsSelected: string[] = [
+      ...(filter_body?.month_year?.type === "discrete"
+        ? filter_body.month_year.values
+        : []),
+      ...(appliedMonths ?? []),
+    ];
+
+    // remove duplicates if any
+    const uniqueMonths = Array.from(new Set(monthsSelected));
+
+    // overwrite filter_body.month_year if there are months
+    if (uniqueMonths.length > 0) {
+      filter_body.month_year = {
+        type: "discrete",
+        values: uniqueMonths,
+      };
+    } else {
+      // if no months, ensure filter_body stays {} or whatever generateFiltersForAPI returned
+      delete filter_body.month_year;
     }
-    
-    const requestBody = {group_by: group_by_columns, selected_months: generateSelectedMonths()}
-    await forecastRepository.makeAPICall(requestBody, stateSettersNew, "accuracy-error-over-level");
-  };
+
+    debugggg(filter_body);
+
+    const requestBody = { group_by: group_by_columns, filters: filter_body };
+    await forecastRepository.makeAPICall(
+      requestBody,
+      stateSettersNew,
+      "accuracy-error-over-level"
+    );
+  }
+
 
 
   const getAllAggTableData = async () => {
-    await getSingleAggTableData("article_id", ["article_id"])
-    await getSingleAggTableData("article_p1dc", ["article_id", "p1_dc"])
-    await getSingleAggTableData("article_store", ["article_id", "store_no"])
+    setAggLoading(true);
+    try {
+      await getSingleAggTableData("article_id", ["article_id"]);
+      await getSingleAggTableData("article_p1dc", ["article_id", "p1_dc"]);
+      await getSingleAggTableData("article_store", ["article_id", "store_no"]);
+    } catch (err) {
+      console.error("Error loading aggregated data:", err);
+      setError("Failed to load aggregated data");
+    } finally {
+      setAggLoading(false);
+    }
   }
 
 
@@ -1165,7 +1207,7 @@ const MonthOnMonthComparison: React.FC = () => {
   };
   
 
-  if (metadataLoading || (loading && data.length === 0)) {
+  if (metadataLoading || (loading && data.length === 0) || aggLoading) {
     return (
       <div className="flex flex-col h-full bg-[hsl(var(--dark-9))] text-[hsl(var(--panel-foreground))]">
         {/* Header */}
