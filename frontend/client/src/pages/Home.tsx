@@ -129,7 +129,7 @@ interface ReplenishmentData {
 
 export default function Home({ initialModule, initialSlug }: HomeProps) {
   const { selectedProject, setSelectedProject, projectToSlug } = useProject();
-  const { activeModule, setActiveModule } = useWorkspace();
+  const { activeModule, setActiveModule, openFileInPanel } = useWorkspace();
   const { isAgentPanelOpen, panelWidth, setPanelWidth, isResizing, setIsResizing } = useAgent();
   const { isOpen, close } = useCommandPalette();
   const [, navigate] = useLocation();
@@ -223,6 +223,12 @@ export default function Home({ initialModule, initialSlug }: HomeProps) {
 
   const handleResizeEnd = () => {
     setIsResizing(false);
+  };
+
+  const handleOpenMonthOnMonth = () => {
+    setActiveModule('analytics');
+    navigate(prefixedPath(`/${projectToSlug(selectedProject)}/analytics`));
+    openFileInPanel(`analytics-${encodeURIComponent('Month-on-Month Comparison')}`);
   };
 
   const loadAvailableMonths = async () => {
@@ -1157,6 +1163,36 @@ export default function Home({ initialModule, initialSlug }: HomeProps) {
 
               {/* Right Column - Insights & Rankings */}
               <div className="lg:col-span-3 space-y-4 md:space-y-6">
+
+                {/* Quick Links */}
+                <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-4 md:p-6 border border-[hsl(var(--dashboard-card-border))]">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-[hsl(var(--dashboard-card-foreground))] text-sm md:text-base font-medium">Quick Links</h3>
+                  </div>
+                  <div className="space-y-2">
+                    <button
+                      onClick={handleOpenMonthOnMonth}
+                      className="w-full group relative overflow-hidden rounded-lg border border-[hsl(var(--dashboard-card-border))] bg-gradient-to-r from-[hsl(var(--dashboard-primary-blue))]/10 to-[hsl(var(--dashboard-primary-purple))]/10 hover:from-[hsl(var(--dashboard-primary-blue))]/20 hover:to-[hsl(var(--dashboard-primary-purple))]/20 transition-all duration-300 p-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-8 h-8 rounded-md bg-[hsl(var(--dashboard-primary-purple))]/20 flex items-center justify-center group-hover:bg-[hsl(var(--dashboard-primary-purple))]/30 transition-colors">
+                            <LineChart size={16} className="text-[hsl(var(--dashboard-primary-purple))]" />
+                          </div>
+                          <div className="text-left">
+                            <div className="text-[hsl(var(--dashboard-card-foreground))] text-xs md:text-sm font-medium">
+                              Month on Month Dashboard
+                            </div>
+                            <div className="text-[hsl(var(--dashboard-muted-foreground))] text-xs">
+                              Compare monthly trends
+                            </div>
+                          </div>
+                        </div>
+                        <ArrowRight size={16} className="text-[hsl(var(--dashboard-muted-foreground))] group-hover:text-[hsl(var(--dashboard-primary-purple))] group-hover:translate-x-1 transition-all" />
+                      </div>
+                    </button>
+                  </div>
+                </div>
 
                 {/* Replenishment Chart */}
                 <div className="bg-[hsl(var(--dashboard-card-background))] rounded-2xl p-4 md:p-6 border border-[hsl(var(--dashboard-card-border))]">

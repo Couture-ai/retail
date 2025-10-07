@@ -7,6 +7,9 @@ import { WorkspaceProvider } from "./context/WorkspaceProvider";
 import { ThemeProvider } from "./context/ThemeProvider";
 import { AgentProvider } from "./context/AgentProvider";
 import { ProjectProvider } from "@/context/ProjectProvider";
+import { AuthProvider } from "@/context/AuthProvider";
+import Login from "@/components/auth/Login";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import React, { useState, useEffect } from 'react';
 import { ForecastRepository } from './repository/forecast_repository';
 import { Module } from "./types";
@@ -104,55 +107,74 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider>
-      <WorkspaceProvider>
-        <AgentProvider>
-          <TooltipProvider>
-            <div className="pt-10">
-              <Toaster />
-              <Switch>
-                {/* Slug-based routes: /<slug>/<module> */}
-                <Route path={prefixedPath("/reliance-digital")} component={() => (
-                  <ProjectProvider initialSlug="reliance-digital">
-                    <Home initialModule="home" initialSlug="reliance-digital" />
-                  </ProjectProvider>
-                )} />
-                <Route path={prefixedPath("/reliance-digital/:module")} component={() => (
-                  <ProjectProvider initialSlug="reliance-digital">
-                    <Home initialModule={activeModule} initialSlug="reliance-digital" />
-                  </ProjectProvider>
-                )} />
-                <Route path={prefixedPath("/reliance-jewels")} component={() => (
-                  <ProjectProvider initialSlug="reliance-jewels">
-                    <Home initialModule="home" initialSlug="reliance-jewels" />
-                  </ProjectProvider>
-                )} />
-                <Route path={prefixedPath("/reliance-jewels/:module")} component={() => (
-                  <ProjectProvider initialSlug="reliance-jewels">
-                    <Home initialModule={activeModule} initialSlug="reliance-jewels" />
-                  </ProjectProvider>
-                )} />
-                <Route path={prefixedPath("/fashion-and-lifestyle")} component={() => (
-                  <ProjectProvider initialSlug="fashion-and-lifestyle">
-                    <Home initialModule="home" initialSlug="fashion-and-lifestyle" />
-                  </ProjectProvider>
-                )} />
-                <Route path={prefixedPath("/fashion-and-lifestyle/:module")} component={() => (
-                  <ProjectProvider initialSlug="fashion-and-lifestyle">
-                    <Home initialModule={activeModule} initialSlug="fashion-and-lifestyle" />
-                  </ProjectProvider>
-                )} />
-                {/* Default redirect to reliance-digital */}
-                <Route path={prefixedPath("/")} component={() => (
-                  <ProjectProvider initialSlug="reliance-digital">
-                    <Home initialModule="home" initialSlug="reliance-digital" />
-                  </ProjectProvider>
-                )} />
-                <Route component={NotFound} />
-              </Switch>
-            </div>
-          </TooltipProvider>
-        </AgentProvider>
-      </WorkspaceProvider>
+      <AuthProvider>
+        <WorkspaceProvider>
+          <AgentProvider>
+            <TooltipProvider>
+              <div className="pt-10">
+                <Toaster />
+                <Switch>
+                  {/* Login route - not protected */}
+                  <Route path={prefixedPath("/login")} component={Login} />
+                  
+                  {/* Protected routes: /<slug>/<module> */}
+                  <Route path={prefixedPath("/reliance-digital")} component={() => (
+                    <ProtectedRoute>
+                      <ProjectProvider initialSlug="reliance-digital">
+                        <Home initialModule="home" initialSlug="reliance-digital" />
+                      </ProjectProvider>
+                    </ProtectedRoute>
+                  )} />
+                  <Route path={prefixedPath("/reliance-digital/:module")} component={() => (
+                    <ProtectedRoute>
+                      <ProjectProvider initialSlug="reliance-digital">
+                        <Home initialModule={activeModule} initialSlug="reliance-digital" />
+                      </ProjectProvider>
+                    </ProtectedRoute>
+                  )} />
+                  <Route path={prefixedPath("/reliance-jewels")} component={() => (
+                    <ProtectedRoute>
+                      <ProjectProvider initialSlug="reliance-jewels">
+                        <Home initialModule="home" initialSlug="reliance-jewels" />
+                      </ProjectProvider>
+                    </ProtectedRoute>
+                  )} />
+                  <Route path={prefixedPath("/reliance-jewels/:module")} component={() => (
+                    <ProtectedRoute>
+                      <ProjectProvider initialSlug="reliance-jewels">
+                        <Home initialModule={activeModule} initialSlug="reliance-jewels" />
+                      </ProjectProvider>
+                    </ProtectedRoute>
+                  )} />
+                  <Route path={prefixedPath("/fashion-and-lifestyle")} component={() => (
+                    <ProtectedRoute>
+                      <ProjectProvider initialSlug="fashion-and-lifestyle">
+                        <Home initialModule="home" initialSlug="fashion-and-lifestyle" />
+                      </ProjectProvider>
+                    </ProtectedRoute>
+                  )} />
+                  <Route path={prefixedPath("/fashion-and-lifestyle/:module")} component={() => (
+                    <ProtectedRoute>
+                      <ProjectProvider initialSlug="fashion-and-lifestyle">
+                        <Home initialModule={activeModule} initialSlug="fashion-and-lifestyle" />
+                      </ProjectProvider>
+                    </ProtectedRoute>
+                  )} />
+                  {/* Default redirect to reliance-digital - protected */}
+                  <Route path={prefixedPath("/")} component={() => (
+                    <ProtectedRoute>
+                      <ProjectProvider initialSlug="reliance-digital">
+                        <Home initialModule="home" initialSlug="reliance-digital" />
+                      </ProjectProvider>
+                    </ProtectedRoute>
+                  )} />
+                  <Route component={NotFound} />
+                </Switch>
+              </div>
+            </TooltipProvider>
+          </AgentProvider>
+        </WorkspaceProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 };
