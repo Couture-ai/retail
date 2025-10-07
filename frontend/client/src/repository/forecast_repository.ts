@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import monthWiseMockData from "../data/retailMock.json"
 
 // Define interfaces for better type safety
 interface StateSetters {

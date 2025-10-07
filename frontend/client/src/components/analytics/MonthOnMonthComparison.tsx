@@ -95,6 +95,24 @@ interface ForecastRecord {
   [key: string]: any;
 }
 
+interface AggTableRowEntry {
+  month_year: string;
+  total_sold_qty: number | null;
+  total_couture_baseline: number | null;
+  total_business_baseline: number | null;
+  total_revised_baseline: number | null;
+  total_business_consensus: number | null;
+  total_couture_error: number | null;
+  total_business_error: number | null;
+  total_revised_error: number | null;
+  total_consensus_error: number | null;
+  couture_baseline_accuracy: number | null;
+  business_baseline_accuracy: number | null;
+  revised_forecast_accuracy: number | null;
+  business_consensus_accuracy: number | null;
+}
+
+
 const MonthOnMonthComparison: React.FC = () => {
   const [data, setData] = useState<GroupedForecastRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -179,8 +197,48 @@ const MonthOnMonthComparison: React.FC = () => {
     "business_consensus",
   ]);
 
+  const [aggTableColumns, setAggTableColumns] = useState<string[]>([
+    "month_year",
+    "total_sold_qty",
+    "total_couture_baseline",
+    "total_business_baseline",
+    "total_revised_baseline",
+    "total_business_consensus",
+    "total_couture_error",
+    "total_business_error",
+    "total_revised_error",
+    "total_consensus_error",
+    "couture_baseline_accuracy",
+    "business_baseline_accuracy",
+    "revised_forecast_accuracy",
+    "business_consensus_accuracy",
+  ]);
+
+  const [aggTableData, setAggTableData] = useState<{
+    article_store: AggTableRowEntry[];
+    article_p1dc: AggTableRowEntry[];
+    article_id: AggTableRowEntry[];
+  }>({
+    article_store: [],
+    article_p1dc: [],
+    article_id: [],
+  });
+
+
   // Add a new state for metadata loading
   const [metadataLoading, setMetadataLoading] = useState(true);
+
+  // --- NEW: Configuration for Aggregation Tables ---
+  const aggregationTableOrder = ['article_store', 'article_p1dc', 'article_id'];
+  
+  const formatAggregationName = (key: string) => {
+    switch (key) {
+      case 'article_store': return 'Article-Store';
+      case 'article_p1dc': return 'Article-P1DC';
+      case 'article_id': return 'Article-ID';
+      default: return sanitizeLabel(key); // Fallback to existing utility function
+    }
+  };
 
 
   // --- Effect Hooks for Data Loading ---
@@ -189,7 +247,7 @@ const MonthOnMonthComparison: React.FC = () => {
   useEffect(() => {
     const initializeData = async () => {
       loadMetadata();
-      await getListOfMonths();
+      getListOfMonths();
     }
     
     initializeData()
@@ -203,6 +261,11 @@ const MonthOnMonthComparison: React.FC = () => {
     }
     loadInitialData();
   }, [activeSearches, activeUnifiedSearch, groupByColumns, appliedMonths, metadataLoading, appliedFilters]);
+
+  useEffect(() => {
+    // fire this only when the filter is changed
+    getAllAggTableData()
+  }, [appliedFilters])
 
 
   const getListOfMonths = async () => {
@@ -225,6 +288,32 @@ const MonthOnMonthComparison: React.FC = () => {
 
       // bring all the months from the API
       await forecastRepository.getMetadataFromAPI({filter_name: "month_year"}, stateSettersNew, 'get-filters');
+  }
+
+  // Function to load the entries for the tables
+  const getSingleAggTableData = async (type: string, group_by_columns: string[]) => { 
+    const stateSettersNew = {
+      setLoading: (loading: boolean) => setLoading(loading),
+      setError: (error: string | null) => setError(error),
+      setData: (response: any) => {
+        if (response && response.items) {
+          setAggTableData(prev => ({
+            ...prev,
+            [type]: response.items as AggTableRowEntry[]
+          }));
+        }
+      }
+    }
+    
+    const requestBody = {group_by: group_by_columns, selected_months: generateSelectedMonths()}
+    await forecastRepository.makeAPICall(requestBody, stateSettersNew, "accuracy-error-over-level");
+  };
+
+
+  const getAllAggTableData = async () => {
+    await getSingleAggTableData("article_id", ["article_id"])
+    await getSingleAggTableData("article_p1dc", ["article_id", "p1_dc"])
+    await getSingleAggTableData("article_store", ["article_id", "store_no"])
   }
 
 
@@ -1747,255 +1836,292 @@ const MonthOnMonthComparison: React.FC = () => {
         </div>
       )}
 
-      {/* Table Container */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div 
-          ref={tableContainerRef}
-          className="flex-1 overflow-y-auto overflow-x-auto"
-        >
-          <table className="w-full text-sm border-collapse">
+      {/* ============== CHANGE #2: Sticky Header Fix ============== */}
+      {/* By adding `overflow-x-auto` here, this container manages both vertical and horizontal scrolling, allowing the sticky header in the main table to work correctly. */}
+      <div ref={tableContainerRef} className="flex-1 overflow-y-auto overflow-x-auto px-6">
+      
+        {/* AGGREGATION TABLES SECTION - MODIFIED FOR DYNAMIC TITLES */}
+        <div className="py-4 border-b border-[hsl(var(--panel-border))]">
+            <h2 className="text-lg font-semibold mb-4 text-[hsl(var(--panel-foreground))]">
+                Aggregated Analysis
+            </h2>
+            <div className="space-y-8">
+                {aggregationTableOrder.map((tableKey) => (
+                    <div key={tableKey}>
+                        {/* CHANGE #1: Dynamic Title */}
+                        <h3 className="text-md font-medium mb-2 text-[hsl(var(--panel-muted-foreground))]">
+                            <b>{formatAggregationName(tableKey as keyof typeof aggTableData)}</b>
+                        </h3>
+                        <div className="overflow-x-auto border border-[hsl(var(--panel-border))] rounded-lg max-h-64 overflow-y-auto">
+                            <table className="w-full text-sm border-collapse">
+                                <thead className="sticky top-0 bg-[hsl(var(--panel-header-background))] z-10">
+                                    <tr>
+                                        {aggTableColumns.map(col => (
+                                            <th 
+                                                key={col} 
+                                                className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-b border-[hsl(var(--panel-border))] whitespace-nowrap"
+                                            >
+                                                {sanitizeLabel(col)}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  {/* CHANGE #1: Dynamic Data Access */}
+                                  {(aggTableData[tableKey as keyof typeof aggTableData] || []).map((row, rowIndex) => (
+                                    <tr 
+                                      key={rowIndex} 
+                                      /* FIX: Corrected CSS variable syntax */
+                                      className="border-b border-[hsl(var(--panel-border))] last:border-b-0 hover:bg-[hsl(var(--panel-hover))]"
+                                    >
+                                      {aggTableColumns.map(col => (
+                                        <td 
+                                          key={`${col}-${rowIndex}`} 
+                                          className="px-3 py-2 border-r border-[hsl(var(--panel-border))] last:border-r-0 text-[hsl(var(--panel-foreground))]"
+                                        >
+                                          {formatCellValue((row as any)[col])}
+                                        </td>
+                                      ))}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+        
+        {/* MAIN TABLE SECTION */}
+        {/* CHANGE #2: Removed `overflow-x-auto` from this wrapper div. The parent now handles it. */}
+        <div className="relative pt-4">
+            <table className="w-full text-sm border-collapse">
+            {/* This sticky header will now work as expected. */}
             <thead className="sticky top-0 bg-[hsl(var(--panel-header-background))] border-b border-[hsl(var(--panel-border))] z-20">
-              <tr className="h-12">
+                <tr className="h-12">
 
                 {/* only show the following columns if you are not in groupByMode */}
                 {!isGroupByMode && 
-                  <>
+                    <>
                     {/* Store Details Combined */}
                     <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[200px]">
-                      <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between">
                         <span>Store Details</span>
                         <SearchButton column="store_no" />
-                      </div>
+                        </div>
                     </th>
                     
                     {/* Product Details Combined */}
                     <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[250px]">
-                      <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between">
                         <span>Product Details</span>
                         <SearchButton column="article_id" />
-                      </div>
+                        </div>
                     </th>
                     
                     {/* Brand */}
                     <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[120px]">
-                      <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between">
                         <span>Brand</span>
                         <SearchButton column="brand" />
-                      </div>
+                        </div>
                     </th>
                     
                     {/* Category Combined */}
                     <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[200px]">
-                      <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between">
                         <span>Category</span>
                         <SearchButton column="segment" />
-                      </div>
+                        </div>
                     </th>
                     
                     {/* Channel */}
                     <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
-                      <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between">
                         <span>Channel</span>
                         <SearchButton column="channel" />
-                      </div>
+                        </div>
                     </th>
-                  </>
+                    </>
                 }
 
-                {/* Month Data */}
-                {/* <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
-                  <span>Month</span>
-                </th>
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[130px]">
-                  <span>Business Baseline</span>
-                </th>
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[130px]">
-                  <span>Couture Baseline</span>
-                </th>
-                <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
-                  <span>Sold Qty</span>
-                </th> */}
-
                 {/* Only display the Grouped By columns */}{
-                  groupByColumns.map((column) => {
-                    return <th className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
-                      <div className="flex items-center justify-between">
+                    groupByColumns.map((column) => {
+                    return <th key={column} className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]">
+                        <div className="flex items-center justify-between">
                         <span>{sanitizeLabel(column)}</span>
                         <SearchButton column="channel" />
-                      </div>
+                        </div>
                     </th>
-                  })
+                    })
                 }
 
                 {/* Dynamic Month data */}
                 {monthWiseColumns.map((column) => {
-                  return (visibleColumnSettings[column]) ? <th
-                    key={column}  // ✅ unique key
+                    return (visibleColumnSettings[column]) ? <th
+                    key={column}
                     className="px-3 py-2 text-left text-[hsl(var(--panel-header-foreground))] font-medium border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))] bg-opacity-100 backdrop-blur-md min-w-[100px]"
-                  >
+                    >
                     <span>{sanitizeLabel(column)}</span>
-                  </th> : null
+                    </th> : null
                 }
-                  
-                  
                 )}
 
-              </tr>
+                </tr>
             </thead>
             
             <tbody>
-              {data.map((record, recordIndex) => {
+                {data.map((record, recordIndex) => {
                 return record?.months?.map((monthData, monthIndex) => (
-                  <tr
+                    <tr
                     key={`${record.store_no}-${record.article_id}-${monthData.month_year}`}
                     className={`border-b border-[hsl(var(--panel-border))] hover:bg-[hsl(var(--panel-hover))] transition-colors ${
-                      monthIndex === record.months.length - 1
+                        monthIndex === record.months.length - 1
                         ? "border-b-2 border-b-[hsl(var(--panel-border))]"
                         : ""
                     }`}
-                  >
+                    >
                     {/* Store Details - only show on first month row */}
                     {monthIndex === 0 && (
-                      <>
+                        <>
                         {/* A. Show these standard columns ONLY IF NOT in group-by mode */}
                         {!isGroupByMode && (
-                          <>
+                            <>
                             {/* Store Details */}
                             <td
-                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
-                              rowSpan={record.months.length}
+                                className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
+                                rowSpan={record.months.length}
                             >
-                              <div className="space-y-1">
+                                <div className="space-y-1">
                                 <div className="font-bold text-sm">
-                                  {formatCellValue(record.store_no)}
+                                    {formatCellValue(record.store_no)}
                                 </div>
                                 <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                                  {formatCellValue(record.city)},{" "}
-                                  {formatCellValue(record.state)}
+                                    {formatCellValue(record.city)},{" "}
+                                    {formatCellValue(record.state)}
                                 </div>
                                 <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                                  {formatCellValue(record.region)}
+                                    {formatCellValue(record.region)}
                                 </div>
-                              </div>
+                                </div>
                             </td>
 
                             {/* Product Details */}
                             <td
-                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[250px] align-top"
-                              rowSpan={record.months.length}
+                                className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[250px] align-top"
+                                rowSpan={record.months.length}
                             >
-                              <div className="space-y-1">
+                                <div className="space-y-1">
                                 <div className="font-bold text-sm">
-                                  {formatCellValue(record.article_id)}
+                                    {formatCellValue(record.article_id)}
                                 </div>
                                 <div
-                                  className="text-xs text-[hsl(var(--panel-muted-foreground))] max-w-[220px] overflow-hidden"
-                                  title={record.article_description}
+                                    className="text-xs text-[hsl(var(--panel-muted-foreground))] max-w-[220px] overflow-hidden"
+                                    title={record.article_description}
                                 >
-                                  <div className="break-words">
+                                    <div className="break-words">
                                     {formatCellValue(record.article_description)}
-                                  </div>
+                                    </div>
                                 </div>
-                              </div>
+                                </div>
                             </td>
 
                             {/* Brand */}
                             <td
-                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[120px] align-top"
-                              rowSpan={record.months.length}
+                                className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[120px] align-top"
+                                rowSpan={record.months.length}
                             >
-                              {formatCellValue(record.brand)}
+                                {formatCellValue(record.brand)}
                             </td>
 
                             {/* Category Combined */}
                             <td
-                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
-                              rowSpan={record.months.length}
+                                className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[200px] align-top"
+                                rowSpan={record.months.length}
                             >
-                              <div className="space-y-1">
+                                <div className="space-y-1">
                                 <div className="text-sm font-medium">
-                                  {formatCellValue(record.segment)}
+                                    {formatCellValue(record.segment)}
                                 </div>
                                 <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                                  {formatCellValue(record.division)}
+                                    {formatCellValue(record.division)}
                                 </div>
                                 <div className="text-xs text-[hsl(var(--panel-muted-foreground))]">
-                                  {formatCellValue(record.vertical)}
+                                    {formatCellValue(record.vertical)}
                                 </div>
-                              </div>
+                                </div>
                             </td>
 
                             {/* Channel */}
                             <td
-                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
-                              rowSpan={record.months.length}
+                                className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
+                                rowSpan={record.months.length}
                             >
-                              {formatCellValue(record.channel)}
+                                {formatCellValue(record.channel)}
                             </td>
-                          </>
+                            </>
                         )}
 
                         {/* B. Show the selected "Group By" columns ONLY IF in group-by mode */}
                         {isGroupByMode &&
-                          groupByColumns.map((column) => (
+                            groupByColumns.map((column) => (
                             <td
-                              key={column} // Added a key for React best practices
-                              className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
-                              rowSpan={record.months.length}
+                                key={column} // Added a key for React best practices
+                                className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px] align-top"
+                                rowSpan={record.months.length}
                             >
-                              <span>{record[column] ? record[column] : null}</span>
+                                <span>{record[column] ? record[column] : null}</span>
                             </td>
-                          ))}
-                      </>
+                            ))}
+                        </>
                     )}
                     {/* Month Data - show for every row */}
                     {/* Dynamic month related data */}
                     {monthWiseColumns.map((column) => {
-                      return (visibleColumnSettings[column]) ? (
+                        return (visibleColumnSettings[column]) ? (
                         <td
-                          key={column}
-                          className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px]"
+                            key={column}
+                            className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px]"
                         >
-                          <span className="font-medium">
+                            <span className="font-medium">
                             {formatCellValue(monthData[column])}
-                          </span>
+                            </span>
                         </td>
-                      ) : null
+                        ) : null
                     })}
-                  </tr>
+                    </tr>
                 ));
-              })}
-              
-              {/* Loading row */}
-              {loading && data.length > 0 && (
+                })}
+                
+                {/* Loading row */}
+                {loading && data.length > 0 && (
                 <tr>
-                  <td colSpan={9} className="px-3 py-4 text-center">
+                    <td colSpan={15} className="px-3 py-4 text-center">
                     <div className="flex items-center justify-center">
-                      <Loader2 className="animate-spin text-[hsl(var(--primary))] mr-2" size={16} />
-                      <span className="text-[hsl(var(--panel-muted-foreground))]">Loading...</span>
+                        <Loader2 className="animate-spin text-[hsl(var(--primary))] mr-2" size={16} />
+                        <span className="text-[hsl(var(--panel-muted-foreground))]">Loading...</span>
                     </div>
-                  </td>
+                    </td>
                 </tr>
-              )}
+                )}
             </tbody>
-          </table>
+            </table>
         </div>
         
         {/* Status bar */}
         <div className="px-4 py-2 border-t border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))]">
-          <div className="flex items-center justify-between text-xs text-[hsl(var(--panel-muted-foreground))]">
+            <div className="flex items-center justify-between text-xs text-[hsl(var(--panel-muted-foreground))]">
             <div className="flex items-center space-x-4">
-              {/* <span>
-                Showing month-on-month comparison grouped by (Store, Article) pairs
-              </span> */}
             </div>
             <div>
-              {data.length.toLocaleString()} groups loaded
-              {hasMore && " • Scroll down for more"}
+                {data.length.toLocaleString()} groups loaded
+                {hasMore && " • Scroll down for more"}
             </div>
-          </div>
+            </div>
         </div>
+        
       </div>
+       {/* ============ END: MAIN SCROLLABLE CONTAINER ============ */}
     </div>
   );
 
