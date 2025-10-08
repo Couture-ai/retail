@@ -280,7 +280,7 @@ const MonthOnMonthComparison: React.FC = () => {
           // extract month-year values
           const monthsList: string[] = response.filters.map((item: any) => item[0]);
 
-          // sort in ascending order (YYYY-MM)
+          // sort in descending order (YYYY-MM)
           const monthsSorted: string[] = Array.from(new Set(monthsList)).sort((a, b) => {
             const [yearA, monthA] = a.split("-").map(Number);
             const [yearB, monthB] = b.split("-").map(Number);
