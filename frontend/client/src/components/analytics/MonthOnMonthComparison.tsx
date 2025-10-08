@@ -272,26 +272,34 @@ const MonthOnMonthComparison: React.FC = () => {
 
 
   const getListOfMonths = async () => {
-    // replace this with the API call and downstream processing, placeholders
-
     const stateSettersNew = {
-        setLoading: (loading: boolean) => setIsMonthsLoading(loading),
-        setError: (error: string | null) => setError(error),
-        setData: (response: any) => {
-          if (response && response.filters) {
-              // now set the possible months
-              const monthsList: any = []
-              response.filters.forEach((item : any) => {
-                monthsList.push(item[0])
-              });
-              setMonths(monthsList)
-          }
+      setLoading: (loading: boolean) => setIsMonthsLoading(loading),
+      setError: (error: string | null) => setError(error),
+      setData: (response: any) => {
+        if (response && response.filters) {
+          // extract month-year values
+          const monthsList: string[] = response.filters.map((item: any) => item[0]);
+
+          // sort in ascending order (YYYY-MM)
+          const monthsSorted: string[] = Array.from(new Set(monthsList)).sort((a, b) => {
+            const [yearA, monthA] = a.split("-").map(Number);
+            const [yearB, monthB] = b.split("-").map(Number);
+            return yearB - yearA || monthB - monthA;
+          });
+
+          setMonths(monthsSorted);
         }
       }
+    };
 
-      // bring all the months from the API
-      await forecastRepository.getMetadataFromAPI({filter_name: "month_year"}, stateSettersNew, 'get-filters');
-  }
+    // fetch months from API
+    await forecastRepository.getMetadataFromAPI(
+      { filter_name: "month_year" },
+      stateSettersNew,
+      "get-filters"
+    );
+};
+
 
   // Function to load the entries for the tables
   const getSingleAggTableData = async (type: string, group_by_columns: string[]) => {
@@ -332,8 +340,6 @@ const MonthOnMonthComparison: React.FC = () => {
       // if no months, ensure filter_body stays {} or whatever generateFiltersForAPI returned
       delete filter_body.month_year;
     }
-
-    debugggg(filter_body);
 
     const requestBody = { group_by: group_by_columns, filters: filter_body };
     await forecastRepository.makeAPICall(
@@ -613,7 +619,6 @@ const MonthOnMonthComparison: React.FC = () => {
         setLoading: (loading: boolean) => setLoading(loading),
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
-          debugggg(`${Object.keys(requestBody)} - ${Object.keys(response)}`)
           if (response && response.data) {
             // Apply random generation for trigger_qty and max_qty
             const enhancedData = response.data
@@ -735,11 +740,10 @@ const MonthOnMonthComparison: React.FC = () => {
     if (value === null || value === undefined) return '';
     
     if (typeof value === 'number') {
-      // Check if it's a decimal number
-      if (!Number.isInteger(value)) {
-        return value.toFixed(3); // round to 3 decimal places
-      }
-      return value.toLocaleString(); // show as-is if integer
+      // This will add comma separators and round to 3 decimal places if needed.
+      return value.toLocaleString('en-US', {
+        maximumFractionDigits: 3
+      });
     }
 
     return String(value);
