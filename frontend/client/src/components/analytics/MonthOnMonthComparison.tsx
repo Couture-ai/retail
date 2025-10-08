@@ -204,15 +204,16 @@ const MonthOnMonthComparison: React.FC = () => {
     "total_business_baseline",
     "total_revised_baseline",
     "total_business_consensus",
-    "total_couture_error",
-    "total_business_error",
-    "total_revised_error",
-    "total_consensus_error",
+    "total_couture_baseline_error",
+    "total_business_baseline_error",
+    "total_revised_baseline_error",
+    "total_business_consensus_error",
     "couture_baseline_accuracy",
     "business_baseline_accuracy",
-    "revised_forecast_accuracy",
-    "business_consensus_accuracy",
-  ]);
+    "revised_baseline_accuracy",
+    "business_consensus_accuracy"
+  ]
+);
 
   const [aggTableData, setAggTableData] = useState<{
     article_store: AggTableRowEntry[];
