@@ -2228,6 +2228,20 @@ const MonthOnMonthComparison: React.FC = () => {
   }
 };
 
+  const customDisplayNameMapping: any = {
+    channel_online_offline: {
+      true: "Offline",
+      false: "Online"
+    }
+  }
+
+  const handleCustomFilterDisplayName = (column: string, value: any) => {
+    if (customDisplayNameMapping[column] && customDisplayNameMapping[column][value]){
+      return customDisplayNameMapping[column][value]
+    }
+    return value
+  }
+
 // Filter Column Component
 interface FilterColumnComponentProps {
   column: string;
@@ -2309,7 +2323,7 @@ const FilterColumnComponent: React.FC<FilterColumnComponentProps> = ({
                   className="rounded border-[hsl(var(--panel-input-border))] text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))] focus:ring-1"
                 />
                 <span className="flex-1 truncate text-[hsl(var(--panel-foreground))]" title={option.value}>
-                  {option.value}
+                  {handleCustomFilterDisplayName(column, option.value)}
                 </span>
                 <span className="text-[hsl(var(--panel-muted-foreground))] text-xs">
                   {option.count.toLocaleString()}
