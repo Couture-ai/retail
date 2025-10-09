@@ -1,12 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import icon from '../../assets/img/icon.png';
 import Sidebar from "@/components/layout/Sidebar";
 import { useProject } from "@/context/ProjectProvider";
+import { AuthContext } from "@/context/AuthProvider";
+import { useLocation } from 'wouter';
 
 interface TopBarProps {}
 
 const TopBar: React.FC<TopBarProps> = () => {
   const { selectedProject, setSelectedProject, projectOptions, projectToSlug } = useProject();
+  const { logout } = useContext(AuthContext);
+  const [, setLocation] = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -46,6 +50,13 @@ const TopBar: React.FC<TopBarProps> = () => {
   const handleSearchClick = () => {
     // Command K functionality - placeholder for now
     console.log('Search opened (Command+K)');
+  };
+
+  const handleLogout = () => {
+    logout();
+    const APP_PREFIX = import.meta.env.VITE_APP_PREFIX || '';
+    const loginPath = APP_PREFIX ? `/${APP_PREFIX}/login` : '/login';
+    setLocation(loginPath);
   };
 
   // Expose selectedOption (project) for parent usage
@@ -129,6 +140,22 @@ const TopBar: React.FC<TopBarProps> = () => {
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </button>
+
+          {/* Logout icon */}
+          <button
+            onClick={handleLogout}
+            className="text-[hsl(var(--sidebar-foreground))] hover:text-destructive transition-all duration-300 focus:outline-none opacity-70 hover:opacity-100 p-1.5 rounded-md hover:bg-[hsl(var(--sidebar-accent))]"
+            title="Logout"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
           </button>
         </div>
