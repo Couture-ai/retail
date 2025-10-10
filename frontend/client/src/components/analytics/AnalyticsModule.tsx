@@ -361,7 +361,7 @@ const AnalyticsModule = () => {
                         className="flex-1 min-w-0"
                       >
                         <div className="text-[hsl(var(--sidepanel-foreground))] text-sm font-medium truncate">
-                          # Month-on-Month Comparison
+                          # Month-on-Month Analysis
                         </div>
                       </div>
                     </div>

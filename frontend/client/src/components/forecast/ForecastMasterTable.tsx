@@ -25,6 +25,7 @@ import { ResponsiveBar } from '@nivo/bar';
 import SalesChart from './SalesChart';
 import AdjustmentDiffView, { DiffRow } from './AdjustmentDiffView';
 import { useProject } from "@/context/ProjectProvider";
+import { debugggg } from '@/lib/utils';
 
 interface ForecastMetadata {
   essential_columns: string[];
@@ -77,6 +78,13 @@ interface AppliedFilter {
   type: 'discrete' | 'range' | 'search';
   displayValue: string;
   sqlCondition: string;
+}
+
+interface AppliedFilterForAPI {
+  column: string;
+  type: 'discrete' | 'range' | 'search';
+  displayValue: string;
+  filterValues: Object;
 }
 
 interface ForecastMasterTableProps {
@@ -149,7 +157,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
   const [discreteFilters, setDiscreteFilters] = useState<{ [key: string]: DiscreteFilter }>({});
   const [rangeFilters, setRangeFilters] = useState<{ [key: string]: RangeFilter }>({});
   const [searchFilters, setSearchFilters] = useState<{ [key: string]: SearchFilter }>({});
-  const [appliedFilters, setAppliedFilters] = useState<AppliedFilter[]>([]);
+  const [appliedFilters, setAppliedFilters] = useState<AppliedFilterForAPI[]>([]);
   const [filterRanges, setFilterRanges] = useState<{ [key: string]: { min: number; max: number } }>({});
   
   // Bottom panel state for consensus mode
@@ -534,6 +542,57 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     }
   };
   
+  // take the total requests body from the API and return a final filters body
+   const generateFiltersForAPI = () => {
+    // Define the structure for the final request body object.
+    const finalRequestBody: Record<string, 
+      { type: "discrete"; values: string[] } | 
+      { type: "range"; min?: number; max?: number }
+    > = {};
+
+    // --- Process Discrete Filters ---
+    // Iterate over each entry in the discreteFilters state object.
+    Object.entries(discreteFilters).forEach(([column, filterState]) => {
+      // Check if the filter has any selected values.
+      if (filterState.selectedValues && filterState.selectedValues.length > 0) {
+        // If so, add it to the request body in the required format.
+        finalRequestBody[column] = {
+          type: "discrete",
+          values: filterState.selectedValues,
+        };
+      }
+    });
+
+    // --- Process Range Filters ---
+    // Iterate over each entry in the rangeFilters state object.
+    Object.entries(rangeFilters).forEach(([column, filterState]) => {
+      // Check if 'min' or 'max' has a valid, non-null numeric value.
+      const hasMin = filterState.min !== null && !isNaN(Number(filterState.min));
+      const hasMax = filterState.max !== null && !isNaN(Number(filterState.max));
+
+      // If at least one bound (min or max) is set, create the range filter object.
+      if (hasMin || hasMax) {
+        const rangeFilter: { type: "range"; min?: number; max?: number } = { type: "range" };
+        
+        // Add the 'min' value if it exists.
+        if (hasMin) {
+          rangeFilter.min = Number(filterState.min);
+        }
+        // Add the 'max' value if it exists.
+        if (hasMax) {
+          rangeFilter.max = Number(filterState.max);
+        }
+        
+        // Add the completed range filter to the request body.
+        finalRequestBody[column] = rangeFilter;
+      }
+    });
+
+    // Return the final, correctly formatted object.
+    return finalRequestBody;
+  };
+
+
   const loadMoreData = useCallback(async () => {
     console.log('[ForecastMasterTable] loadMoreData called:', { loadingMore, hasMore, page });
     
@@ -548,112 +607,134 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
       const offset = page * 100;
       let sqlQuery = '';
       
-      if (isGroupByMode && groupByColumns.length > 0) {
-        // Build GROUP BY query
-        const selectColumns = [...groupByColumns];
-        const aggregateColumns: string[] = [];
+      // if (isGroupByMode && groupByColumns.length > 0) {
+      //   // Build GROUP BY query
+      //   const selectColumns = [...groupByColumns];
+      //   const aggregateColumns: string[] = [];
         
-        // Add aggregates for non-grouped columns
-        if (metadata) {
-          metadata.essential_columns.forEach(col => {
-            if (!groupByColumns.includes(col)) {
-              const dataType = metadata.essential_columns_datatypes[col];
-              if (dataType === 'string') {
-                selectColumns.push(`COUNT(DISTINCT ${col}) as "#${col}"`);
-                aggregateColumns.push(`#${col}`);
-              } else if (dataType === 'float' || dataType === 'integer') {
-                selectColumns.push(`SUM(${col}) as "Σ${col}"`);
-                aggregateColumns.push(`Σ${col}`);
-              }
-            }
-          });
-        }
+      //   // Add aggregates for non-grouped columns
+      //   if (metadata) {
+      //     metadata.essential_columns.forEach(col => {
+      //       if (!groupByColumns.includes(col)) {
+      //         const dataType = metadata.essential_columns_datatypes[col];
+      //         if (dataType === 'string') {
+      //           selectColumns.push(`COUNT(DISTINCT ${col}) as "#${col}"`);
+      //           aggregateColumns.push(`#${col}`);
+      //         } else if (dataType === 'float' || dataType === 'integer') {
+      //           selectColumns.push(`SUM(${col}) as "Σ${col}"`);
+      //           aggregateColumns.push(`Σ${col}`);
+      //         }
+      //       }
+      //     });
+      //   }
         
-        sqlQuery = `SELECT ${selectColumns.join(', ')} FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
+      //   sqlQuery = `SELECT ${selectColumns.join(', ')} FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
         
-        // Add data quality filters to exclude invalid rows
-        sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
+      //   // Add data quality filters to exclude invalid rows
+      //   sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
         
-        // Add applied filter conditions
-        const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
-        if (filterConditions.length > 0) {
-          sqlQuery += ` AND ${filterConditions.join(' AND ')}`;
-        }
+      //   // Add applied filter conditions
+      //   const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
+      //   if (filterConditions.length > 0) {
+      //     sqlQuery += ` AND ${filterConditions.join(' AND ')}`;
+      //   }
         
-        // Add search conditions for grouped columns only
-        const searchConditions = Object.entries(activeSearches)
-          .filter(([column, value]) => value.trim() !== '' && groupByColumns.includes(column))
-          .map(([column, value]) => `${column} ILIKE '%${value}%'`);
+      //   // Add search conditions for grouped columns only
+      //   const searchConditions = Object.entries(activeSearches)
+      //     .filter(([column, value]) => value.trim() !== '' && groupByColumns.includes(column))
+      //     .map(([column, value]) => `${column} ILIKE '%${value}%'`);
         
-        if (searchConditions.length > 0) {
-          sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
-        }
+      //   if (searchConditions.length > 0) {
+      //     sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
+      //   }
         
-        sqlQuery += ` GROUP BY ${groupByColumns.join(', ')}`;
+      //   sqlQuery += ` GROUP BY ${groupByColumns.join(', ')}`;
         
-        // Add sorting
-        if (sortState.column && sortState.direction) {
-          const sortExpression = getSortColumnExpression(sortState.column);
-          sqlQuery += ` ORDER BY ${sortExpression} ${sortState.direction.toUpperCase()}`;
-        } else {
-          sqlQuery += ` ORDER BY ${groupByColumns[0]}`;
-        }
+      //   // Add sorting
+      //   if (sortState.column && sortState.direction) {
+      //     const sortExpression = getSortColumnExpression(sortState.column);
+      //     sqlQuery += ` ORDER BY ${sortExpression} ${sortState.direction.toUpperCase()}`;
+      //   } else {
+      //     sqlQuery += ` ORDER BY ${groupByColumns[0]}`;
+      //   }
         
-        sqlQuery += ` LIMIT 100 OFFSET ${offset}`;
-      } else {
-        // Regular query
-        sqlQuery = `SELECT * FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
+      //   sqlQuery += ` LIMIT 100 OFFSET ${offset}`;
+      // } else {
+      //   // Regular query
+      //   sqlQuery = `SELECT * FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
         
-        // Add data quality filters to exclude invalid rows
-        sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
+      //   // Add data quality filters to exclude invalid rows
+      //   sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
         
-        // Add applied filter conditions
-        const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
-        if (filterConditions.length > 0) {
-          sqlQuery += ` AND ${filterConditions.join(' AND ')}`;
-        }
+      //   // Add applied filter conditions
+      //   const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
+      //   if (filterConditions.length > 0) {
+      //     sqlQuery += ` AND ${filterConditions.join(' AND ')}`;
+      //   }
         
-        // Add search conditions
-        const searchConditions = Object.entries(activeSearches)
-          .filter(([_, value]) => value.trim() !== '')
-          .map(([column, value]) => `${column} ILIKE '%${value}%'`);
+      //   // Add search conditions
+      //   const searchConditions = Object.entries(activeSearches)
+      //     .filter(([_, value]) => value.trim() !== '')
+      //     .map(([column, value]) => `${column} ILIKE '%${value}%'`);
         
-        if (searchConditions.length > 0) {
-          sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
-        }
+      //   if (searchConditions.length > 0) {
+      //     sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
+      //   }
         
-        // Add sorting
-        if (sortState.column && sortState.direction) {
-          sqlQuery += ` ORDER BY ${sortState.column} ${sortState.direction.toUpperCase()}`;
-        } else {
-          sqlQuery += ` ORDER BY id`;
-        }
+      //   // Add sorting
+      //   if (sortState.column && sortState.direction) {
+      //     sqlQuery += ` ORDER BY ${sortState.column} ${sortState.direction.toUpperCase()}`;
+      //   } else {
+      //     sqlQuery += ` ORDER BY id`;
+      //   }
         
-        sqlQuery += ` LIMIT 100 OFFSET ${offset}`;
-      }
+      //   sqlQuery += ` LIMIT 100 OFFSET ${offset}`;
+      // }
       
+      // const stateSetters = {
+      //   setLoading: () => {},
+      //   setError: (error: string | null) => setError(error),
+      //   setData: (response: any) => {
+      //     console.log('[ForecastMasterTable] Received response:', response);
+      //     if (response && response.data) {
+      //       console.log('[ForecastMasterTable] Adding data:', response.data.length, 'records');
+      //       // Apply random generation for trigger_qty and max_qty
+      //       const enhancedData = response.data.map((record: ForecastRecord) => generateRandomQtyValues(record));
+      //       setData(prevData => [...prevData, ...enhancedData]);
+      //       setHasMore(response.data.length === 100);
+      //       setPage(prevPage => prevPage + 1);
+      //     } else {
+      //       console.log('[ForecastMasterTable] No data in response');
+      //       setHasMore(false);
+      //     }
+      //   }
+      // };
+      
+
       console.log('[ForecastMasterTable] Executing SQL query:', sqlQuery);
       
-      const stateSetters = {
-        setLoading: () => {},
+      // API level implementation of logic
+      const filterBody = generateFiltersForAPI()
+      const requestBody = {limit: 100, offset: offset, filters: filterBody, group_by: generateGroupBy()}
+
+      
+      const stateSettersNew = {
+        setLoading: (loading: boolean) => setLoading(loading),
         setError: (error: string | null) => setError(error),
         setData: (response: any) => {
-          console.log('[ForecastMasterTable] Received response:', response);
-          if (response && response.data) {
-            console.log('[ForecastMasterTable] Adding data:', response.data.length, 'records');
+          debugggg(`${Object.keys(requestBody)} - ${Object.keys(response)}`)
+          if (response && response.items) {
             // Apply random generation for trigger_qty and max_qty
-            const enhancedData = response.data.map((record: ForecastRecord) => generateRandomQtyValues(record));
+            const enhancedData = response.items.map((record: ForecastRecord) => generateRandomQtyValues(record));
             setData(prevData => [...prevData, ...enhancedData]);
-            setHasMore(response.data.length === 100);
+            setHasMore(response.items.length === 100);
             setPage(prevPage => prevPage + 1);
-          } else {
-            console.log('[ForecastMasterTable] No data in response');
-            setHasMore(false);
           }
         }
-      };
+      }
       
-      await forecastRepo.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+      
+      await forecastRepo.makeAPICall(requestBody, stateSettersNew);
     } catch (err) {
       console.error('[ForecastMasterTable] Error loading more data:', err);
       setError('Failed to load more data');
@@ -781,6 +862,11 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     });
     setVisibleColumnSettings(initialVisibility);
   };
+
+  const generateGroupBy = () => {
+    // debugggg(groupByColumns)
+    return groupByColumns
+  }
   
   const loadInitialData = async () => {
     if (!selectedWeekStartDate) return;
@@ -792,89 +878,89 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
       
       let sqlQuery = '';
       
-      if (isGroupByMode && groupByColumns.length > 0) {
-        // Build GROUP BY query
-        const selectColumns = [...groupByColumns];
-        const aggregateColumns: string[] = [];
+      // if (isGroupByMode && groupByColumns.length > 0) {
+      //   // Build GROUP BY query
+      //   const selectColumns = [...groupByColumns];
+      //   const aggregateColumns: string[] = [];
         
-        // Add aggregates for non-grouped columns
-        if (metadata) {
-          metadata.essential_columns.forEach(col => {
-            if (!groupByColumns.includes(col)) {
-              const dataType = metadata.essential_columns_datatypes[col];
-              if (dataType === 'string') {
-                selectColumns.push(`COUNT(DISTINCT ${col}) as "#${col}"`);
-                aggregateColumns.push(`#${col}`);
-              } else if (dataType === 'float' || dataType === 'integer') {
-                selectColumns.push(`SUM(${col}) as "Σ${col}"`);
-                aggregateColumns.push(`Σ${col}`);
-              }
-            }
-          });
-        }
+      //   // Add aggregates for non-grouped columns
+      //   if (metadata) {
+      //     metadata.essential_columns.forEach(col => {
+      //       if (!groupByColumns.includes(col)) {
+      //         const dataType = metadata.essential_columns_datatypes[col];
+      //         if (dataType === 'string') {
+      //           selectColumns.push(`COUNT(DISTINCT ${col}) as "#${col}"`);
+      //           aggregateColumns.push(`#${col}`);
+      //         } else if (dataType === 'float' || dataType === 'integer') {
+      //           selectColumns.push(`SUM(${col}) as "Σ${col}"`);
+      //           aggregateColumns.push(`Σ${col}`);
+      //         }
+      //       }
+      //     });
+      //   }
         
-        sqlQuery = `SELECT ${selectColumns.join(', ')} FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
+      //   sqlQuery = `SELECT ${selectColumns.join(', ')} FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
         
-        // Add data quality filters to exclude invalid rows
-        sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
+      //   // Add data quality filters to exclude invalid rows
+      //   sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
         
-        // Add applied filter conditions
-        const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
-        if (filterConditions.length > 0) {
-          sqlQuery += ` AND ${filterConditions.join(' AND ')}`;
-        }
+      //   // Add applied filter conditions
+      //   const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
+      //   if (filterConditions.length > 0) {
+      //     sqlQuery += ` AND ${filterConditions.join(' AND ')}`;
+      //   }
         
-        // Add search conditions for grouped columns only
-        const searchConditions = Object.entries(activeSearches)
-          .filter(([column, value]) => value.trim() !== '' && groupByColumns.includes(column))
-          .map(([column, value]) => `${column} ILIKE '%${value}%'`);
+      //   // Add search conditions for grouped columns only
+      //   const searchConditions = Object.entries(activeSearches)
+      //     .filter(([column, value]) => value.trim() !== '' && groupByColumns.includes(column))
+      //     .map(([column, value]) => `${column} ILIKE '%${value}%'`);
         
-        if (searchConditions.length > 0) {
-          sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
-        }
+      //   if (searchConditions.length > 0) {
+      //     sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
+      //   }
         
-        sqlQuery += ` GROUP BY ${groupByColumns.join(', ')}`;
+      //   sqlQuery += ` GROUP BY ${groupByColumns.join(', ')}`;
         
-        // Add sorting
-        if (sortState.column && sortState.direction) {
-          const sortExpression = getSortColumnExpression(sortState.column);
-          sqlQuery += ` ORDER BY ${sortExpression} ${sortState.direction.toUpperCase()}`;
-        } else {
-          sqlQuery += ` ORDER BY ${groupByColumns[0]}`;
-        }
+      //   // Add sorting
+      //   if (sortState.column && sortState.direction) {
+      //     const sortExpression = getSortColumnExpression(sortState.column);
+      //     sqlQuery += ` ORDER BY ${sortExpression} ${sortState.direction.toUpperCase()}`;
+      //   } else {
+      //     sqlQuery += ` ORDER BY ${groupByColumns[0]}`;
+      //   }
         
-        sqlQuery += ` LIMIT 100`;
-      } else {
-        // Regular query
-        sqlQuery = `SELECT * FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
+      //   sqlQuery += ` LIMIT 100`;
+      // } else {
+      //   // Regular query
+      //   sqlQuery = `SELECT * FROM forecast WHERE week_start_date = '${selectedWeekStartDate}'`;
         
-        // Add data quality filters to exclude invalid rows
-        sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
+      //   // Add data quality filters to exclude invalid rows
+      //   sqlQuery += ` AND store_no != 'nan' AND article_description != 'dummy' AND article_description != 'nan'`;
         
-        // Add applied filter conditions
-        const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
-        if (filterConditions.length > 0) {
-          sqlQuery += ` AND ${filterConditions.join(' AND ')}`;
-        }
+      //   // Add applied filter conditions
+      //   const filterConditions = appliedFilters.map(filter => filter.sqlCondition);
+      //   if (filterConditions.length > 0) {
+      //     sqlQuery += ` AND ${filterConditions.join(' AND ')}`;
+      //   }
         
-        // Add search conditions
-        const searchConditions = Object.entries(activeSearches)
-          .filter(([_, value]) => value.trim() !== '')
-          .map(([column, value]) => `${column} ILIKE '%${value}%'`);
+      //   // Add search conditions
+      //   const searchConditions = Object.entries(activeSearches)
+      //     .filter(([_, value]) => value.trim() !== '')
+      //     .map(([column, value]) => `${column} ILIKE '%${value}%'`);
         
-        if (searchConditions.length > 0) {
-          sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
-        }
+      //   if (searchConditions.length > 0) {
+      //     sqlQuery += ` AND ${searchConditions.join(' AND ')}`;
+      //   }
         
-        // Add sorting
-        if (sortState.column && sortState.direction) {
-          sqlQuery += ` ORDER BY ${sortState.column} ${sortState.direction.toUpperCase()}`;
-        } else {
-          sqlQuery += ` ORDER BY id`;
-        }
+      //   // Add sorting
+      //   if (sortState.column && sortState.direction) {
+      //     sqlQuery += ` ORDER BY ${sortState.column} ${sortState.direction.toUpperCase()}`;
+      //   } else {
+      //     sqlQuery += ` ORDER BY id`;
+      //   }
         
-        sqlQuery += ` LIMIT 100`;
-      }
+      //   sqlQuery += ` LIMIT 100`;
+      // }
       
       const stateSetters = {
         setLoading: (loading: boolean) => setLoading(loading),
@@ -888,9 +974,26 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
             setPage(1);
           }
         }
-      };
+      }; 
       
-      await forecastRepo.executeSqlQuery({ sql_query: sqlQuery }, stateSetters);
+      const stateSettersNew = {
+        setLoading: (loading: boolean) => setLoading(loading),
+        setError: (error: string | null) => setError(error),
+        setData: (response: any) => {
+          // debugggg(response)
+          if (response && response.items) {
+            // Apply random generation for trigger_qty and max_qty
+            const enhancedData = response.items.map((record: ForecastRecord) => generateRandomQtyValues(record));
+            setData(enhancedData);
+            setHasMore(response.items.length === 100);
+            setPage(1);
+          }
+        }
+      }
+
+      const requestBody = {limit: 100, offset: 0, filters: generateFiltersForAPI(), group_by: generateGroupBy()}
+      
+      await forecastRepo.makeAPICall(requestBody, stateSettersNew);
     } catch (err) {
       console.error('Error loading initial data:', err);
       setError('Failed to load data');
@@ -1564,68 +1667,148 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
   };
   
   // Apply filters and update applied filters list
-  const applyFilters = () => {
-    const newAppliedFilters: AppliedFilter[] = [];
+  // const applyFilters = () => {
+  //   const newAppliedFilters: AppliedFilter[] = [];
+    
+  //   // Process discrete filters
+  //   Object.entries(discreteFilters).forEach(([column, filter]) => {
+  //     if (filter.selectedValues.length > 0) {
+  //       const displayValue = filter.selectedValues.length === 1 
+  //         ? filter.selectedValues[0]
+  //         : `${filter.selectedValues.length} selected`;
+  //       const sqlCondition = `${column} IN (${filter.selectedValues.map(v => `'${v}'`).join(', ')})`;
+        
+  //       newAppliedFilters.push({
+  //         column,
+  //         type: 'discrete',
+  //         displayValue,
+  //         sqlCondition
+  //       });
+  //     }
+  //   });
+    
+  //   // Process range filters
+  //   Object.entries(rangeFilters).forEach(([column, filter]) => {
+  //     if (filter.min !== null || filter.max !== null) {
+  //       let displayValue = '';
+  //       let sqlCondition = '';
+        
+  //       if (filter.min !== null && filter.max !== null) {
+  //         displayValue = `${filter.min} - ${filter.max}`;
+  //         sqlCondition = `${column} >= ${filter.min} AND ${column} <= ${filter.max}`;
+  //       } else if (filter.min !== null) {
+  //         displayValue = `≥ ${filter.min}`;
+  //         sqlCondition = `${column} >= ${filter.min}`;
+  //       } else if (filter.max !== null) {
+  //         displayValue = `≤ ${filter.max}`;
+  //         sqlCondition = `${column} <= ${filter.max}`;
+  //       }
+        
+  //       if (sqlCondition) {
+  //         newAppliedFilters.push({
+  //           column,
+  //           type: 'range',
+  //           displayValue,
+  //           sqlCondition
+  //         });
+  //       }
+  //     }
+  //   });
+    
+  //   // Process search filters
+  //   Object.entries(searchFilters).forEach(([column, filter]) => {
+  //     if (filter.value.trim()) {
+  //       const displayValue = `"${filter.value}"`;
+  //       const sqlCondition = `${column} ILIKE '%${filter.value}%'`;
+        
+  //       newAppliedFilters.push({
+  //         column,
+  //         type: 'search',
+  //         displayValue,
+  //         sqlCondition
+  //       });
+  //     }
+  //   });
+    
+  //   setAppliedFilters(newAppliedFilters);
+    
+  //   // Reset data and reload
+  //   setData([]);
+  //   setPage(0);
+  //   setHasMore(true);
+  // };
+  
+  const applyFiltersForAPI = () => {
+    const newAppliedFilters: AppliedFilterForAPI[] = [];
     
     // Process discrete filters
     Object.entries(discreteFilters).forEach(([column, filter]) => {
+      debugggg(`${column} - ${JSON.stringify(filter)}`)
+
       if (filter.selectedValues.length > 0) {
         const displayValue = filter.selectedValues.length === 1 
           ? filter.selectedValues[0]
           : `${filter.selectedValues.length} selected`;
-        const sqlCondition = `${column} IN (${filter.selectedValues.map(v => `'${v}'`).join(', ')})`;
         
+        const filterValues = {values: filter.selectedValues}
         newAppliedFilters.push({
           column,
           type: 'discrete',
           displayValue,
-          sqlCondition
+          filterValues
         });
       }
+
     });
     
     // Process range filters
     Object.entries(rangeFilters).forEach(([column, filter]) => {
-      if (filter.min !== null || filter.max !== null) {
+      // Check if 'min' or 'max' has a valid, non-null value.
+      const hasMin = filter.min !== null && !isNaN(Number(filter.min));
+      const hasMax = filter.max !== null && !isNaN(Number(filter.max));
+
+      // Proceed only if at least one part of the range is defined.
+      if (hasMin || hasMax) {
         let displayValue = '';
-        let sqlCondition = '';
-        
-        if (filter.min !== null && filter.max !== null) {
+
+        // Create a user-friendly string to display the active filter.
+        if (hasMin && hasMax) {
           displayValue = `${filter.min} - ${filter.max}`;
-          sqlCondition = `${column} >= ${filter.min} AND ${column} <= ${filter.max}`;
-        } else if (filter.min !== null) {
+        } else if (hasMin) {
           displayValue = `≥ ${filter.min}`;
-          sqlCondition = `${column} >= ${filter.min}`;
-        } else if (filter.max !== null) {
+        } else { // hasMax must be true
           displayValue = `≤ ${filter.max}`;
-          sqlCondition = `${column} <= ${filter.max}`;
         }
         
-        if (sqlCondition) {
-          newAppliedFilters.push({
-            column,
-            type: 'range',
-            displayValue,
-            sqlCondition
-          });
-        }
+        // This object will be used by `generateFiltersForAPI`.
+        const filterValues = { 
+            min: hasMin ? Number(filter.min) : null,
+            max: hasMax ? Number(filter.max) : null
+        };
+        
+        newAppliedFilters.push({
+          column,
+          type: 'range',
+          displayValue,
+          filterValues
+        });
       }
     });
     
     // Process search filters
-    Object.entries(searchFilters).forEach(([column, filter]) => {
-      if (filter.value.trim()) {
-        const displayValue = `"${filter.value}"`;
-        const sqlCondition = `${column} ILIKE '%${filter.value}%'`;
+    // Object.entries(searchFilters).forEach(([column, filter]) => {
+    //   if (filter.value.trim()) {
+    //     const displayValue = `"${filter.value}"`;
+    //     const sqlCondition = `${column} ILIKE '%${filter.value}%'`;
         
-        newAppliedFilters.push({
-          column,
-          type: 'search',
-          displayValue,
-          sqlCondition
-        });
-      }
-    });
+    //     newAppliedFilters.push({
+    //       column,
+    //       type: 'search',
+    //       displayValue,
+    //       sqlCondition
+    //     });
+    //   }
+    // });
     
     setAppliedFilters(newAppliedFilters);
     
@@ -1634,9 +1817,45 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
     setPage(0);
     setHasMore(true);
   };
-  
+
   // Remove a specific applied filter
   const removeFilter = (filterToRemove: AppliedFilter) => {
+    const { column, type } = filterToRemove;
+    
+    if (type === 'discrete') {
+      setDiscreteFilters(prev => ({
+        ...prev,
+        [column]: {
+          ...prev[column],
+          selectedValues: []
+        }
+      }));
+    } else if (type === 'range') {
+      setRangeFilters(prev => ({
+        ...prev,
+        [column]: { min: null, max: null }
+      }));
+    } else if (type === 'search') {
+      setSearchFilters(prev => ({
+        ...prev,
+        [column]: { value: '' }
+      }));
+    }
+    
+    // Remove from applied filters and reload
+    const newAppliedFilters = appliedFilters.filter(f => 
+      !(f.column === column && f.type === type)
+    );
+    setAppliedFilters(newAppliedFilters);
+    
+    // Reset data and reload
+    setData([]);
+    setPage(0);
+    setHasMore(true);
+  };
+
+
+  const removeAPIFilter = (filterToRemove: AppliedFilterForAPI) => {
     const { column, type } = filterToRemove;
     
     if (type === 'discrete') {
@@ -1952,7 +2171,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
                   </span>
                   <span>{filter.displayValue}</span>
                   <button
-                    onClick={() => removeFilter(filter)}
+                    onClick={() => removeAPIFilter(filter)}
                     className="text-[hsl(var(--panel-error))] hover:text-[hsl(var(--panel-error))]/80 ml-1"
                     title="Remove filter"
                   >
@@ -2062,7 +2281,7 @@ const ForecastMasterTable = ({ consensusMode = false, selectedWeekStartDate: pro
             {/* Apply Filters Button */}
             <div className="mt-6 flex justify-center">
               <button
-                onClick={applyFilters}
+                onClick={applyFiltersForAPI}
                 className="px-6 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded hover:bg-[hsl(var(--primary))]/90"
               >
                 Apply Filters
