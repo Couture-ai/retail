@@ -211,7 +211,11 @@ const MonthOnMonthComparison: React.FC = () => {
     "couture_baseline_accuracy",
     "business_baseline_accuracy",
     "revised_baseline_accuracy",
-    "business_consensus_accuracy"
+    "business_consensus_accuracy",
+    "couture_baseline_vs_business_baseline_uplift",
+    "couture_baseline_vs_business_consensus_uplift",
+    "revised_baseline_vs_business_consensus_uplift",
+    "business_baseline_vs_business_consensus_uplift"
   ]
 );
 
@@ -640,34 +644,37 @@ const MonthOnMonthComparison: React.FC = () => {
   }, [loading, hasMore, page, forecastRepository, activeSearches, activeUnifiedSearch]);
 
   // Set up infinite scroll
-  useEffect(() => {
-    const container = tableContainerRef.current;
-    if (!container) return;
+  // useEffect(() => {
+  //   const container = tableContainerRef.current;
+  //   if (!container) return;
     
-    const handleScroll = () => {
-      if (loading || !hasMore) return;
+  //   const handleScroll = () => {
+  //     if (loading || !hasMore) return;
       
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
+  //     const { scrollTop, scrollHeight, clientHeight } = container;
+  //     const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
       
-      if (scrollPercentage > 0.8) {
-        loadMoreData();
-      }
-    };
+  //     if (scrollPercentage > 0.8) {
+  //       loadMoreData();
+  //     }
+  //   };
     
-    let timeoutId: NodeJS.Timeout;
-    const debouncedHandleScroll = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(handleScroll, 100);
-    };
+  //   let timeoutId: NodeJS.Timeout;
+  //   const debouncedHandleScroll = () => {
+  //     clearTimeout(timeoutId);
+  //     timeoutId = setTimeout(handleScroll, 100);
+  //   };
     
-    container.addEventListener('scroll', debouncedHandleScroll);
+  //   container.addEventListener('scroll', debouncedHandleScroll);
     
-    return () => {
-      container.removeEventListener('scroll', debouncedHandleScroll);
-      clearTimeout(timeoutId);
-    };
-  }, [loading, hasMore, loadMoreData]);
+  //   return () => {
+  //     container.removeEventListener('scroll', debouncedHandleScroll);
+  //     clearTimeout(timeoutId);
+  //   };
+  // }, [loading, hasMore, loadMoreData]);
+
+
+
 
   // Handle search functionality
   const handleSearchChange = (column: string, value: string) => {
@@ -736,17 +743,25 @@ const MonthOnMonthComparison: React.FC = () => {
     }
   };
 
-  const formatCellValue = (value: any) => {
+  const formatCellValue = (value: any, column?: string) => {
     if (value === null || value === undefined) return '';
     
+    let val = null;
     if (typeof value === 'number') {
       // This will add comma separators and round to 3 decimal places if needed.
-      return value.toLocaleString('en-US', {
+      val = value.toLocaleString('en-US', {
         maximumFractionDigits: 3
       });
+    } else {
+      val = String(value);
     }
 
-    return String(value);
+    // add percent if needed
+    if(column && column.includes("accuracy")){
+      val += "%"
+    }
+
+    return val;
   };
 
 
@@ -1220,7 +1235,7 @@ const MonthOnMonthComparison: React.FC = () => {
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
               <TrendingUp className="text-[hsl(var(--primary))]" size={20} />
-              <h1 className="text-lg font-semibold">Month-on-Month Comparison</h1>
+              <h1 className="text-lg font-semibold">Month-on-Month Analysis</h1>
             </div>
           </div>
           <div className="flex items-center space-x-2 text-[hsl(var(--panel-muted-foreground))]">
@@ -1284,7 +1299,7 @@ const MonthOnMonthComparison: React.FC = () => {
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
               <TrendingUp className="text-[hsl(var(--primary))]" size={20} />
-              <h1 className="text-lg font-semibold">Month-on-Month Comparison</h1>
+              <h1 className="text-lg font-semibold">Month-on-Month Analysis</h1>
             </div>
           </div>
           <div className="flex items-center space-x-2 text-[hsl(var(--panel-muted-foreground))]">
@@ -1310,7 +1325,7 @@ const MonthOnMonthComparison: React.FC = () => {
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2">
             <TrendingUp className="text-[hsl(var(--primary))]" size={20} />
-            <h1 className="text-lg font-semibold">Month-on-Month Comparison</h1>
+            <h1 className="text-lg font-semibold">Month-on-Month Analysis</h1>
           </div>
         </div>
         <div className="flex items-center space-x-2 text-[hsl(var(--panel-muted-foreground))]">
@@ -1926,7 +1941,7 @@ const MonthOnMonthComparison: React.FC = () => {
                                           key={`${col}-${rowIndex}`} 
                                           className="px-3 py-2 border-r border-[hsl(var(--panel-border))] last:border-r-0 text-[hsl(var(--panel-foreground))]"
                                         >
-                                          {formatCellValue((row as any)[col])}
+                                          {formatCellValue((row as any)[col], col)}
                                         </td>
                                       ))}
                                     </tr>
@@ -2131,7 +2146,7 @@ const MonthOnMonthComparison: React.FC = () => {
                             className="px-3 py-2 text-[hsl(var(--panel-foreground))] border-r border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-background))] min-w-[100px]"
                         >
                             <span className="font-medium">
-                            {formatCellValue(monthData[column])}
+                            {formatCellValue(monthData[column], column)}
                             </span>
                         </td>
                         ) : null
@@ -2158,12 +2173,33 @@ const MonthOnMonthComparison: React.FC = () => {
         {/* Status bar */}
         <div className="px-4 py-2 border-t border-[hsl(var(--panel-border))] bg-[hsl(var(--panel-header-background))]">
             <div className="flex items-center justify-between text-xs text-[hsl(var(--panel-muted-foreground))]">
-            <div className="flex items-center space-x-4">
+
+            {/* Left side can remain empty or for other info */}
+            <div className="flex items-center space-x-4"></div>
+
+            {/* Right side now contains the button logic */}
+            <div className="flex items-center space-x-2">
+                <span>{data.length.toLocaleString()} groups loaded</span>
+
+                {/* Show button only if there is more data to fetch */}
+                {hasMore && (
+                  <button
+                    onClick={loadMoreData}
+                    disabled={loading}
+                    className="px-3 py-1 text-xs rounded border border-[hsl(var(--primary))]/40 text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-colors"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="animate-spin mr-2" size={12} />
+                        Loading...
+                      </>
+                    ) : (
+                      "Load More"
+                    )}
+                  </button>
+                )}
             </div>
-            <div>
-                {data.length.toLocaleString()} groups loaded
-                {hasMore && " • Scroll down for more"}
-            </div>
+
             </div>
         </div>
         
